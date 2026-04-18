@@ -1,0 +1,169 @@
+{
+  "users": {
+    "admin_001": {
+      "id": "admin_001",
+      "email": "admin@btl-learning.com",
+      "displayName": "Admin Demo",
+      "role": "admin",
+      "createdAt": "2026-04-11T00:00:00.000Z",
+      "updatedAt": "2026-04-11T00:00:00.000Z"
+    },
+    "student_001": {
+      "id": "student_001",
+      "email": "student@btl-learning.com",
+      "displayName": "Student Demo",
+      "role": "student",
+      "createdAt": "2026-04-11T00:00:00.000Z",
+      "updatedAt": "2026-04-11T00:00:00.000Z"
+    }
+  },
+  "profiles": {
+    "admin_001": {
+      "userId": "admin_001",
+      "displayName": "Admin Demo",
+      "avatarUrl": null,
+      "bio": "Quan tri he thong"
+    },
+    "student_001": {
+      "userId": "student_001",
+      "displayName": "Student Demo",
+      "avatarUrl": null,
+      "bio": "Hoc vien demo"
+    }
+  },
+  "sessions": {
+    "admin_001": {
+      "userId": "admin_001",
+      "email": "admin@btl-learning.com",
+      "role": "admin",
+      "isActive": true,
+      "provider": "firebase_auth",
+      "lastLoginAt": "2026-04-11T00:00:00.000Z",
+      "lastSeenAt": "2026-04-11T00:00:00.000Z"
+    },
+    "student_001": {
+      "userId": "student_001",
+      "email": "student@btl-learning.com",
+      "role": "student",
+      "isActive": true,
+      "provider": "firebase_auth",
+      "lastLoginAt": "2026-04-11T00:00:00.000Z",
+      "lastSeenAt": "2026-04-11T00:00:00.000Z"
+    }
+  },
+  "courses": {
+    "course_flutter_basics": {
+      "id": "course_flutter_basics",
+      "title": "Flutter Co Ban",
+      "description": "Lam quen voi Flutter, widget va giao dien di dong",
+      "level": "beginner"
+    },
+    "course_dart_fundamentals": {
+      "id": "course_dart_fundamentals",
+      "title": "Dart Co Ban",
+      "description": "Hoc kieu du lieu, ham, class va xu ly logic co ban",
+      "level": "beginner"
+    }
+  },
+  "lessons": {
+    "lesson_flutter_001": {
+      "id": "lesson_flutter_001",
+      "courseId": "course_flutter_basics",
+      "title": "Gioi thieu Flutter",
+      "order": 1,
+      "content": "Flutter la UI toolkit cho app di dong da nen tang.",
+      "quizId": "quiz_flutter_001"
+    },
+    "lesson_flutter_002": {
+      "id": "lesson_flutter_002",
+      "courseId": "course_flutter_basics",
+      "title": "Widget la gi",
+      "order": 2,
+      "content": "Moi thu trong Flutter deu la widget.",
+      "quizId": null
+    },
+    "lesson_dart_001": {
+      "id": "lesson_dart_001",
+      "courseId": "course_dart_fundamentals",
+      "title": "Bien va Kieu du lieu",
+      "order": 1,
+      "content": "Dart co dynamic typing va static typing rat linh hoat.",
+      "quizId": "quiz_dart_001"
+    }
+  },
+  "quizzes": {
+    "quiz_flutter_001": {
+      "id": "quiz_flutter_001",
+      "courseId": "course_flutter_basics",
+      "lessonId": "lesson_flutter_001",
+      "title": "Quiz Gioi thieu Flutter",
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "Flutter duoc phat trien boi ai?",
+          "options": ["Google", "Microsoft", "Apple"],
+          "correctIndex": 0,
+          "explanation": "Flutter la framework cua Google."
+        },
+        {
+          "id": "q2",
+          "prompt": "Trong Flutter, tat ca deu la gi?",
+          "options": ["Widget", "Activity", "Fragment"],
+          "correctIndex": 0,
+          "explanation": "Tat ca thanh phan giao dien trong Flutter deu la widget."
+        }
+      ]
+    },
+    "quiz_dart_001": {
+      "id": "quiz_dart_001",
+      "courseId": "course_dart_fundamentals",
+      "lessonId": "lesson_dart_001",
+      "title": "Quiz Bien va Kieu du lieu",
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "Kieu so nguyen trong Dart la gi?",
+          "options": ["int", "string", "bool"],
+          "correctIndex": 0,
+          "explanation": "int la kieu so nguyen."
+        }
+      ]
+    }
+  },
+  "attempts": {
+    "sample_attempt_001": {
+      "attemptId": "sample_attempt_001",
+      "quizId": "quiz_flutter_001",
+      "userId": "student_001",
+      "score": 100,
+      "total": 2,
+      "submittedAt": "2026-04-11T00:00:00.000Z",
+      "review": [
+        {
+          "questionId": "q1",
+          "selectedIndex": 0,
+          "correctIndex": 0,
+          "isCorrect": true,
+          "explanation": "Flutter la framework cua Google."
+        },
+        {
+          "questionId": "q2",
+          "selectedIndex": 0,
+          "correctIndex": 0,
+          "isCorrect": true,
+          "explanation": "Tat ca thanh phan giao dien trong Flutter deu la widget."
+        }
+      ]
+    }
+  },
+  "contacts": {
+    "sample_message_001": {
+      "name": "Student Demo",
+      "email": "student@btl-learning.com",
+      "subject": "Can ho tro tai khoan",
+      "message": "Toi can ho tro ve dang nhap.",
+      "createdAt": "2026-04-11T00:00:00.000Z"
+    }
+  }
+}
+
