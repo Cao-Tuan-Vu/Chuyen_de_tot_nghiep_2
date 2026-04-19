@@ -40,7 +40,7 @@ flutter run
 
 - Chua dang nhap -> moi route deu redirect ve `LoginPage`.
 - Dang nhap role `admin` -> redirect vao `AdminPage` (luong quan tri rieng).
-- Dang nhap role `student/mentor` -> khong vao duoc route admin.
+- Dang nhap role `student` -> khong vao duoc route admin.
 
 ## Firebase project
 

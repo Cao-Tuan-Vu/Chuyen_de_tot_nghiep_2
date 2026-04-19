@@ -44,17 +44,20 @@ class AdminRepository {
   }
 
   Future<List<Lesson>> getLessonsByCourse(String courseId) async {
-    final snapshot = await _lessonsRef.orderByChild('courseId').equalTo(courseId).get();
+    final snapshot = await _lessonsRef.get();
     if (!snapshot.exists || snapshot.value == null) {
       return [];
     }
 
     final data = _asMap(snapshot.value);
-    final lessons = data.entries.map((entry) {
-      final item = _asMap(entry.value);
-      item.putIfAbsent('id', () => entry.key);
-      return Lesson.fromJson(item);
-    }).toList();
+    final lessons = data.entries
+        .map((entry) {
+          final item = _asMap(entry.value);
+          item.putIfAbsent('id', () => entry.key);
+          return Lesson.fromJson(item);
+        })
+        .where((lesson) => lesson.courseId == courseId)
+        .toList();
 
     lessons.sort((a, b) => a.order.compareTo(b.order));
     return lessons;

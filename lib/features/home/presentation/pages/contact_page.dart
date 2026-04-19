@@ -7,145 +7,88 @@ class ContactPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Liên Hệ'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Card(
+      backgroundColor: isDarkMode ? Colors.black : const Color(0xFFF8F9FA),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 220,
+            pinned: true,
+            stretch: true,
+            backgroundColor: Colors.indigo,
+            foregroundColor: Colors.white,
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: const Text('Liên Hệ', 
+                style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.indigo, Colors.indigoAccent],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: -50,
+                    top: -50,
+                    child: CircleAvatar(
+                      radius: 100,
+                      backgroundColor: Colors.white.withAlpha((0.05 * 255).round()),
+                    ),
+                  ),
+                  const Center(
+                    child: Icon(Icons.contact_support_rounded, size: 80, color: Colors.white24),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Liên Hệ Chúng Tôi',
-                    style: Theme.of(context).textTheme.titleLarge,
+                  _buildSectionTitle(context, 'Thông tin cá nhân', isDarkMode),
+                  const SizedBox(height: 16),
+                  _buildContactCard(
+                    context,
+                    isDarkMode,
+                    icon: Icons.person_rounded,
+                    title: 'Họ tên',
+                    value: 'Ta Phuc Anh',
+                    color: Colors.blue,
                   ),
-                  const SizedBox(height: 20),
-                  _buildContactItem(
-                    icon: Icons.email_outlined,
+                  const SizedBox(height: 12),
+                  _buildContactCard(
+                    context,
+                    isDarkMode,
+                    icon: Icons.phone_rounded,
+                    title: 'Số điện thoại',
+                    value: '0769743204',
+                    color: Colors.green,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildContactCard(
+                    context,
+                    isDarkMode,
+                    icon: Icons.email_rounded,
                     title: 'Email',
-                    subtitle: 'support@btl-learning.com',
-                    onTap: () {},
+                    value: '20220249@eaut.edu.vn',
+                    color: Colors.orange,
                   ),
+                  const SizedBox(height: 40),
+                  _buildSectionTitle(context, 'Gửi tin nhắn phản hồi', isDarkMode),
                   const SizedBox(height: 16),
-                  _buildContactItem(
-                    icon: Icons.phone_outlined,
-                    title: 'Điện Thoại',
-                    subtitle: '(+84) 28 3000 0000',
-                    onTap: () {},
-                  ),
-                  const SizedBox(height: 16),
-                  _buildContactItem(
-                    icon: Icons.location_on_outlined,
-                    title: 'Địa Chỉ',
-                    subtitle: 'TP. Hồ Chí Minh, Việt Nam',
-                    onTap: () {},
-                  ),
-                  const SizedBox(height: 16),
-                  _buildContactItem(
-                    icon: Icons.access_time_outlined,
-                    title: 'Giờ Làm Việc',
-                    subtitle: 'Thứ 2 - Thứ 6: 9:00 - 18:00',
-                    onTap: () {},
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Gửi Tin Nhắn',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    decoration: const InputDecoration(
-                      labelText: 'Tên của bạn',
-                      prefixIcon: Icon(Icons.person_outline),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email_outlined),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    decoration: const InputDecoration(
-                      labelText: 'Tiêu đề',
-                      prefixIcon: Icon(Icons.subject_outlined),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    maxLines: 5,
-                    decoration: const InputDecoration(
-                      labelText: 'Tin nhắn',
-                      prefixIcon: Icon(Icons.message_outlined),
-                      alignLabelWithHint: true,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Cảm ơn bạn! Chúng tôi sẽ phản hồi sớm.')),
-                      );
-                    },
-                    child: const Text('Gửi Tin Nhắn'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Theo Dõi Chúng Tôi',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.public),
-                        tooltip: 'Website',
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.facebook),
-                        tooltip: 'Facebook',
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.camera_alt_outlined),
-                        tooltip: 'Instagram',
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.chat_bubble_outline),
-                        tooltip: 'Chat',
-                      ),
-                    ],
-                  ),
+                  _buildFeedbackForm(context, isDarkMode),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -155,37 +98,169 @@ class ContactPage extends StatelessWidget {
     );
   }
 
-  Widget _buildContactItem({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
+  Widget _buildSectionTitle(BuildContext context, String title, bool isDarkMode) {
+    return Row(
+      children: [
+        Container(
+          width: 4,
+          height: 24,
+          decoration: BoxDecoration(
+            color: Colors.indigo,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContactCard(BuildContext context, bool isDarkMode,
+      {required IconData icon, required String title, required String value, required Color color}) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+            BoxShadow(
+             color: Colors.black.withAlpha(((isDarkMode ? 0.3 : 0.05) * 255).round()),
+             blurRadius: 15,
+             offset: const Offset(0, 8),
+           ),
+        ],
+      ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.indigo, size: 24),
-          const SizedBox(width: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+               decoration: BoxDecoration(
+               color: color.withAlpha((0.1 * 255).round()),
+               borderRadius: BorderRadius.circular(15),
+             ),
+            child: Icon(icon, color: color, size: 26),
+          ),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  style: TextStyle(
+                    fontSize: 13, 
+                    fontWeight: FontWeight.w500,
+                    color: isDarkMode ? Colors.grey[400] : Colors.grey[600]
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  subtitle,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                  value,
+                  style: TextStyle(
+                    fontSize: 16, 
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black87,
+                  ),
                 ),
               ],
+            ),
+          ),
+           Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey.withAlpha((0.5 * 255).round())),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeedbackForm(BuildContext context, bool isDarkMode) {
+    final fieldColor = isDarkMode ? Colors.grey[900] : Colors.white;
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: fieldColor,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: isDarkMode ? Colors.grey[800]! : Colors.grey[200]!),
+      ),
+      child: Column(
+        children: [
+          _buildTextField(
+            label: 'Tiêu đề',
+            icon: Icons.subject_rounded,
+            isDarkMode: isDarkMode,
+          ),
+          const SizedBox(height: 20),
+          _buildTextField(
+            label: 'Nội dung phản hồi',
+            icon: Icons.chat_bubble_outline_rounded,
+            maxLines: 4,
+            isDarkMode: isDarkMode,
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Cảm ơn bạn đã gửi phản hồi!'),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.indigo,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
+              child: const Text('Gửi Tin Nhắn', 
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
       ),
     );
   }
-}
 
+  Widget _buildTextField({
+    required String label, 
+    required IconData icon, 
+    int maxLines = 1,
+    required bool isDarkMode,
+  }) {
+    return TextField(
+      maxLines: maxLines,
+      style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: isDarkMode ? Colors.grey[400] : Colors.grey[600]),
+        prefixIcon: Icon(icon, color: Colors.indigo, size: 22),
+        filled: true,
+        fillColor: isDarkMode ? Colors.black.withAlpha((0.3 * 255).round()) : Colors.grey[50],
+        alignLabelWithHint: true,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.indigo, width: 1.5),
+        ),
+      ),
+    );
+  }
+}

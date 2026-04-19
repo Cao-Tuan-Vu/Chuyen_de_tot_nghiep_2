@@ -5,6 +5,7 @@ class Lesson {
     required this.title,
     required this.order,
     required this.content,
+    this.theory,
     this.quizId,
   });
 
@@ -13,16 +14,20 @@ class Lesson {
   final String title;
   final int order;
   final String content;
+  final String? theory;
   final String? quizId;
 
   factory Lesson.fromJson(Map<String, dynamic> json) {
     return Lesson(
       id: (json['id'] ?? json['lessonId']) as String,
-      courseId: json['courseId'] as String? ?? '',
+      // Support both 'courseId' and legacy/key named 'course' from seed data
+      courseId: (json['courseId'] ?? json['course']) as String? ?? '',
       title: json['title'] as String? ?? '',
       order: (json['order'] as num?)?.toInt() ?? 0,
       content: json['content'] as String? ?? '',
-      quizId: json['quizId'] as String?,
+      theory: json['theory'] as String? ?? json['content'] as String? ?? '',
+      // Support both 'quizId' and legacy/key named 'quiz'
+      quizId: (json['quizId'] ?? json['quiz']) as String?,
     );
   }
 
@@ -33,6 +38,7 @@ class Lesson {
       'title': title,
       'order': order,
       'content': content,
+      'theory': theory,
       'quizId': quizId,
     };
   }

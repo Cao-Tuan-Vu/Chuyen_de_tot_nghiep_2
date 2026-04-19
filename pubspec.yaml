@@ -41,6 +41,7 @@ dependencies:
   firebase_analytics: ^11.4.7
   firebase_crashlytics: ^4.3.7
   shared_preferences: ^2.3.2
+  flutter_markdown: ^0.7.0
 
 dev_dependencies:
   flutter_test:

@@ -7,9 +7,10 @@ import 'package:btl/features/admin/data/repositories/admin_repository.dart';
 import 'package:btl/features/admin/presentation/pages/admin_page.dart';
 import 'package:btl/features/home/presentation/pages/home_page.dart';
 import 'package:btl/features/learning/data/repositories/learning_repository.dart';
+import 'package:btl/features/learning/presentation/pages/course_list_page.dart';
+import 'package:btl/features/learning/presentation/pages/lesson_list_page.dart';
 import 'package:btl/features/learning/domain/entities/course.dart';
 import 'package:btl/features/learning/domain/entities/lesson.dart';
-import 'package:btl/features/learning/presentation/pages/course_list_page.dart';
 import 'package:btl/features/quiz/data/repositories/quiz_repository.dart';
 import 'package:btl/features/quiz/domain/entities/quiz.dart';
 import 'package:flutter/material.dart';
@@ -223,34 +224,38 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: HomePage(controller: controller),
-        routes: {
-          CourseListPage.routeName: (_) => CourseListPage(
-                controller: controller,
-                learningRepository: learningRepository,
-                quizRepository: quizRepository,
-              ),
-        },
+        home: HomePage(
+          controller: controller,
+          learningRepository: learningRepository,
+          quizRepository: quizRepository,
+        ),
       ),
     );
 
-    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.tap(find.byIcon(Icons.add_shopping_cart_rounded));
     await tester.pumpAndSettle();
-    final drawerCourseTile = find.widgetWithText(ListTile, 'Khóa Học');
-    expect(drawerCourseTile, findsOneWidget);
 
-    await tester.tap(drawerCourseTile);
-    await tester.pumpAndSettle();
     expect(find.text('Dart co ban'), findsOneWidget);
 
-    await tester.tap(find.text('Dart co ban'));
+    final courseInList = find.descendant(
+      of: find.byType(CourseListPage),
+      matching: find.text('Dart co ban'),
+    );
+    await tester.ensureVisible(courseInList);
+    await tester.tap(courseInList);
     await tester.pumpAndSettle();
     expect(find.text('Cau truc dieu kien'), findsOneWidget);
 
-    await tester.tap(find.text('Cau truc dieu kien'));
+    final lessonInList = find.descendant(
+      of: find.byType(LessonListPage),
+      matching: find.text('Cau truc dieu kien'),
+    );
+    await tester.ensureVisible(lessonInList);
+    await tester.tap(lessonInList);
     await tester.pumpAndSettle();
     expect(find.text('Lam quiz bai nay'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('Lam quiz bai nay'));
     await tester.tap(find.text('Lam quiz bai nay'));
     await tester.pumpAndSettle();
     expect(find.text('Quiz: Dieu kien trong Dart'), findsOneWidget);
@@ -268,10 +273,16 @@ void main() {
       ..token = 'test-token';
 
     final adminRepository = _FakeAdminRepository();
+    final learningRepository = _FakeLearningRepository();
+    final quizRepository = _FakeQuizRepository();
 
     await tester.pumpWidget(
       MaterialApp(
-        home: HomePage(controller: controller),
+        home: HomePage(
+          controller: controller,
+          learningRepository: learningRepository,
+          quizRepository: quizRepository,
+        ),
         routes: {
           AdminPage.routeName: (_) => AdminPage(
                 controller: controller,
@@ -281,16 +292,13 @@ void main() {
       ),
     );
 
-    expect(find.text('Công Cụ Quản Trị'), findsOneWidget);
-
-    final adminButton = find.text('Mở Trang Quản Trị');
-    await tester.ensureVisible(adminButton);
-    await tester.pumpAndSettle();
+    final adminButton = find.byIcon(Icons.admin_panel_settings);
+    expect(adminButton, findsOneWidget);
     await tester.tap(adminButton);
     await tester.pumpAndSettle();
 
-    expect(find.text('Admin CMS'), findsOneWidget);
-    await tester.tap(find.text('Users'));
+    expect(find.text('Admin Console'), findsOneWidget);
+    await tester.tap(find.text('Người dùng'));
     await tester.pumpAndSettle();
     expect(find.text('admin@example.com'), findsOneWidget);
     expect(find.text('student@example.com'), findsOneWidget);

@@ -33,7 +33,7 @@ class LearningRepository {
 
   Future<List<Lesson>> getLessonsByCourse(String courseId) async {
     final snapshot = await _getWithTimeout(
-      _lessonsRef.orderByChild('courseId').equalTo(courseId),
+      _lessonsRef,
       errorContext: 'Tai danh sach bai hoc that bai',
     );
     if (!snapshot.exists || snapshot.value == null) {
@@ -41,11 +41,14 @@ class LearningRepository {
     }
 
     final data = _asMap(snapshot.value);
-    final lessons = data.entries.map((entry) {
-      final item = _asMap(entry.value);
-      item.putIfAbsent('id', () => entry.key);
-      return Lesson.fromJson(item);
-    }).toList();
+    final lessons = data.entries
+        .map((entry) {
+          final item = _asMap(entry.value);
+          item.putIfAbsent('id', () => entry.key);
+          return Lesson.fromJson(item);
+        })
+        .where((lesson) => lesson.courseId == courseId)
+        .toList();
 
     lessons.sort((a, b) => a.order.compareTo(b.order));
     return lessons;

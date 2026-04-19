@@ -12,6 +12,7 @@ class CourseListPage extends StatefulWidget {
     required this.controller,
     LearningRepository? learningRepository,
     QuizRepository? quizRepository,
+    this.useScaffold = true,
   }) : learningRepository = learningRepository ?? LearningRepository(),
        quizRepository = quizRepository ?? QuizRepository();
 
@@ -20,6 +21,7 @@ class CourseListPage extends StatefulWidget {
   final AuthController controller;
   final LearningRepository learningRepository;
   final QuizRepository quizRepository;
+  final bool useScaffold;
 
   @override
   State<CourseListPage> createState() => _CourseListPageState();
@@ -42,11 +44,9 @@ class _CourseListPageState extends State<CourseListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Khoa hoc')),
-      body: FutureBuilder<List<Course>>(
-        future: _coursesFuture,
-        builder: (context, snapshot) {
+    final content = FutureBuilder<List<Course>>(
+      future: _coursesFuture,
+      builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -101,8 +101,19 @@ class _CourseListPageState extends State<CourseListPage> {
               );
             },
           );
-        },
-      ),
+      },
+    );
+
+    if (widget.useScaffold) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Khoa hoc')),
+        body: content,
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: content,
     );
   }
 }

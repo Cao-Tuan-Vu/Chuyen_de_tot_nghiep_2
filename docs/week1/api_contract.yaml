@@ -79,7 +79,7 @@ paths:
                 userId: { type: string }
                 role:
                   type: string
-                  enum: [student, mentor, admin]
+                  enum: [student, admin]
       responses:
         '200': { description: Success }
 

@@ -34,17 +34,25 @@ class QuizResultPage extends StatelessWidget {
                   final review = result.review[index];
                   final question = quiz.questions.firstWhere(
                     (item) => item.id == review.questionId,
+                    orElse: () => QuizQuestion(id: '', prompt: '(Cau hoi khong tim thay)', options: <String>[]),
                   );
+
+                  // Safeguard: ensure options and correctIndex are valid before indexing
+                  final String detailText;
+                  if (review.isCorrect) {
+                    detailText = 'Dung. ${review.explanation}';
+                  } else {
+                    final hasOptions = question.options.isNotEmpty;
+                    final validIndex = review.correctIndex >= 0 && review.correctIndex < question.options.length;
+                    final correctAnswer = (hasOptions && validIndex) ? question.options[review.correctIndex] : '(khong co dap an)';
+                    detailText = 'Sai. Dap an dung: $correctAnswer. ${review.explanation}';
+                  }
 
                   return Card(
                     margin: const EdgeInsets.only(bottom: 12),
                     child: ListTile(
                       title: Text('${index + 1}. ${question.prompt}'),
-                      subtitle: Text(
-                        review.isCorrect
-                            ? 'Dung. ${review.explanation}'
-                            : 'Sai. Dap an dung: ${question.options[review.correctIndex]}. ${review.explanation}',
-                      ),
+                        subtitle: Text(detailText),
                       trailing: Icon(
                         review.isCorrect ? Icons.check_circle : Icons.cancel,
                         color: review.isCorrect ? Colors.green : Colors.red,

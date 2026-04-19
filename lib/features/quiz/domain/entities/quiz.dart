@@ -50,14 +50,54 @@ class Quiz {
   final List<QuizQuestion> questions;
 
   factory Quiz.fromJson(Map<String, dynamic> json) {
-    return Quiz(
-      id: (json['id'] ?? json['quizId']) as String,
-      courseId: json['courseId'] as String? ?? '',
-      lessonId: json['lessonId'] as String? ?? '',
-      title: json['title'] as String? ?? '',
-      questions: (json['questions'] as List<dynamic>)
+    // Support two possible quiz formats:
+    // 1) Modern format: { 'questions': [ { id, prompt, options, correctIndex, explanation }, ... ] }
+    // 2) Seed legacy format: { 'q1': 'prompt', 'q1_opts': [...], 'q1_ans': X, 'q2': ..., ... }
+    final id = (json['id'] ?? json['quizId']) as String? ?? '';
+    final courseId = json['courseId'] as String? ?? '';
+    final lessonId = json['lessonId'] as String? ?? '';
+    final title = json['title'] as String? ?? '';
+
+    List<QuizQuestion> questions = [];
+    if (json['questions'] != null) {
+      questions = (json['questions'] as List<dynamic>)
           .map((item) => QuizQuestion.fromJson(item as Map<String, dynamic>))
-          .toList(),
+          .toList();
+    } else {
+      // build from legacy qN / qN_opts / qN_ans scheme
+      final pattern = RegExp(r'^q(\d+)$');
+      final indices = <int>[];
+      for (final key in json.keys) {
+        final m = pattern.firstMatch(key);
+        if (m != null) {
+          final idx = int.tryParse(m.group(1) ?? '0') ?? 0;
+          indices.add(idx);
+        }
+      }
+      indices.sort();
+      for (final idx in indices) {
+        final qKey = 'q$idx';
+        final optsKey = 'q${idx}_opts';
+        final ansKey = 'q${idx}_ans';
+        final prompt = json[qKey] as String? ?? '';
+        final options = (json[optsKey] as List<dynamic>?)?.cast<String>() ?? <String>[];
+        final correctIndex = (json[ansKey] as num?)?.toInt();
+        questions.add(QuizQuestion(
+          id: qKey,
+          prompt: prompt,
+          options: options,
+          correctIndex: correctIndex,
+          explanation: null,
+        ));
+      }
+    }
+
+    return Quiz(
+      id: id,
+      courseId: courseId,
+      lessonId: lessonId,
+      title: title,
+      questions: questions,
     );
   }
 

@@ -20,8 +20,13 @@ class AppUser {
   final String? updatedAt;
 
   factory AppUser.fromJson(Map<String, dynamic> json) {
+    // Be defensive: json['id'] or json['uid'] may be missing or not a String.
+    // Convert to string when present, otherwise use empty string (or throw if you prefer strict validation).
+    final rawId = json['id'] ?? json['uid'];
+    final id = rawId?.toString() ?? '';
+
     return AppUser(
-      id: (json['id'] ?? json['uid']) as String,
+      id: id,
       email: json['email'] as String? ?? '',
       displayName: json['displayName'] as String? ?? '',
       role: json['role'] as String? ?? 'student',

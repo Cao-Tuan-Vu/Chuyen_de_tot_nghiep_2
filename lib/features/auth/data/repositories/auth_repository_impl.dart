@@ -130,7 +130,8 @@ class AuthRepositoryImpl implements AuthRepository {
     final now = DateTime.now().toUtc().toIso8601String();
     final payload = user.copyWith(updatedAt: now).toJson();
 
-    await _usersRef.child(user.id).set(payload);
+    // 🔧 Dùng .update() để không xóa enrolledCourses
+    await _usersRef.child(user.id).update(payload);
     await _profilesRef.child(user.id).set({
       'userId': user.id,
       'displayName': user.displayName,

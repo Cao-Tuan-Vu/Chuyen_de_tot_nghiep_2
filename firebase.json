@@ -1,6 +1,1 @@
-{
-  "database": {
-    "rules": "database.rules.json"
-  }
-}
-
+{"database":{"rules":"database.rules.json"},"flutter":{"platforms":{"android":{"default":{"projectId":"news-app-6ef88","appId":"1:319308367191:android:8441def48e404a3a74aa12","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"news-app-6ef88","configurations":{"ios":"1:319308367191:ios:ab52b51e7f78efa674aa12"}}}}}}

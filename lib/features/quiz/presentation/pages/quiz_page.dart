@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:btl/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:btl/features/quiz/data/repositories/quiz_repository.dart';
 import 'package:btl/features/quiz/domain/entities/quiz.dart';
 import 'quiz_result_page.dart';
+import 'quizzes_debug_page.dart';
 
 class QuizPage extends StatefulWidget {
   QuizPage({
@@ -80,7 +82,24 @@ class _QuizPageState extends State<QuizPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString()));
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(snapshot.error.toString()),
+                  const SizedBox(height: 12),
+                  if (kDebugMode)
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(builder: (_) => const QuizzesDebugPage()),
+                        );
+                      },
+                      child: const Text('Show all quizzes (debug)'),
+                    ),
+                ],
+              ),
+            );
           }
 
           final quiz = snapshot.data;
