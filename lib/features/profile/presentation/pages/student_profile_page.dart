@@ -1,4 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:btl/features/auth/presentation/controllers/auth_controller.dart';
 
 class StudentProfilePage extends StatefulWidget {
@@ -13,7 +19,12 @@ class StudentProfilePage extends StatefulWidget {
 }
 
 class _StudentProfilePageState extends State<StudentProfilePage> {
+  static const String _avatarPrefsPrefix = 'local_avatar_path_';
+
   late final TextEditingController _displayNameController;
+  final ImagePicker _imagePicker = ImagePicker();
+  bool _isUploadingAvatar = false;
+  String? _localAvatarPath;
 
   @override
   void initState() {
@@ -21,12 +32,33 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
     _displayNameController = TextEditingController(
       text: widget.controller.currentUser?.displayName ?? '',
     );
+    _loadLocalAvatar();
   }
 
-  @override
-  void dispose() {
-    _displayNameController.dispose();
-    super.dispose();
+  String _avatarKeyForUser(String userId) => '$_avatarPrefsPrefix$userId';
+
+  Future<void> _loadLocalAvatar() async {
+    final userId = widget.controller.currentUser?.id;
+    if (userId == null || userId.isEmpty) {
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final savedPath = prefs.getString(_avatarKeyForUser(userId));
+    if (savedPath == null || savedPath.isEmpty) {
+      return;
+    }
+
+    final file = File(savedPath);
+    if (await file.exists()) {
+      if (!mounted) return;
+      setState(() {
+        _localAvatarPath = savedPath;
+      });
+      return;
+    }
+
+    await prefs.remove(_avatarKeyForUser(userId));
   }
 
   Future<void> _saveProfile() async {
@@ -41,10 +73,103 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
     );
   }
 
-  // Placeholder cho chức năng đổi ảnh (bạn có thể kết nối sau)
   Future<void> _changeAvatar() async {
+    if (_isUploadingAvatar || widget.controller.isLoading) {
+      return;
+    }
+
+    final currentUser = widget.controller.currentUser;
+    final userId = currentUser?.id;
+    if (userId == null || userId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Không tìm thấy thông tin tài khoản.')),
+      );
+      return;
+    }
+
+    final image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+      maxWidth: 1200,
+      maxHeight: 1200,
+    );
+
+    if (image == null) {
+      return;
+    }
+
+    setState(() {
+      _isUploadingAvatar = true;
+    });
+
+    try {
+      final appDir = await getApplicationDocumentsDirectory();
+      final avatarsDir = Directory('${appDir.path}/avatars');
+      if (!await avatarsDir.exists()) {
+        await avatarsDir.create(recursive: true);
+      }
+
+      final savedFilePath = '${avatarsDir.path}/$userId.jpg';
+      final sourceFile = File(image.path);
+      await sourceFile.copy(savedFilePath);
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_avatarKeyForUser(userId), savedFilePath);
+
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _localAvatarPath = savedFilePath;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Đã lưu ảnh đại diện trên thiết bị này'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Không thể lưu ảnh. Vui lòng thử lại.')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUploadingAvatar = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _removeLocalAvatar() async {
+    final userId = widget.controller.currentUser?.id;
+    if (userId == null || userId.isEmpty) {
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final existingPath = prefs.getString(_avatarKeyForUser(userId));
+
+    if (existingPath != null && existingPath.isNotEmpty) {
+      final file = File(existingPath);
+      if (await file.exists()) {
+        await file.delete();
+      }
+      await prefs.remove(_avatarKeyForUser(userId));
+    }
+
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _localAvatarPath = null;
+    });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Chức năng chọn ảnh sẽ được thêm sau')),
+      const SnackBar(content: Text('Đã xóa ảnh đại diện trên thiết bị này')),
     );
   }
 
@@ -52,6 +177,9 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
   Widget build(BuildContext context) {
     final user = widget.controller.currentUser;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final ImageProvider<Object>? avatarImage = _localAvatarPath != null
+        ? FileImage(File(_localAvatarPath!))
+        : (user?.avatarUrl != null ? NetworkImage(user!.avatarUrl!) : null);
 
     return Scaffold(
       appBar: AppBar(
@@ -86,15 +214,13 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
                         backgroundColor: Colors.white,
                         child: CircleAvatar(
                           radius: 62,
-                          backgroundImage: user?.avatarUrl != null
-                              ? NetworkImage(user!.avatarUrl!)
-                              : null,
+                          backgroundImage: avatarImage,
                           backgroundColor: Colors.grey[300],
-                          child: user?.avatarUrl == null
+                          child: (avatarImage == null)
                               ? Text(
-                                ((user?.displayName ?? '').isNotEmpty ? (user?.displayName ?? '')[0] : 'U').toUpperCase(),
-                                style: const TextStyle(fontSize: 55, fontWeight: FontWeight.bold, color: Color(0xFF2196F3)),
-                              )
+                                  ((user?.displayName ?? '').isNotEmpty ? (user?.displayName ?? '')[0] : 'U').toUpperCase(),
+                                  style: const TextStyle(fontSize: 55, fontWeight: FontWeight.bold, color: Color(0xFF2196F3)),
+                                )
                               : null,
                         ),
                       ),
@@ -109,10 +235,16 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
                               color: Colors.white,
                               shape: BoxShape.circle,
                               boxShadow: [
-                                BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 8),
+                                BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 8),
                               ],
                             ),
-                            child: const Icon(Icons.camera_alt_rounded, size: 22, color: Color(0xFFFFD700)),
+                            child: _isUploadingAvatar
+                                ? const SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  )
+                                : const Icon(Icons.camera_alt_rounded, size: 22, color: Color(0xFFFFD700)),
                           ),
                         ),
                       ),
@@ -125,8 +257,17 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
                   ),
                   Text(
                     user?.email ?? '',
-                    style: TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.85)),
+                    style: TextStyle(fontSize: 16, color: Colors.white.withValues(alpha: 0.85)),
                   ),
+                  if (_localAvatarPath != null)
+                    TextButton.icon(
+                      onPressed: _isUploadingAvatar ? null : _removeLocalAvatar,
+                      icon: const Icon(Icons.delete_outline_rounded, color: Colors.white),
+                      label: const Text(
+                        'Xóa ảnh thiết bị',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -148,7 +289,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
                         children: [
                           _infoRow('Email', user?.email ?? 'Chưa có'),
                           const Divider(height: 24),
-                          _infoRow('Vai trò', user?.role?.toUpperCase() ?? 'Học viên'),
+                          _infoRow('Vai trò', user?.role.toUpperCase() ?? 'Học viên'),
                           const Divider(height: 24),
                           _infoRow('Ngày tham gia', 'Chưa cập nhật'), // Có thể thêm sau
                         ],
@@ -209,22 +350,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
                       ),
                     ),
 
-                  const SizedBox(height: 30),
-
-                  // Logout button
-                  OutlinedButton.icon(
-                    onPressed: () async {
-                      await widget.controller.logout();
-                      if (mounted) Navigator.pushReplacementNamed(context, '/login');
-                    },
-                    icon: const Icon(Icons.logout, color: Colors.red),
-                    label: const Text('Đăng xuất', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 52),
-                      side: const BorderSide(color: Colors.red),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                  ),
+                  const SizedBox(height: 12),
                 ],
               ),
             ),
@@ -254,3 +380,4 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
     );
   }
 }
+

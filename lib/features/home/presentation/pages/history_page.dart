@@ -14,6 +14,37 @@ class _HistoryPageState extends State<HistoryPage> {
   bool _loading = true;
   List<_AttemptHistory> _attempts = [];
 
+  Future<DataSnapshot?> _safeGet(String path) async {
+    try {
+      return await db.child(path).get();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Map<String, dynamic> _asMap(Object? value) {
+    if (value is Map<String, dynamic>) {
+      return value;
+    }
+    if (value is Map) {
+      return value.map((key, dynamic item) => MapEntry(key.toString(), item));
+    }
+    return <String, dynamic>{};
+  }
+
+  int _toTimestamp(Object? raw) {
+    if (raw is int) {
+      return raw;
+    }
+    if (raw is String && raw.isNotEmpty) {
+      final date = DateTime.tryParse(raw);
+      if (date != null) {
+        return date.toLocal().millisecondsSinceEpoch;
+      }
+    }
+    return DateTime.now().millisecondsSinceEpoch;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -34,50 +65,148 @@ class _HistoryPageState extends State<HistoryPage> {
 
       final uid = user.uid;
 
-      // Lấy lịch sử làm bài của người dùng
-      final historySnap = await db.child('userQuizResults/$uid').get();
+      // Nguồn mới: users/{uid}/quizAttempts + attempts/{attemptId}
+      final userAttemptsSnap = await _safeGet('users/$uid/quizAttempts');
       final attempts = <_AttemptHistory>[];
+      final quizzesSnap = await _safeGet('quizzes');
+      final lessonsSnap = await _safeGet('lessons');
+      final attemptsDetailSnap = await _safeGet('attempts');
 
-      if (historySnap.exists && historySnap.value is Map) {
-        final allResults = Map<String, dynamic>.from(historySnap.value as Map);
+      final quizzesData = _asMap(quizzesSnap?.value);
+      final lessonsData = _asMap(lessonsSnap?.value);
+      final attemptsDetailData = _asMap(attemptsDetailSnap?.value);
 
-        // Lấy thông tin bài tập
-        final quizzesSnap = await db.child('quizzes').get();
-        final lessonsSnap = await db.child('lessons').get();
+      if (userAttemptsSnap?.exists == true && userAttemptsSnap!.value is Map) {
+        final userAttemptsData = _asMap(userAttemptsSnap.value);
 
-        Map<String, dynamic> quizzesData = {};
-        Map<String, dynamic> lessonsData = {};
+        userAttemptsData.forEach((attemptId, item) {
+          final basic = _asMap(item);
+          final detail = _asMap(attemptsDetailData[attemptId]);
+          final quizId = (basic['quizId'] ?? detail['quizId'] ?? '').toString();
+          if (quizId.isEmpty) {
+            return;
+          }
 
-        if (quizzesSnap.exists && quizzesSnap.value is Map) {
-          quizzesData = Map<String, dynamic>.from(quizzesSnap.value as Map);
-        }
-        if (lessonsSnap.exists && lessonsSnap.value is Map) {
-          lessonsData = Map<String, dynamic>.from(lessonsSnap.value as Map);
-        }
+          String quizTitle = (basic['quizTitle'] ?? detail['quizTitle'] ?? '').toString();
+          String lessonTitle = '';
+          final attemptType = (basic['attemptType'] ?? detail['attemptType'] ?? '').toString();
+          final level = (basic['level'] ?? detail['level'] ?? '').toString();
 
-        allResults.forEach((quizId, resultData) {
-          if (resultData is Map) {
-            final data = Map<String, dynamic>.from(resultData);
+          if (quizTitle.isEmpty && attemptType == 'level_test') {
+            final normalizedLevel = level.isEmpty ? 'medium' : level;
+            quizTitle = 'Kiểm tra ${normalizedLevel.toUpperCase()}';
+          }
+
+          final quizInfo = _asMap(quizzesData[quizId]);
+          if (quizTitle.isEmpty && (quizInfo['title'] as String?)?.isNotEmpty == true) {
+            quizTitle = quizInfo['title'] as String;
+          }
+
+          if (quizTitle.isEmpty) {
+            quizTitle = 'Bài tập không xác định';
+          }
+
+          for (final lesson in lessonsData.values) {
+            final lessonMap = _asMap(lesson);
+            final qId = (lessonMap['quizId'] ?? lessonMap['quiz'] ?? '').toString();
+            if (qId == quizId) {
+              lessonTitle = (lessonMap['title'] ?? '').toString();
+              break;
+            }
+          }
+
+          attempts.add(_AttemptHistory(
+            quizId: quizId,
+            quizTitle: quizTitle,
+            lessonTitle: lessonTitle,
+            score: ((basic['score'] ?? detail['score']) as num?)?.toInt() ?? 0,
+            total: ((basic['total'] ?? detail['total']) as num?)?.toInt() ?? 0,
+            timestamp: _toTimestamp(basic['submittedAt'] ?? detail['submittedAt']),
+            attemptType: attemptType,
+            level: level,
+          ));
+        });
+      }
+
+      // Fallback mới: đọc trực tiếp attempts theo userId khi không có quizAttempts
+      if (attempts.isEmpty && attemptsDetailData.isNotEmpty) {
+        attemptsDetailData.forEach((attemptId, item) {
+          final detail = _asMap(item);
+          if (detail['userId']?.toString() != uid) {
+            return;
+          }
+
+          final quizId = (detail['quizId'] ?? '').toString();
+          if (quizId.isEmpty) {
+            return;
+          }
+
+          String quizTitle = (detail['quizTitle'] ?? '').toString();
+          String lessonTitle = '';
+          final attemptType = (detail['attemptType'] ?? '').toString();
+          final level = (detail['level'] ?? '').toString();
+
+          if (quizTitle.isEmpty && attemptType == 'level_test') {
+            final normalizedLevel = level.isEmpty ? 'medium' : level;
+            quizTitle = 'Kiểm tra ${normalizedLevel.toUpperCase()}';
+          }
+
+          final quizInfo = _asMap(quizzesData[quizId]);
+          if (quizTitle.isEmpty && (quizInfo['title'] as String?)?.isNotEmpty == true) {
+            quizTitle = quizInfo['title'] as String;
+          }
+
+          if (quizTitle.isEmpty) {
+            quizTitle = 'Bài tập không xác định';
+          }
+
+          for (final lesson in lessonsData.values) {
+            final lessonMap = _asMap(lesson);
+            final qId = (lessonMap['quizId'] ?? lessonMap['quiz'] ?? '').toString();
+            if (qId == quizId) {
+              lessonTitle = (lessonMap['title'] ?? '').toString();
+              break;
+            }
+          }
+
+          attempts.add(_AttemptHistory(
+            quizId: quizId,
+            quizTitle: quizTitle,
+            lessonTitle: lessonTitle,
+            score: (detail['score'] as num?)?.toInt() ?? 0,
+            total: (detail['total'] as num?)?.toInt() ?? 0,
+            timestamp: _toTimestamp(detail['submittedAt']),
+            attemptType: attemptType,
+            level: level,
+          ));
+        });
+      }
+
+      // Fallback cũ: userQuizResults/{uid}
+      if (attempts.isEmpty) {
+        final legacyHistorySnap = await _safeGet('userQuizResults/$uid');
+        if (legacyHistorySnap?.exists == true && legacyHistorySnap!.value is Map) {
+          final allResults = _asMap(legacyHistorySnap.value);
+          allResults.forEach((quizId, resultData) {
+            final data = _asMap(resultData);
+            if (data.isEmpty) {
+              return;
+            }
 
             String quizTitle = 'Bài tập không xác định';
             String lessonTitle = '';
 
-            // Lấy tên bài tập
-            if (quizzesData.containsKey(quizId)) {
-              final quizInfo = quizzesData[quizId];
-              if (quizInfo is Map && quizInfo.containsKey('title')) {
-                quizTitle = quizInfo['title'] ?? quizTitle;
-              }
+            final quizInfo = _asMap(quizzesData[quizId]);
+            if ((quizInfo['title'] as String?)?.isNotEmpty == true) {
+              quizTitle = quizInfo['title'] as String;
             }
 
-            // Lấy tên bài học
-            for (var lesson in lessonsData.values) {
-              if (lesson is Map) {
-                final qId = lesson['quizId'] ?? lesson['quiz'];
-                if (qId.toString() == quizId) {
-                  lessonTitle = lesson['title'] ?? '';
-                  break;
-                }
+            for (final lesson in lessonsData.values) {
+              final lessonMap = _asMap(lesson);
+              final qId = (lessonMap['quizId'] ?? lessonMap['quiz'] ?? '').toString();
+              if (qId == quizId) {
+                lessonTitle = (lessonMap['title'] ?? '').toString();
+                break;
               }
             }
 
@@ -85,16 +214,17 @@ class _HistoryPageState extends State<HistoryPage> {
               quizId: quizId,
               quizTitle: quizTitle,
               lessonTitle: lessonTitle,
-              score: data['score'] ?? 0,
-              total: data['total'] ?? 0,
-              timestamp: data['timestamp'] as int? ?? DateTime.now().millisecondsSinceEpoch,
+              score: (data['score'] as num?)?.toInt() ?? 0,
+              total: (data['total'] as num?)?.toInt() ?? 0,
+              timestamp: _toTimestamp(data['timestamp']),
+              attemptType: 'learning',
+              level: '',
             ));
-          }
-        });
-
-        // Sắp xếp theo thời gian mới nhất trước
-        attempts.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+          });
+        }
       }
+
+      attempts.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
       setState(() {
         _attempts = attempts;
@@ -159,7 +289,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   itemBuilder: (context, index) {
                     final attempt = _attempts[index];
                     final percentage = _calculatePercentage(attempt.score, attempt.total);
-                    final isPassed = percentage >= 50;
+                    final isPassed = percentage >= 60;
 
                     return Card(
                       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -187,6 +317,18 @@ class _HistoryPageState extends State<HistoryPage> {
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.grey[600],
+                                ),
+                              ),
+                            if (attempt.attemptType == 'level_test')
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  "Mức độ: ${attempt.level.isEmpty ? 'medium' : attempt.level}",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.indigo[400],
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             const SizedBox(height: 8),
@@ -268,6 +410,8 @@ class _AttemptHistory {
   final int score;
   final int total;
   final int timestamp;
+  final String attemptType;
+  final String level;
 
   _AttemptHistory({
     required this.quizId,
@@ -276,6 +420,8 @@ class _AttemptHistory {
     required this.score,
     required this.total,
     required this.timestamp,
+    required this.attemptType,
+    required this.level,
   });
 }
 

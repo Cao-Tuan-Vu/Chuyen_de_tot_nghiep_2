@@ -72,6 +72,40 @@ class LearningRepository {
     return lesson;
   }
 
+  /// Lấy danh sách bài học hoàn thành của user
+  Future<List<String>> getCompletedLessons(String userId) async {
+    try {
+      final snapshot = await _database.ref('users/$userId/completedLessons').get();
+      if (!snapshot.exists || snapshot.value == null) {
+        return [];
+      }
+      final data = _asMap(snapshot.value);
+      return data.keys.toList();
+    } catch (e) {
+      print('❌ Error loading completed lessons: $e');
+      return [];
+    }
+  }
+
+  /// Tính tiến độ của một khóa học (%)
+  Future<double> getCourseProgress(String courseId, String userId) async {
+    try {
+      // Lấy tổng số bài học
+      final lessons = await getLessonsByCourse(courseId);
+      if (lessons.isEmpty) return 0.0;
+
+      // Lấy số bài hoàn thành
+      final completedLessons = await getCompletedLessons(userId);
+      final completedCount = lessons.where((lesson) => completedLessons.contains(lesson.id)).length;
+
+      // Tính %
+      return (completedCount / lessons.length) * 100;
+    } catch (e) {
+      print('❌ Error calculating progress: $e');
+      return 0.0;
+    }
+  }
+
   Map<String, dynamic> _asMap(Object? value) {
     if (value is Map<String, dynamic>) {
       return value;

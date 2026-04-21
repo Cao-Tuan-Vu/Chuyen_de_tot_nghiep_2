@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:btl/features/learning/presentation/theme/course_visuals.dart';
 
 class MyCoursesPage extends StatefulWidget {
   const MyCoursesPage({Key? key}) : super(key: key);
@@ -372,13 +373,15 @@ class _CatalogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+	final courseStyle = courseVisualStyleFor(id);
+
     return Container(
       decoration: BoxDecoration(
         color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+			color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -392,8 +395,8 @@ class _CatalogCard extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: enrolled
-                      ? [const Color(0xFF10B981), const Color(0xFF34D399)]
-                      : [const Color(0xFF6366F1), const Color(0xFF818CF8)],
+					  ? [courseStyle.primary.withValues(alpha: 0.88), courseStyle.gradient[1].withValues(alpha: 0.92)]
+					  : courseStyle.gradient,
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -413,8 +416,8 @@ class _CatalogCard extends StatelessWidget {
                         color: Colors.black12,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Text(
-                        level,
+					  child: Text(
+						courseStyle.title,
                         style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -447,7 +450,7 @@ class _CatalogCard extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: onToggle,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: enrolled ? Colors.transparent : const Color(0xFF6366F1),
+					  backgroundColor: enrolled ? Colors.transparent : courseStyle.primary,
                       foregroundColor: enrolled ? (isDarkMode ? Colors.white70 : Colors.black54) : Colors.white,
                       elevation: enrolled ? 0 : 2,
                       shape: RoundedRectangleBorder(

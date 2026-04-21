@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -9,6 +10,25 @@ class QuizRepository {
 
   DatabaseReference get _quizzesRef => _database.ref('quizzes');
   DatabaseReference get _attemptsRef => _database.ref('attempts');
+  DatabaseReference get _leaderboardRef => _database.ref('leaderboard');
+
+  Future<bool> _isFinalQuiz(String quizId) async {
+    try {
+      final coursesSnap = await _database.ref('courses').get();
+      if (!coursesSnap.exists || coursesSnap.value == null) {
+        return false;
+      }
+
+      final courses = _asMap(coursesSnap.value);
+      for (final course in courses.values) {
+        final courseMap = _asMap(course);
+        if (courseMap['finalQuiz']?.toString() == quizId) {
+          return true;
+        }
+      }
+    } catch (_) {}
+    return false;
+  }
 
   Future<Quiz> getQuiz(String quizId) async {
     final snapshot = await _quizzesRef.child(quizId).get();
@@ -42,8 +62,18 @@ class QuizRepository {
     required String quizId,
     required String token,
     required Map<String, int> answers,
+    Quiz? quizData,
+    String? attemptType,
+    String? level,
+    String? quizTitle,
   }) async {
-    final quiz = await getQuiz(quizId);
+    final authUid = FirebaseAuth.instance.currentUser?.uid;
+    final userId = (authUid != null && authUid.isNotEmpty) ? authUid : token;
+
+    final quiz = quizData ?? await getQuiz(quizId);
+    final isFinalQuiz = attemptType == null ? await _isFinalQuiz(quizId) : attemptType == 'final';
+    final normalizedAttemptType = attemptType ?? (isFinalQuiz ? 'final' : 'learning');
+    final normalizedLevel = _normalizeLevel(level);
     final review = <QuizReviewItem>[];
     var correctCount = 0;
 
@@ -71,14 +101,21 @@ class QuizRepository {
     }
 
     final total = quiz.questions.length;
-    final score = total == 0 ? 0 : ((correctCount / total) * 100).round();
+    final percentage = total > 0 ? (correctCount / total) * 100 : 0.0;
+    final passedThisAttempt = percentage >= 60;
+    final askedQuestionIds = quiz.questions
+        .map((question) => question.id.trim())
+        .where((id) => id.isNotEmpty)
+        .toList();
+    // 1 câu đúng = 1 điểm (không tính percentage)
+    final score = correctCount;
     final submittedAt = DateTime.now().toUtc().toIso8601String();
     final attemptId = _attemptsRef.push().key ?? '${quizId}_$submittedAt';
 
     final result = QuizAttemptResult(
       attemptId: attemptId,
       quizId: quizId,
-      userId: token,
+      userId: userId,
       score: score,
       total: total,
       submittedAt: submittedAt,
@@ -86,13 +123,152 @@ class QuizRepository {
     );
 
     await _attemptsRef.child(attemptId).set(result.toJson());
-    await _database.ref('users').child(token).child('quizAttempts').child(attemptId).set({
+    final attemptExtraData = <String, dynamic>{
+      'attemptType': normalizedAttemptType,
+    };
+    if (normalizedLevel != null) {
+      attemptExtraData['level'] = normalizedLevel;
+    }
+    if (normalizedAttemptType == 'level_test' && askedQuestionIds.isNotEmpty) {
+      attemptExtraData['questionIds'] = askedQuestionIds;
+    }
+    final normalizedTitle = (quizTitle ?? quiz.title).trim();
+    if (normalizedTitle.isNotEmpty) {
+      attemptExtraData['quizTitle'] = normalizedTitle;
+    }
+
+    await _attemptsRef.child(attemptId).update(attemptExtraData);
+    await _database.ref('users').child(userId).child('quizAttempts').child(attemptId).set({
       'attemptId': attemptId,
       'quizId': quizId,
       'submittedAt': submittedAt,
       'score': score,
       'total': total,
+      'percentage': percentage,
+      'isFinalQuiz': isFinalQuiz,
+      ...attemptExtraData,
     });
+
+    // Update leaderboard aggregate for ranking page.
+    try {
+      final leaderboardNode = _leaderboardRef.child(userId);
+      final leaderboardSnap = await leaderboardNode.get();
+      final leaderboardData = _asMap(leaderboardSnap.value);
+      final currentUser = FirebaseAuth.instance.currentUser;
+
+      final learningQuizzes = _asMap(leaderboardData['learningQuizzes']);
+      final finalExam = _asMap(leaderboardData['finalExam']);
+      final levelTests = _asMap(leaderboardData['levelTests']);
+
+      if (normalizedAttemptType == 'level_test') {
+        final levelKey = normalizedLevel ?? 'medium';
+        final current = _asMap(levelTests[levelKey]);
+        final previousBest = (current['percentage'] as num?)?.toDouble() ?? -1;
+        if (percentage >= previousBest) {
+          levelTests[levelKey] = {
+            'quizId': quizId,
+            'attemptId': attemptId,
+            'score': score,
+            'total': total,
+            'percentage': percentage,
+            'passed': passedThisAttempt,
+            'submittedAt': submittedAt,
+            'attemptType': normalizedAttemptType,
+            'level': levelKey,
+            if ((quizTitle ?? quiz.title).trim().isNotEmpty)
+              'quizTitle': (quizTitle ?? quiz.title).trim(),
+          };
+        }
+        leaderboardData['levelTests'] = levelTests;
+      } else if (isFinalQuiz) {
+        final previousBest = (finalExam['percentage'] as num?)?.toDouble() ?? -1;
+        if (percentage >= previousBest) {
+          leaderboardData['finalExam'] = {
+            'quizId': quizId,
+            'attemptId': attemptId,
+            'score': score,
+            'total': total,
+            'percentage': percentage,
+            'passed': passedThisAttempt,
+            'submittedAt': submittedAt,
+            'attemptType': normalizedAttemptType,
+          };
+        }
+      } else {
+        final current = _asMap(learningQuizzes[quizId]);
+        final previousBest = (current['percentage'] as num?)?.toDouble() ?? -1;
+        if (percentage >= previousBest) {
+          learningQuizzes[quizId] = {
+            'quizId': quizId,
+            'attemptId': attemptId,
+            'score': score,
+            'total': total,
+            'percentage': percentage,
+            'passed': passedThisAttempt,
+            'submittedAt': submittedAt,
+            'attemptType': normalizedAttemptType,
+          };
+        }
+        leaderboardData['learningQuizzes'] = learningQuizzes;
+      }
+
+      final normalizedLearning = _asMap(leaderboardData['learningQuizzes']);
+      final learningValues = normalizedLearning.values.map(_asMap).toList();
+      final learningQuizCount = learningValues.length;
+      final learningPassCount = learningValues.where((item) => item['passed'] == true).length;
+      final learningAverageScore = learningQuizCount > 0
+          ? learningValues
+                  .map((item) => (item['percentage'] as num?)?.toDouble() ?? 0.0)
+                  .reduce((a, b) => a + b) /
+              learningQuizCount
+          : 0.0;
+
+      final finalData = _asMap(leaderboardData['finalExam']);
+      final normalizedLevelTests = _asMap(leaderboardData['levelTests']);
+      final easyScore = (_asMap(normalizedLevelTests['easy'])['percentage'] as num?)?.toDouble() ?? 0.0;
+      final mediumScore = (_asMap(normalizedLevelTests['medium'])['percentage'] as num?)?.toDouble() ?? 0.0;
+      final hardScore = (_asMap(normalizedLevelTests['hard'])['percentage'] as num?)?.toDouble() ?? 0.0;
+      final hasEasyAttempt = normalizedLevelTests['easy'] != null;
+      final hasMediumAttempt = normalizedLevelTests['medium'] != null;
+      final hasHardAttempt = normalizedLevelTests['hard'] != null;
+      final levelScores = [easyScore, mediumScore, hardScore].where((value) => value > 0).toList();
+      final levelAverageScore =
+          levelScores.isEmpty ? 0.0 : levelScores.reduce((a, b) => a + b) / levelScores.length;
+      final finalTestScore = (finalData['percentage'] as num?)?.toDouble() ?? 0.0;
+      final finalQuizPassed = finalData['passed'] == true;
+      final totalScore = (learningAverageScore * 0.4) + (finalTestScore * 0.6);
+      final activityCount = learningQuizCount + (finalData.isNotEmpty ? 1 : 0);
+
+      await leaderboardNode.set({
+        'userId': userId,
+        'displayName':
+            leaderboardData['displayName'] ??
+            currentUser?.displayName ??
+            currentUser?.email?.split('@').first ??
+            'Học viên',
+        'learningScore': learningAverageScore,
+        'learningQuizCount': learningQuizCount,
+        'learningPassCount': learningPassCount,
+        'finalTestScore': finalTestScore,
+        'easyTestScore': easyScore,
+        'mediumTestScore': mediumScore,
+        'hardTestScore': hardScore,
+        'hasEasyAttempt': hasEasyAttempt,
+        'hasMediumAttempt': hasMediumAttempt,
+        'hasHardAttempt': hasHardAttempt,
+        'levelAverageScore': levelAverageScore,
+        'finalQuizPassed': finalQuizPassed,
+        'totalScore': totalScore,
+        'activityCount': activityCount,
+        'passedCount': learningPassCount + (finalQuizPassed ? 1 : 0),
+        'updatedAt': submittedAt,
+        'learningQuizzes': normalizedLearning,
+        if (normalizedLevelTests.isNotEmpty) 'levelTests': normalizedLevelTests,
+        if (finalData.isNotEmpty) 'finalExam': finalData,
+      });
+    } catch (_) {
+      // Do not block quiz flow if leaderboard path is not available yet.
+    }
 
     return result;
   }
@@ -105,6 +281,23 @@ class QuizRepository {
       return value.map((key, dynamic item) => MapEntry(key.toString(), item));
     }
     return <String, dynamic>{};
+  }
+
+  String? _normalizeLevel(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return null;
+    }
+    final normalized = value.trim().toLowerCase();
+    if (normalized == 'easy' || normalized == 'beginner') {
+      return 'easy';
+    }
+    if (normalized == 'medium' || normalized == 'intermediate') {
+      return 'medium';
+    }
+    if (normalized == 'hard' || normalized == 'advanced') {
+      return 'hard';
+    }
+    return null;
   }
 
   /// Static debug helper - list all quizzes under /quizzes as a map.

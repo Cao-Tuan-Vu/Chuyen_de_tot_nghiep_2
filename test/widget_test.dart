@@ -5,10 +5,8 @@ import 'package:btl/features/auth/domain/repositories/auth_repository.dart';
 import 'package:btl/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:btl/features/admin/data/repositories/admin_repository.dart';
 import 'package:btl/features/admin/presentation/pages/admin_page.dart';
-import 'package:btl/features/home/presentation/pages/home_page.dart';
 import 'package:btl/features/learning/data/repositories/learning_repository.dart';
 import 'package:btl/features/learning/presentation/pages/course_list_page.dart';
-import 'package:btl/features/learning/presentation/pages/lesson_list_page.dart';
 import 'package:btl/features/learning/domain/entities/course.dart';
 import 'package:btl/features/learning/domain/entities/lesson.dart';
 import 'package:btl/features/quiz/data/repositories/quiz_repository.dart';
@@ -24,7 +22,11 @@ class _FakeAuthRepository implements AuthRepository {
   Future<AuthSession?> getSession() async => null;
 
   @override
-  Future<AuthSession> login({required String email, required String password}) async {
+  Future<AuthSession> login({
+    required String email,
+    required String password,
+    bool rememberMe = true,
+  }) async {
     throw UnimplementedError();
   }
 
@@ -38,10 +40,23 @@ class _FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> updateProfile({required String displayName}) async {}
+  Future<void> updateProfile({String? displayName, String? avatarUrl}) async {}
+
+  @override
+  Future<void> sendPasswordResetEmail({required String email}) async {}
 }
 
 class _FakeLearningRepository implements LearningRepository {
+  @override
+  Future<List<String>> getCompletedLessons(String userId) async {
+    return const ['lesson_variables'];
+  }
+
+  @override
+  Future<double> getCourseProgress(String courseId, String userId) async {
+    return 50.0;
+  }
+
   @override
   Future<List<Course>> getCourses() async {
     return const [
@@ -111,6 +126,10 @@ class _FakeQuizRepository implements QuizRepository {
     required String quizId,
     required String token,
     required Map<String, int> answers,
+    Quiz? quizData,
+    String? attemptType,
+    String? level,
+    String? quizTitle,
   }) async {
     return const QuizAttemptResult(
       attemptId: 'att_1',
@@ -224,7 +243,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: HomePage(
+        home: CourseListPage(
           controller: controller,
           learningRepository: learningRepository,
           quizRepository: quizRepository,
@@ -232,31 +251,20 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byIcon(Icons.add_shopping_cart_rounded));
     await tester.pumpAndSettle();
 
     expect(find.text('Dart co ban'), findsOneWidget);
 
-    final courseInList = find.descendant(
-      of: find.byType(CourseListPage),
-      matching: find.text('Dart co ban'),
-    );
-    await tester.ensureVisible(courseInList);
-    await tester.tap(courseInList);
+    await tester.tap(find.text('Dart co ban'));
     await tester.pumpAndSettle();
     expect(find.text('Cau truc dieu kien'), findsOneWidget);
 
-    final lessonInList = find.descendant(
-      of: find.byType(LessonListPage),
-      matching: find.text('Cau truc dieu kien'),
-    );
-    await tester.ensureVisible(lessonInList);
-    await tester.tap(lessonInList);
+    await tester.tap(find.text('Cau truc dieu kien'));
     await tester.pumpAndSettle();
-    expect(find.text('Lam quiz bai nay'), findsOneWidget);
+    expect(find.text('LÀM BÀI TRẮC NGHIỆM'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('Lam quiz bai nay'));
-    await tester.tap(find.text('Lam quiz bai nay'));
+    await tester.ensureVisible(find.text('LÀM BÀI TRẮC NGHIỆM'));
+    await tester.tap(find.text('LÀM BÀI TRẮC NGHIỆM'));
     await tester.pumpAndSettle();
     expect(find.text('Quiz: Dieu kien trong Dart'), findsOneWidget);
     expect(find.text('1. Dart dung tu khoa nao?'), findsOneWidget);
@@ -273,29 +281,14 @@ void main() {
       ..token = 'test-token';
 
     final adminRepository = _FakeAdminRepository();
-    final learningRepository = _FakeLearningRepository();
-    final quizRepository = _FakeQuizRepository();
-
     await tester.pumpWidget(
       MaterialApp(
-        home: HomePage(
+        home: AdminPage(
           controller: controller,
-          learningRepository: learningRepository,
-          quizRepository: quizRepository,
+          repository: adminRepository,
         ),
-        routes: {
-          AdminPage.routeName: (_) => AdminPage(
-                controller: controller,
-                repository: adminRepository,
-              ),
-        },
       ),
     );
-
-    final adminButton = find.byIcon(Icons.admin_panel_settings);
-    expect(adminButton, findsOneWidget);
-    await tester.tap(adminButton);
-    await tester.pumpAndSettle();
 
     expect(find.text('Admin Console'), findsOneWidget);
     await tester.tap(find.text('Người dùng'));

@@ -12,11 +12,19 @@ class QuizPage extends StatefulWidget {
     super.key,
     required this.controller,
     required this.quizId,
+    this.generatedQuiz,
+    this.attemptType,
+    this.level,
+    this.quizTitle,
     QuizRepository? repository,
   }) : repository = repository ?? QuizRepository();
 
   final AuthController controller;
   final String quizId;
+  final Quiz? generatedQuiz;
+  final String? attemptType;
+  final String? level;
+  final String? quizTitle;
   final QuizRepository repository;
 
   @override
@@ -32,7 +40,9 @@ class _QuizPageState extends State<QuizPage> {
   @override
   void initState() {
     super.initState();
-    _quizFuture = widget.repository.getQuiz(widget.quizId);
+    _quizFuture = widget.generatedQuiz != null
+        ? Future.value(widget.generatedQuiz!)
+        : widget.repository.getQuiz(widget.quizId);
   }
 
   Future<void> _submit(Quiz quiz) async {
@@ -52,6 +62,10 @@ class _QuizPageState extends State<QuizPage> {
         quizId: quiz.id,
         token: token,
         answers: _answers,
+        quizData: widget.generatedQuiz,
+        attemptType: widget.attemptType,
+        level: widget.level,
+        quizTitle: widget.quizTitle,
       );
 
       if (!mounted) {
@@ -73,8 +87,12 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    final appBarTitle = (widget.quizTitle != null && widget.quizTitle!.trim().isNotEmpty)
+        ? widget.quizTitle!.trim()
+        : 'Quiz';
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Quiz')),
+      appBar: AppBar(title: Text(appBarTitle)),
       body: FutureBuilder<Quiz>(
         future: _quizFuture,
         builder: (context, snapshot) {

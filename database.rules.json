@@ -37,6 +37,12 @@
         ".write": "auth != null && newData.child('userId').val() == auth.uid"
       }
     },
+    "leaderboard": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
     "contacts": {
       "$messageId": {
         ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",

@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:btl/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:btl/features/quiz/data/repositories/quiz_repository.dart';
-import 'package:btl/features/quiz/presentation/pages/quiz_page.dart';
+import 'package:btl/features/quiz/presentation/pages/final_test_intro_page.dart';
 import 'package:btl/features/learning/data/repositories/learning_repository.dart';
 import 'package:btl/features/learning/domain/entities/course.dart';
 import 'package:btl/features/learning/domain/entities/lesson.dart';
+import 'package:btl/features/learning/presentation/theme/course_visuals.dart';
 import 'lesson_detail_page.dart';
 
 class LessonListPage extends StatefulWidget {
@@ -29,19 +30,38 @@ class LessonListPage extends StatefulWidget {
 
 class _LessonListPageState extends State<LessonListPage> {
   late Future<List<Lesson>> _lessonsFuture;
+  late Future<Set<String>> _completedLessonIdsFuture;
 
   @override
   void initState() {
     super.initState();
     _lessonsFuture = widget.learningRepository.getLessonsByCourse(widget.course.id);
+    _completedLessonIdsFuture = _loadCompletedLessonIds();
+  }
+
+  Future<Set<String>> _loadCompletedLessonIds() async {
+    final userId = widget.controller.currentUser?.id;
+    if (userId == null) {
+      return <String>{};
+    }
+
+    final completed = await widget.learningRepository.getCompletedLessons(userId);
+    return completed.toSet();
+  }
+
+  void _refreshCompletionState() {
+    setState(() {
+      _completedLessonIdsFuture = _loadCompletedLessonIds();
+    });
   }
 
   void _startComprehensiveQuiz(String quizId) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => QuizPage(
+        builder: (_) => FinalTestIntroPage(
           controller: widget.controller,
           quizId: quizId,
+          courseTitle: widget.course.title,
           repository: widget.quizRepository,
         ),
       ),
@@ -51,6 +71,7 @@ class _LessonListPageState extends State<LessonListPage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final courseStyle = courseVisualStyleFor(widget.course.id);
 
     return Scaffold(
       backgroundColor: isDarkMode ? const Color(0xFF121212) : const Color(0xFFF8FAFC),
@@ -59,7 +80,7 @@ class _LessonListPageState extends State<LessonListPage> {
           SliverAppBar(
             expandedHeight: 220,
             pinned: true,
-            backgroundColor: const Color(0xFF6366F1),
+            backgroundColor: courseStyle.primary,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 widget.course.title,
@@ -74,9 +95,9 @@ class _LessonListPageState extends State<LessonListPage> {
                 fit: StackFit.expand,
                 children: [
                   Container(
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF4F46E5), Color(0xFF6366F1), Color(0xFF818CF8)],
+                        colors: courseStyle.gradient,
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -90,8 +111,12 @@ class _LessonListPageState extends State<LessonListPage> {
                       backgroundColor: Colors.white.withOpacity(0.1),
                     ),
                   ),
-                  const Center(
-                    child: Icon(Icons.auto_stories_rounded, size: 80, color: Colors.white24),
+                  Center(
+                    child: Icon(
+                      courseStyle.icon,
+                      size: 80,
+                      color: Colors.white24,
+                    ),
                   ),
                 ],
               ),
@@ -112,26 +137,40 @@ class _LessonListPageState extends State<LessonListPage> {
                 return const SliverFillRemaining(child: Center(child: Text('Chưa có bài học')));
               }
 
-              return SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      if (index < lessons.length) {
-                        final lesson = lessons[index];
-                        final isQuiz = lesson.quizId != null;
-                        return _buildLessonCard(context, lesson, index, isQuiz, isDarkMode);
-                      }
+              return FutureBuilder<Set<String>>(
+                future: _completedLessonIdsFuture,
+                builder: (context, completedSnapshot) {
+                  final completedLessonIds = completedSnapshot.data ?? <String>{};
+                  final requiredQuizLessons = lessons
+                      .where((lesson) => lesson.quizId != null && lesson.quizId!.isNotEmpty)
+                      .map((lesson) => lesson.id)
+                      .toList();
 
-                      // Final Quiz Button
-                      if (widget.course.comprehensiveQuizId != null) {
-                        return _buildFinalQuizBanner(context, isDarkMode);
-                      }
-                      return null;
-                    },
-                    childCount: lessons.length + (widget.course.comprehensiveQuizId != null ? 1 : 0),
-                  ),
-                ),
+                  final canShowFinalQuiz =
+                      widget.course.comprehensiveQuizId != null &&
+                      requiredQuizLessons.every(completedLessonIds.contains);
+
+                  return SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          if (index < lessons.length) {
+                            final lesson = lessons[index];
+                            final isQuiz = lesson.quizId != null;
+                            return _buildLessonCard(context, lesson, index, isQuiz, isDarkMode);
+                          }
+
+                          if (canShowFinalQuiz) {
+                            return _buildFinalQuizBanner(context, isDarkMode);
+                          }
+                          return null;
+                        },
+                        childCount: lessons.length + (canShowFinalQuiz ? 1 : 0),
+                      ),
+                    ),
+                  );
+                },
               );
             },
           ),
@@ -141,6 +180,8 @@ class _LessonListPageState extends State<LessonListPage> {
   }
 
   Widget _buildLessonCard(BuildContext context, Lesson lesson, int index, bool isQuiz, bool isDarkMode) {
+    final courseStyle = courseVisualStyleFor(widget.course.id);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -160,14 +201,14 @@ class _LessonListPageState extends State<LessonListPage> {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: (isQuiz ? Colors.amber : Colors.indigo).withOpacity(0.1),
+            color: courseStyle.primary.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
           child: Center(
             child: Text(
               '${lesson.order}',
               style: TextStyle(
-                color: isQuiz ? Colors.orange[800] : Colors.indigo,
+                color: courseStyle.primary,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -193,8 +234,8 @@ class _LessonListPageState extends State<LessonListPage> {
           ],
         ),
         trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey[400]),
-        onTap: () {
-          Navigator.of(context).push(
+        onTap: () async {
+          await Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => LessonDetailPage(
                 controller: widget.controller,
@@ -205,6 +246,11 @@ class _LessonListPageState extends State<LessonListPage> {
               ),
             ),
           );
+
+          if (!mounted) {
+            return;
+          }
+          _refreshCompletionState();
         },
       ),
     );

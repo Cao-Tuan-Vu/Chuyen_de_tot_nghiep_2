@@ -26,13 +26,21 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  Future<void> login(String email, String password) async {
+  Future<void> login(
+    String email,
+    String password, {
+    bool rememberMe = true,
+  }) async {
     isLoading = true;
     error = null;
     notifyListeners();
 
     try {
-      final session = await _repository.login(email: email, password: password);
+      final session = await _repository.login(
+        email: email,
+        password: password,
+        rememberMe: rememberMe,
+      );
       token = session.token;
       currentUser = session.user;
     } catch (e) {
@@ -89,11 +97,50 @@ class AuthController extends ChangeNotifier {
     }
   }
 
+  Future<void> updateAvatarUrl(String avatarUrl) async {
+    if (token == null) return;
+
+    isLoading = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      await _repository.updateProfile(avatarUrl: avatarUrl);
+      final AuthSession? session = await _repository.getSession();
+      if (session != null) {
+        token = session.token;
+        currentUser = session.user;
+      }
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> logout() async {
     await _repository.clearSession();
     token = null;
     currentUser = null;
     error = null;
     notifyListeners();
+  }
+
+  Future<bool> sendPasswordResetEmail(String email) async {
+    isLoading = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      await _repository.sendPasswordResetEmail(email: email);
+      return true;
+    } catch (e) {
+      error = e.toString();
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:btl/features/admin/presentation/pages/admin_page.dart';
 import 'package:btl/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:btl/features/auth/presentation/pages/login_page.dart';
 import 'package:btl/features/learning/domain/entities/course.dart';
 import 'package:btl/features/learning/data/repositories/learning_repository.dart';
+import 'package:btl/features/learning/presentation/theme/course_visuals.dart';
 import 'package:btl/features/quiz/data/repositories/quiz_repository.dart';
 import 'package:btl/features/home/presentation/pages/contact_page.dart';
 import 'package:btl/features/home/presentation/pages/introduction_page.dart';
@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           isDarkMode: _isDarkMode,
           bannerAnimation: _bannerAnimation,
         )
-            : CourseCatalogPage(userId: FirebaseAuth.instance.currentUser?.uid ?? ''),
+                : CourseCatalogPage(userId: widget.controller.currentUser?.id ?? ''),
         bottomNavigationBar: _buildModernBottomNav(),
       ),
     );
@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
           _drawerItem(Icons.person_outline_rounded, 'Trang cá nhân', () => _navigateTo(context, ProfilePage(controller: widget.controller))),
           _drawerItem(Icons.history_rounded, 'Lịch sử học', () => _navigateTo(context, const HistoryPage())),
-          _drawerItem(Icons.assignment_rounded, 'Bài tập', () => _navigateTo(context, ExercisesPage(controller: widget.controller))),
+          _drawerItem(Icons.assignment_rounded, 'Kiểm tra', () => _navigateTo(context, ExercisesPage(controller: widget.controller))),
           _drawerItem(Icons.leaderboard_rounded, 'Xếp hạng', () => _navigateTo(context, const RankingPage())),
           _drawerItem(Icons.policy_outlined, 'Chính sách', () => _navigateToNamed(context, PolicyPage.routeName)),
           _drawerItem(Icons.info_outline_rounded, 'Giới thiệu', () => _navigateToNamed(context, IntroductionPage.routeName)),
@@ -496,7 +496,7 @@ class _HomeEnrolledCoursesPreview extends StatefulWidget {
 
 class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview> {
   late final Future<List<Course>> _enrolledCoursesFuture;
-  final _db = FirebaseDatabase.instance.ref();
+  FirebaseDatabase? get _database => Firebase.apps.isEmpty ? null : FirebaseDatabase.instance;
 
   @override
   void initState() {
@@ -505,8 +505,9 @@ class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview
   }
 
   Future<List<Course>> _loadEnrolledCourses() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) {
+    final uid = widget.controller.currentUser?.id;
+    final database = _database;
+    if (uid == null || database == null) {
       print('❌ [HOME] No user logged in');
       return [];
     }
@@ -514,7 +515,7 @@ class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview
     print('🏠 [HOME] Loading enrolled courses for user: $uid');
 
     try {
-      final userSnap = await _db.child('users/$uid').get();
+      final userSnap = await database.ref('users/$uid').get();
       print('🏠 [HOME] User snapshot exists: ${userSnap.exists}');
 
       final enrolled = <String>[];
@@ -547,7 +548,7 @@ class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview
         return [];
       }
 
-      final coursesSnap = await _db.child('courses').get();
+      final coursesSnap = await database.ref('courses').get();
       print('🏠 [HOME] Courses snapshot exists: ${coursesSnap.exists}');
 
       final courses = <Course>[];
@@ -656,7 +657,7 @@ class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview
 }
 
 // ==================== COURSE CARD ====================
-class _CourseCard extends StatelessWidget {
+class _CourseCard extends StatefulWidget {
   const _CourseCard({
     required this.course,
     required this.isDarkMode,
@@ -672,31 +673,65 @@ class _CourseCard extends StatelessWidget {
   final QuizRepository? quizRepository;
 
   @override
+  State<_CourseCard> createState() => _CourseCardState();
+}
+
+class _CourseCardState extends State<_CourseCard> {
+  late Future<double> _progressFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _progressFuture = _loadProgress();
+  }
+
+  Future<double> _loadProgress() async {
+    try {
+      final userId = widget.controller.currentUser?.id;
+      if (userId == null) return 0.0;
+      return await widget.learningRepository.getCourseProgress(widget.course.id, userId);
+    } catch (e) {
+      print('❌ Error loading progress: $e');
+      return 0.0;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final courseStyle = courseVisualStyleFor(widget.course.id);
+
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => LessonListPage(
-              controller: controller,
-              course: course,
-              learningRepository: learningRepository,
-              quizRepository: quizRepository,
+              controller: widget.controller,
+              course: widget.course,
+              learningRepository: widget.learningRepository,
+              quizRepository: widget.quizRepository,
             ),
           ),
         );
+
+        if (!mounted) {
+          return;
+        }
+
+        setState(() {
+          _progressFuture = _loadProgress();
+        });
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         width: 220,
         margin: const EdgeInsets.only(right: 18, bottom: 10),
         decoration: BoxDecoration(
-          color: isDarkMode ? const Color(0xFF2C2C2E) : Colors.white,
+          color: widget.isDarkMode ? const Color(0xFF2C2C2E) : Colors.white,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: isDarkMode ? Colors.black45 : Colors.black.withOpacity(0.08),
+              color: widget.isDarkMode ? Colors.black45 : Colors.black.withOpacity(0.08),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -713,16 +748,16 @@ class _CourseCard extends StatelessWidget {
                     height: 125,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: isDarkMode 
-                          ? [const Color(0xFF4F46E5).withOpacity(0.8), const Color(0xFF7C3AED).withOpacity(0.8)]
-                          : [const Color(0xFF4F46E5), const Color(0xFF818CF8)],
+                        colors: widget.isDarkMode
+                            ? courseStyle.gradient.map((color) => color.withOpacity(0.85)).toList()
+                            : courseStyle.gradient,
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                     ),
                     child: Center(
                       child: Icon(
-                        Icons.auto_stories_rounded,
+                        courseStyle.icon,
                         size: 48,
                         color: Colors.white.withOpacity(0.9),
                       ),
@@ -736,52 +771,64 @@ class _CourseCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    course.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold, 
-                      fontSize: 16,
-                      color: isDarkMode ? Colors.white : Colors.black87,
-                    ),
-                  ),
+                   Text(
+                     widget.course.title,
+                     maxLines: 1,
+                     overflow: TextOverflow.ellipsis,
+                     style: TextStyle(
+                       fontWeight: FontWeight.bold,
+                       fontSize: 16,
+                       color: widget.isDarkMode ? Colors.white : Colors.black87,
+                     ),
+                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    course.level.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 11, 
-                      color: Colors.indigoAccent, 
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
+                   Text(
+                     widget.course.level.toUpperCase(),
+                     style: TextStyle(
+                       fontSize: 11,
+                        color: courseStyle.primary,
+                       fontWeight: FontWeight.w800,
+                       letterSpacing: 0.5,
+                     ),
+                   ),
                   const SizedBox(height: 16),
-                  Row(
+                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
                         "Tiến độ",
                         style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w500),
                       ),
-                      Text(
-                        "0%",
-                        style: TextStyle(
-                          fontSize: 12, 
-                          color: isDarkMode ? Colors.white70 : Colors.black54, 
-                          fontWeight: FontWeight.bold
-                        ),
+                      FutureBuilder<double>(
+                        future: _progressFuture,
+                        builder: (context, snapshot) {
+                          final progress = snapshot.data ?? 0.0;
+                          return Text(
+                            '${progress.toStringAsFixed(0)}%',
+                            style: TextStyle(
+                              fontSize: 12, 
+                              color: widget.isDarkMode ? Colors.white70 : Colors.black54, 
+                              fontWeight: FontWeight.bold
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
                   const SizedBox(height: 6),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: LinearProgressIndicator(
-                      value: 0.0,
-                      minHeight: 6,
-                      backgroundColor: isDarkMode ? Colors.white10 : Colors.grey[200],
-                      color: const Color(0xFF6366F1),
+                    child: FutureBuilder<double>(
+                      future: _progressFuture,
+                      builder: (context, snapshot) {
+                        final progress = (snapshot.data ?? 0.0) / 100;
+                        return LinearProgressIndicator(
+                          value: progress,
+                          minHeight: 6,
+                          backgroundColor: widget.isDarkMode ? Colors.white10 : Colors.grey[200],
+                          color: const Color(0xFF6366F1),
+                        );
+                      },
                     ),
                   ),
                 ],

@@ -17,6 +17,12 @@
       "email": "anh@gmail.com",
       "name": "Anh",
       "role": "student"
+    },
+    "CcMUHVMhEsNICagTAPyz2C3V9mu1": {
+      "id": "CcMUHVMhEsNICagTAPyz2C3V9mu1",
+      "email": "phucanhta986@gmail.com",
+      "name": "Phuc Anh",
+      "role": "student"
     }
   },
   "courses": {
@@ -122,7 +128,7 @@
       "order": 2,
       "content": "State Management",
       "theory": "## Khái niệm\nState là dữ liệu quyết định giao diện tại một thời điểm; quản lý state là cách lưu, cập nhật và chia sẻ dữ liệu đó trong ứng dụng Flutter.\n\n### Đặc điểm\n- Local state (setState): phù hợp cho state cục bộ, đơn giản.\n- Shared/global state: Provider, Riverpod, Bloc... cho phép chia sẻ và tổ chức state trên toàn app.\n- Async patterns: FutureBuilder/StreamBuilder xử lý future/stream cho UI.\n\n### Ví dụ\n```dart\n// Local state\nclass _C extends State<MyWidget> { int c = 0; void inc() => setState(() => c++); }\n\n// Provider (conceptual)\n// ChangeNotifierProvider(create: (_) => Counter())\n```\n\n### Gợi ý\n- Chọn pattern phù hợp với quy mô app; tách logic khỏi UI; viết unit tests cho business logic.",
-      "quiz": null
+      "quiz": "quiz_f002"
     }
   },
   "quizzes": {
@@ -395,6 +401,29 @@
       "q5_opts": ["Column", "Row", "ListView", "Container"],
       "q5_ans": 2,
       "q5_expl": "ListView cung cấp danh sách có thể cuộn hiệu quả."
+    },
+    "quiz_f002": {
+      "id": "quiz_f002",
+      "q1": "State trong Flutter là gì?",
+      "q1_opts": ["Màu giao diện", "Dữ liệu làm thay đổi UI", "Tên route", "Kích thước màn hình"],
+      "q1_ans": 1,
+      "q1_expl": "State là dữ liệu ảnh hưởng trực tiếp đến giao diện tại một thời điểm.",
+      "q2": "Widget nào dùng khi cần thay đổi UI theo dữ liệu nội bộ?",
+      "q2_opts": ["StatelessWidget", "StatefulWidget", "InheritedWidget", "MaterialApp"],
+      "q2_ans": 1,
+      "q2_expl": "StatefulWidget có State nên có thể cập nhật UI bằng setState.",
+      "q3": "Hàm nào thường dùng để cập nhật state cục bộ?",
+      "q3_opts": ["setState", "rebuild", "refresh", "notify"],
+      "q3_ans": 0,
+      "q3_expl": "setState báo cho Flutter biết cần render lại giao diện.",
+      "q4": "Khi nào nên dùng Provider/Riverpod/Bloc?",
+      "q4_opts": ["App nhỏ 1 màn", "Khi cần chia sẻ state giữa nhiều màn", "Khi viết animation", "Khi đổi theme"],
+      "q4_ans": 1,
+      "q4_expl": "Các state management tool phù hợp khi state được dùng nhiều nơi.",
+      "q5": "Widget nào phù hợp để hiển thị dữ liệu bất đồng bộ từ Future?",
+      "q5_opts": ["ListView", "FutureBuilder", "GestureDetector", "Container"],
+      "q5_ans": 1,
+      "q5_expl": "FutureBuilder giúp xử lý trạng thái loading/success/error cho Future."
     }
   },
   "exercises": {

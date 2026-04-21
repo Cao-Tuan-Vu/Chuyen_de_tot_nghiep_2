@@ -18,16 +18,118 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _displayNameController = TextEditingController();
+  final _forgotPasswordEmailController = TextEditingController();
 
   bool _isRegisterMode = false;
   bool _obscurePassword = true;
   bool _rememberMe = true;
+
+  String _humanizeError(String raw) {
+    final text = raw.trim();
+    if (text.startsWith('Exception:')) {
+      return text.replaceFirst('Exception:', '').trim();
+    }
+    return text;
+  }
+
+  Future<void> _showForgotPasswordDialog() async {
+    _forgotPasswordEmailController.text = _emailController.text.trim();
+    String? localError;
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Quên mật khẩu'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Nhập email để nhận link đặt lại mật khẩu.',
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _forgotPasswordEmailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        hintText: 'you@example.com',
+                        prefixIcon: Icon(Icons.email_outlined),
+                      ),
+                    ),
+                    if (localError != null) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        localError!,
+                        style: TextStyle(color: Colors.red[700], fontSize: 13),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: widget.controller.isLoading
+                      ? null
+                      : () => Navigator.of(dialogContext).pop(),
+                  child: const Text('Hủy'),
+                ),
+                ElevatedButton(
+                  onPressed: widget.controller.isLoading
+                      ? null
+                      : () async {
+                          final email = _forgotPasswordEmailController.text.trim();
+                          if (email.isEmpty || !email.contains('@')) {
+                            setDialogState(() {
+                              localError = 'Vui lòng nhập email hợp lệ';
+                            });
+                            return;
+                          }
+
+                          final ok = await widget.controller.sendPasswordResetEmail(email);
+                          if (!mounted || !dialogContext.mounted) {
+                            return;
+                          }
+
+                          if (ok) {
+                            Navigator.of(dialogContext).pop();
+                            ScaffoldMessenger.of(dialogContext).showSnackBar(
+                              const SnackBar(
+                                content: Text('Đã gửi email đặt lại mật khẩu. Vui lòng kiểm tra hộp thư.'),
+                              ),
+                            );
+                          } else {
+                            setDialogState(() {
+                              localError = _humanizeError(widget.controller.error ?? 'Gửi email thất bại');
+                            });
+                          }
+                        },
+                  child: widget.controller.isLoading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Gửi link'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _displayNameController.dispose();
+    _forgotPasswordEmailController.dispose();
     super.dispose();
   }
 
@@ -44,6 +146,7 @@ class _LoginPageState extends State<LoginPage> {
       await widget.controller.login(
         _emailController.text.trim(),
         _passwordController.text.trim(),
+        rememberMe: _rememberMe,
       );
     }
 
@@ -90,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
                             width: 72,
                             height: 72,
                             decoration: BoxDecoration(
-                              color: Colors.indigo.withOpacity(0.1),
+                              color: Colors.indigo.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: const Icon(Icons.school, color: Colors.indigo, size: 44),
@@ -154,10 +257,13 @@ class _LoginPageState extends State<LoginPage> {
                         // Nhớ mật khẩu + Quên mật khẩu
                         if (!_isRegisterMode) ...[
                           const SizedBox(height: 12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            runSpacing: 4,
+                            spacing: 8,
                             children: [
                               Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Checkbox(
                                     value: _rememberMe,
@@ -168,12 +274,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ],
                               ),
                               TextButton(
-                                onPressed: () {
-                                  // TODO: Xử lý quên mật khẩu
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Chức năng quên mật khẩu đang được phát triển')),
-                                  );
-                                },
+                                onPressed: controller.isLoading ? null : _showForgotPasswordDialog,
                                 child: const Text('Quên mật khẩu?'),
                               ),
                             ],

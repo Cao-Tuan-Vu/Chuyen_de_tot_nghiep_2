@@ -11,6 +11,7 @@ import 'package:btl/features/auth/domain/repositories/auth_repository.dart';
 class AuthRepositoryImpl implements AuthRepository {
   static const String _tokenKey = 'auth_token';
   static const String _userKey = 'auth_user';
+  static const String _rememberMeKey = 'auth_remember_me';
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseDatabase _database = FirebaseDatabase.instance;
@@ -23,6 +24,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthSession> login({
     required String email,
     required String password,
+    bool rememberMe = true,
   }) async {
     final credential = await _auth.signInWithEmailAndPassword(
       email: email,
@@ -37,7 +39,7 @@ class AuthRepositoryImpl implements AuthRepository {
     final user = await _loadOrCreateUser(firebaseUser, fallbackRole: 'student');
     final String token = firebaseUser.uid;
     await _saveUserToFirebase(user, isNewSession: false);
-    await _saveSession(token, user);
+    await _saveSession(token, user, rememberMe: rememberMe);
     return AuthSession(token: token, user: user);
   }
 
@@ -72,37 +74,56 @@ class AuthRepositoryImpl implements AuthRepository {
 
     final String token = firebaseUser.uid;
     await _saveUserToFirebase(user, isNewSession: true);
-    await _saveSession(token, user);
+    await _saveSession(token, user, rememberMe: true);
     return AuthSession(token: token, user: user);
   }
 
   @override
   Future<void> updateProfile({
-    required String displayName,
+    String? displayName,
+    String? avatarUrl,
   }) async {
     final firebaseUser = _auth.currentUser;
     if (firebaseUser == null) {
       throw Exception('Chua dang nhap');
     }
 
-    await firebaseUser.updateDisplayName(displayName);
-    await firebaseUser.reload();
+    final normalizedName = displayName?.trim();
+    if (normalizedName != null && normalizedName.isNotEmpty) {
+      await firebaseUser.updateDisplayName(normalizedName);
+      await firebaseUser.reload();
+    }
 
     final existing = await _loadOrCreateUser(firebaseUser, fallbackRole: 'student');
     final now = DateTime.now().toUtc().toIso8601String();
     final updated = existing.copyWith(
-      displayName: displayName,
+      displayName: (normalizedName != null && normalizedName.isNotEmpty)
+          ? normalizedName
+          : existing.displayName,
+      avatarUrl: avatarUrl ?? existing.avatarUrl,
       updatedAt: now,
     );
 
     await _saveUserToFirebase(updated, isNewSession: false);
-    await _saveSession(firebaseUser.uid, updated);
+    final prefs = await SharedPreferences.getInstance();
+    final rememberMe = prefs.getBool(_rememberMeKey) ?? true;
+    await _saveSession(firebaseUser.uid, updated, rememberMe: rememberMe);
   }
 
-  Future<void> _saveSession(String token, AppUser user) async {
+  Future<void> _saveSession(
+    String token,
+    AppUser user, {
+    required bool rememberMe,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_tokenKey, token);
-    await prefs.setString(_userKey, jsonEncode(user.toJson()));
+    await prefs.setBool(_rememberMeKey, rememberMe);
+    if (rememberMe) {
+      await prefs.setString(_tokenKey, token);
+      await prefs.setString(_userKey, jsonEncode(user.toJson()));
+    } else {
+      await prefs.remove(_tokenKey);
+      await prefs.remove(_userKey);
+    }
   }
 
   Future<AppUser> _loadOrCreateUser(User firebaseUser, {required String fallbackRole}) async {
@@ -164,21 +185,45 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<AuthSession?> getSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    final rememberMe = prefs.getBool(_rememberMeKey) ?? true;
+
+    if (!rememberMe) {
+      try {
+        if (_auth.currentUser != null) {
+          await _auth.signOut();
+        }
+      } catch (_) {
+        // keep flow resilient
+      }
+      await prefs.remove(_tokenKey);
+      await prefs.remove(_userKey);
+      return null;
+    }
+
     final firebaseUser = _auth.currentUser;
     if (firebaseUser != null) {
       final String token = firebaseUser.uid;
       final user = await _loadOrCreateUser(firebaseUser, fallbackRole: 'student');
       await _saveUserToFirebase(user, isNewSession: false);
-      await _saveSession(token, user);
+      await _saveSession(token, user, rememberMe: true);
       return AuthSession(token: token, user: user);
     }
 
     // Firebase Realtime Database rules rely on auth token, so local-only
     // cached session is not enough to keep app requests working.
-    final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tokenKey);
     await prefs.remove(_userKey);
     return null;
+  }
+
+  @override
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    final normalized = email.trim();
+    if (normalized.isEmpty || !normalized.contains('@')) {
+      throw Exception('Vui lòng nhập email hợp lệ');
+    }
+    await _auth.sendPasswordResetEmail(email: normalized);
   }
 
   @override
@@ -194,5 +239,6 @@ class AuthRepositoryImpl implements AuthRepository {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tokenKey);
     await prefs.remove(_userKey);
+    await prefs.remove(_rememberMeKey);
   }
 }
