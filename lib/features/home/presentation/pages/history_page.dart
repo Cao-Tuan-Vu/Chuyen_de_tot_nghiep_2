@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:intl/intl.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({Key? key}) : super(key: key);
@@ -109,42 +110,6 @@ class _HistoryPageState extends State<HistoryPage> {
         });
       }
 
-      // Fallback 1: attempts by userId
-      if (attempts.isEmpty) {
-        attemptsDetailData.forEach((attemptId, item) {
-          final detail = _asMap(item);
-          if (detail['userId']?.toString() != uid) return;
-          final quizId = detail['quizId']?.toString() ?? '';
-          if (quizId.isEmpty) return;
-
-          String quizTitle = detail['quizTitle']?.toString() ?? '';
-          if (quizTitle.isEmpty && detail['attemptType'] == 'level_test') {
-            quizTitle = 'Kiểm tra ${detail['level']?.toString().toUpperCase() ?? 'MEDIUM'}';
-          }
-          if (quizTitle.isEmpty) quizTitle = _asMap(quizzesData[quizId])['title']?.toString() ?? 'Bài tập';
-
-          String lessonTitle = '';
-          for (final lesson in lessonsData.values) {
-            final lessonMap = _asMap(lesson);
-            if ((lessonMap['quizId'] ?? lessonMap['quiz'] ?? '').toString() == quizId) {
-              lessonTitle = lessonMap['title']?.toString() ?? '';
-              break;
-            }
-          }
-
-          attempts.add(_AttemptHistory(
-            quizId: quizId,
-            quizTitle: quizTitle,
-            lessonTitle: lessonTitle,
-            score: (detail['score'] as num?)?.toInt() ?? 0,
-            total: (detail['total'] as num?)?.toInt() ?? 0,
-            timestamp: _toTimestamp(detail['submittedAt']),
-            attemptType: detail['attemptType']?.toString() ?? '',
-            level: detail['level']?.toString() ?? '',
-          ));
-        });
-      }
-
       attempts.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       if (mounted) {
         setState(() {
@@ -160,210 +125,339 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final theme = Theme.of(context);
     
+    int totalPassed = _attempts.where((a) => (a.score / a.total) >= 0.7).length;
+    double avgScore = _attempts.isEmpty ? 0 : (_attempts.map((a) => a.score / a.total).reduce((a, b) => a + b) / _attempts.length) * 10;
+
     return Scaffold(
-      backgroundColor: isDarkMode ? const Color(0xFF121212) : Colors.grey[50],
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-        ),
-        title: const Text('Lịch sử học tập', style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        backgroundColor: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
-        foregroundColor: isDarkMode ? Colors.white : Colors.black,
-        elevation: 0,
-      ),
+      backgroundColor: isDarkMode ? const Color(0xFF121212) : const Color(0xFFF8FAFC),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadHistory,
-              child: _attempts.isEmpty ? _buildEmptyState(isDarkMode) : _buildList(theme, isDarkMode),
-            ),
-    );
-  }
-
-  Widget _buildEmptyState(bool isDarkMode) {
-    return ListView(
-      children: [
-        SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-        Center(
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.indigo.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.history_edu_rounded, size: 80, color: Colors.indigo),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Chưa có dữ liệu',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.white : Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Hãy hoàn thành bài học đầu tiên của bạn!',
-                style: TextStyle(color: isDarkMode ? Colors.grey[400] : Colors.grey),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildList(ThemeData theme, bool isDarkMode) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      itemCount: _attempts.length,
-      itemBuilder: (context, index) {
-        final attempt = _attempts[index];
-        final percent = attempt.total > 0 ? (attempt.score / attempt.total) : 0.0;
-        final isPassed = percent >= 0.6;
-        final date = DateTime.fromMillisecondsSinceEpoch(attempt.timestamp);
-        final dateStr = "${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}";
-
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(isDarkMode ? 0.3 : 0.04),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: IntrinsicHeight(
-            child: Row(
-              children: [
-                // Thanh màu bên trái
-                Container(
-                  width: 6,
-                  decoration: BoxDecoration(
-                    color: isPassed ? Colors.green : Colors.orange,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      bottomLeft: Radius.circular(20),
-                    ),
-                  ),
-                ),
-                Expanded(
+          : CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                _buildSliverAppBar(isDarkMode, totalPassed, avgScore),
+                SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+                    child: Row(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                attempt.quizTitle,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: isDarkMode ? Colors.white : Colors.black87,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            _buildTypeTag(attempt),
-                          ],
-                        ),
-                        if (attempt.lessonTitle.isNotEmpty) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            attempt.lessonTitle,
-                            style: TextStyle(color: isDarkMode ? Colors.grey[400] : Colors.grey[600], fontSize: 13),
+                        Text(
+                          'Hoạt động gần đây',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: isDarkMode ? Colors.white : Colors.indigo[900],
+                            letterSpacing: -0.5,
                           ),
-                        ],
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            _buildInfoItem(Icons.calendar_today_rounded, dateStr, isDarkMode),
-                            const Spacer(),
-                            _buildScoreIndicator(attempt.score, attempt.total, isPassed),
-                          ],
+                        ),
+                        const Spacer(),
+                        Text(
+                          '${_attempts.length} bài tập',
+                          style: TextStyle(color: Colors.grey[500], fontSize: 13, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
                   ),
                 ),
+                _attempts.isEmpty 
+                    ? SliverFillRemaining(child: _buildEmptyState(isDarkMode))
+                    : SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) => _HistoryCard(attempt: _attempts[index], isDarkMode: isDarkMode),
+                            childCount: _attempts.length,
+                          ),
+                        ),
+                      ),
+                const SliverToBoxAdapter(child: SizedBox(height: 40)),
               ],
             ),
-          ),
-        );
-      },
     );
   }
 
-  Widget _buildTypeTag(_AttemptHistory attempt) {
-    bool isLevelTest = attempt.attemptType == 'level_test';
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: isLevelTest ? Colors.purple.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
+  Widget _buildSliverAppBar(bool isDarkMode, int totalPassed, double avgScore) {
+    return SliverAppBar(
+      expandedHeight: 220,
+      pinned: true,
+      elevation: 0,
+      stretch: true,
+      backgroundColor: Colors.indigo[700],
+      leading: IconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: const BoxDecoration(color: Colors.white24, shape: BoxShape.circle),
+          child: const Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: Colors.white),
+        ),
       ),
-      child: Text(
-        isLevelTest ? 'Kiểm tra' : 'Học tập',
-        style: TextStyle(
-          color: isLevelTest ? Colors.purple : Colors.blue,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
+      centerTitle: true,
+      title: const Text(
+        'Hành trình học tập', 
+        style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white)
+      ),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Background Gradient
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.indigo[800]!, Colors.indigo[500]!],
+                ),
+              ),
+            ),
+            // Decorative circles
+            Positioned(
+              right: -50,
+              top: -50,
+              child: CircleAvatar(radius: 100, backgroundColor: Colors.white.withOpacity(0.05)),
+            ),
+            // Stats content
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildStatItem('Bài tập', _attempts.length.toString(), Icons.assignment_rounded),
+                      _buildStatItem('Hoàn thành', totalPassed.toString(), Icons.verified_rounded),
+                      _buildStatItem('ĐTB', avgScore.toStringAsFixed(1), Icons.stars_rounded),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoItem(IconData icon, String label, bool isDarkMode) {
-    return Row(
+  Widget _buildStatItem(String label, String value, IconData icon) {
+    return Column(
       children: [
-        Icon(icon, size: 14, color: isDarkMode ? Colors.grey[400] : Colors.grey),
-        const SizedBox(width: 4),
-        Text(label, style: TextStyle(color: isDarkMode ? Colors.grey[400] : Colors.grey, fontSize: 12)),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Icon(icon, color: Colors.white, size: 24),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900),
+        ),
+        Text(
+          label,
+          style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12, fontWeight: FontWeight.w500),
+        ),
       ],
     );
   }
 
-  Widget _buildScoreIndicator(int score, int total, bool isPassed) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: isPassed ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+  Widget _buildEmptyState(bool isDarkMode) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            isPassed ? Icons.check_circle_rounded : Icons.cancel_rounded,
-            size: 14,
-            color: isPassed ? Colors.green : Colors.red,
-          ),
-          const SizedBox(width: 4),
-          Text(
-            "$score/$total",
-            style: TextStyle(
-              color: isPassed ? Colors.green[700] : Colors.red[700],
-              fontWeight: FontWeight.bold,
-              fontSize: 13,
+          Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: Colors.indigo.withOpacity(0.05),
+              shape: BoxShape.circle,
             ),
+            child: Icon(Icons.auto_stories_rounded, size: 80, color: Colors.indigo[200]),
           ),
+          const SizedBox(height: 24),
+          const Text('Chưa có hành trình nào', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ],
       ),
     );
+  }
+}
+
+class _HistoryCard extends StatelessWidget {
+  final _AttemptHistory attempt;
+  final bool isDarkMode;
+
+  const _HistoryCard({required this.attempt, required this.isDarkMode});
+
+  @override
+  Widget build(BuildContext context) {
+    final percent = attempt.total > 0 ? (attempt.score / attempt.total) : 0.0;
+    final isPassed = percent >= 0.7;
+    final date = DateTime.fromMillisecondsSinceEpoch(attempt.timestamp);
+    final dateStr = DateFormat('HH:mm, dd/MM/yyyy').format(date);
+
+    Color statusColor = isPassed ? const Color(0xFF10B981) : Colors.orange;
+    if (percent < 0.4) statusColor = Colors.redAccent;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDarkMode ? 0.4 : 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: _getLevelColor(attempt.level).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      _getIcon(attempt.attemptType, attempt.level),
+                      color: _getLevelColor(attempt.level),
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          attempt.quizTitle,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 17,
+                            color: isDarkMode ? Colors.white : Colors.indigo[900],
+                            letterSpacing: -0.5,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          attempt.lessonTitle.isNotEmpty ? attempt.lessonTitle : 'Luyện tập tổng hợp',
+                          style: TextStyle(
+                            color: isDarkMode ? Colors.grey[400] : Colors.grey[500],
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildScoreBadge(percent, attempt.score, attempt.total),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const Divider(height: 1, thickness: 1, color: Colors.black12),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.access_time_filled_rounded, size: 14, color: Colors.grey[400]),
+                      const SizedBox(width: 6),
+                      Text(
+                        dateStr,
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: statusColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      isPassed ? 'HOÀN THÀNH' : 'CẦN CỐ GẮNG',
+                      style: TextStyle(
+                        color: statusColor,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: percent,
+                  minHeight: 6,
+                  backgroundColor: isDarkMode ? Colors.white10 : Colors.grey[100],
+                  valueColor: AlwaysStoppedAnimation<Color>(statusColor),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScoreBadge(double percent, int score, int total) {
+    return Column(
+      children: [
+        Text(
+          "$score",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w900,
+            color: percent >= 0.7 ? const Color(0xFF10B981) : Colors.orange[800],
+            height: 1,
+          ),
+        ),
+        Text(
+          "/$total",
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey[400]),
+        ),
+      ],
+    );
+  }
+
+  IconData _getIcon(String type, String level) {
+    if (type == 'level_test') {
+      switch (level.toLowerCase()) {
+        case 'easy': return Icons.child_care_rounded;
+        case 'medium': return Icons.psychology_rounded;
+        case 'hard': return Icons.workspace_premium_rounded;
+        default: return Icons.quiz_rounded;
+      }
+    }
+    return Icons.menu_book_rounded;
+  }
+
+  Color _getLevelColor(String level) {
+    switch (level.toLowerCase()) {
+      case 'easy': return Colors.green;
+      case 'medium': return Colors.blue;
+      case 'hard': return Colors.purple;
+      default: return Colors.indigo;
+    }
   }
 }
 

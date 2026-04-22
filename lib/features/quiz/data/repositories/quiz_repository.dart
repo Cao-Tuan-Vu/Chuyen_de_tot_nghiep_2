@@ -281,33 +281,39 @@ class QuizRepository {
       final totalScore = (learningAverageScore * 0.4) + (finalTestScore * 0.6);
       final activityCount = learningQuizCount + (finalData.isNotEmpty ? 1 : 0);
 
-      await leaderboardNode.set({
-        'userId': userId,
-        'displayName':
-            leaderboardData['displayName'] ??
-            currentUser?.displayName ??
-            currentUser?.email?.split('@').first ??
-            'Học viên',
-        'learningScore': learningAverageScore,
-        'learningQuizCount': learningQuizCount,
-        'learningPassCount': learningPassCount,
-        'finalTestScore': finalTestScore,
-        'easyTestScore': easyScore,
-        'mediumTestScore': mediumScore,
-        'hardTestScore': hardScore,
-        'hasEasyAttempt': hasEasyAttempt,
-        'hasMediumAttempt': hasMediumAttempt,
-        'hasHardAttempt': hasHardAttempt,
-        'levelAverageScore': levelAverageScore,
-        'finalQuizPassed': finalQuizPassed,
-        'totalScore': totalScore,
-        'activityCount': activityCount,
-        'passedCount': learningPassCount + (finalQuizPassed ? 1 : 0),
-        'updatedAt': submittedAt,
-        'learningQuizzes': normalizedLearning,
-        if (normalizedLevelTests.isNotEmpty) 'levelTests': normalizedLevelTests,
-        if (finalData.isNotEmpty) 'finalExam': finalData,
-      });
+      // Check for rank displacement notifications
+      try {
+        final allLeaderboardSnap = await _leaderboardRef.orderByChild('totalScore').get();
+        if (allLeaderboardSnap.exists) {
+          final Map<dynamic, dynamic> allData = allLeaderboardSnap.value as Map<dynamic, dynamic>;
+          final sortedList = allData.entries.toList()
+            ..sort((a, b) => (b.value['totalScore'] as num).compareTo(a.value['totalScore'] as num));
+
+          final newRank = sortedList.indexWhere((e) => e.key == userId) + 1;
+          
+          // If the user is in top 50 and improved their rank
+          if (newRank > 0 && newRank <= 50) {
+            // Find the person who was previously at this rank or just below
+            for (int i = newRank; i < sortedList.length && i < newRank + 2; i++) {
+              final displacedUser = sortedList[i];
+              if (displacedUser.key != userId) {
+                // Send notification to the displaced user
+                await _database.ref('notifications/${displacedUser.key}').push().set({
+                  'title': 'Bạn đã bị vượt hạng! 📉',
+                  'body': '${leaderboardData['displayName'] ?? 'Một học viên khác'} vừa vượt qua bạn trên bảng xếp hạng. Hãy cố gắng hơn nhé!',
+                  'timestamp': ServerValue.timestamp,
+                  'isRead': false,
+                  'type': 'announcement',
+                });
+              }
+            }
+          }
+        }
+      } catch (e) {
+        print('Error sending displacement notification: $e');
+      }
+
+      return result;
     } catch (_) {
       // Do not block quiz flow if leaderboard path is not available yet.
     }

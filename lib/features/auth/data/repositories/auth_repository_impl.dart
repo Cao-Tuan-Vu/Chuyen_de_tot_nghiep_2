@@ -74,6 +74,16 @@ class AuthRepositoryImpl implements AuthRepository {
 
     final String token = firebaseUser.uid;
     await _saveUserToFirebase(user, isNewSession: true);
+
+    // Gửi thông báo chào mừng realtime
+    await _database.ref('notifications/${user.id}').push().set({
+      'title': 'Chào mừng bạn mới! 👋',
+      'body': 'Chào mừng $displayName đã tham gia cộng đồng học tập. Hãy khám phá các khóa học thú vị ngay nhé!',
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+      'isRead': false,
+      'type': 'announcement',
+    });
+
     await _saveSession(token, user, rememberMe: true);
     return AuthSession(token: token, user: user);
   }

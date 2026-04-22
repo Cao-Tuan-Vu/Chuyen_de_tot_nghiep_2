@@ -1,9 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ContactPage extends StatelessWidget {
+class ContactPage extends StatefulWidget {
   const ContactPage({super.key});
 
   static const String routeName = '/contact';
+
+  @override
+  State<ContactPage> createState() => _ContactPageState();
+}
+
+class _ContactPageState extends State<ContactPage> {
+  final TextEditingController _subjectController = TextEditingController();
+  final TextEditingController _messageController = TextEditingController();
+
+  @override
+  void dispose() {
+    _subjectController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _sendEmail() async {
+    final String subject = _subjectController.text.trim();
+    final String body = _messageController.text.trim();
+
+    if (subject.isEmpty || body.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng nhập đầy đủ tiêu đề và nội dung!')),
+      );
+      return;
+    }
+
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: '20220249@gmail.com',
+      queryParameters: {
+        'subject': subject,
+        'body': body,
+      },
+    );
+
+    try {
+      if (await canLaunchUrl(emailLaunchUri)) {
+        await launchUrl(emailLaunchUri);
+        _subjectController.clear();
+        _messageController.clear();
+      } else {
+        throw 'Could not launch $emailLaunchUri';
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không thể mở ứng dụng email: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +67,11 @@ class ContactPage extends StatelessWidget {
           SliverAppBar(
             leading: IconButton(
               onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: const BoxDecoration(color: Colors.white24, shape: BoxShape.circle),
+                child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
+              ),
             ),
             expandedHeight: 220,
             pinned: true,
@@ -85,7 +140,7 @@ class ContactPage extends StatelessWidget {
                     isDarkMode,
                     icon: Icons.email_rounded,
                     title: 'Email',
-                    value: '20220249@eaut.edu.vn',
+                    value: '20220249@gmail.com',
                     color: Colors.orange,
                   ),
                   const SizedBox(height: 40),
@@ -195,12 +250,14 @@ class ContactPage extends StatelessWidget {
       child: Column(
         children: [
           _buildTextField(
+            controller: _subjectController,
             label: 'Tiêu đề',
             icon: Icons.subject_rounded,
             isDarkMode: isDarkMode,
           ),
           const SizedBox(height: 20),
           _buildTextField(
+            controller: _messageController,
             label: 'Nội dung phản hồi',
             icon: Icons.chat_bubble_outline_rounded,
             maxLines: 4,
@@ -211,16 +268,7 @@ class ContactPage extends StatelessWidget {
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Cảm ơn bạn đã gửi phản hồi!'),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              },
+              onPressed: _sendEmail,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.indigo,
                 foregroundColor: Colors.white,
@@ -237,12 +285,14 @@ class ContactPage extends StatelessWidget {
   }
 
   Widget _buildTextField({
+    required TextEditingController controller,
     required String label, 
     required IconData icon, 
     int maxLines = 1,
     required bool isDarkMode,
   }) {
     return TextField(
+      controller: controller,
       maxLines: maxLines,
       style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),
       decoration: InputDecoration(

@@ -17,6 +17,7 @@ import 'package:btl/features/profile/presentation/pages/profile_page.dart';
 import 'package:btl/features/quiz/presentation/pages/exercises_page.dart';
 import 'package:btl/features/home/presentation/pages/history_page.dart';
 import 'package:btl/features/home/presentation/pages/ranking_page.dart';
+import 'package:btl/features/notifications/presentation/pages/notification_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -349,22 +350,47 @@ class _HomeContent extends StatelessWidget {
             ),
           ),
           actions: [
-            Stack(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 28),
-                  onPressed: () {},
-                ),
-                Positioned(
-                  top: 12,
-                  right: 12,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(color: Colors.redAccent, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 2)),
-                  ),
-                ),
-              ],
+            StreamBuilder(
+              stream: FirebaseDatabase.instance.ref('notifications/${user?.id}').onValue,
+              builder: (context, snapshot) {
+                bool hasUnread = false;
+                if (snapshot.hasData && snapshot.data?.snapshot.value != null) {
+                  final data = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+                  hasUnread = data.values.any((e) => (e as Map)['isRead'] == false);
+                }
+
+                return Stack(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 28),
+                      onPressed: () {
+                        if (user?.id != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => NotificationPage(userId: user!.id!),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    if (hasUnread)
+                      Positioned(
+                        top: 12,
+                        right: 12,
+                        child: Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: Colors.redAccent,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
             ),
             const SizedBox(width: 8),
           ],

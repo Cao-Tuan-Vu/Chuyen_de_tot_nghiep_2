@@ -76,56 +76,9 @@ class _LessonListPageState extends State<LessonListPage> {
     return Scaffold(
       backgroundColor: isDarkMode ? const Color(0xFF121212) : const Color(0xFFF8FAFC),
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
-          SliverAppBar(
-          leading: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
-          ),
-          expandedHeight: 220,
-          pinned: true,
-            backgroundColor: courseStyle.primary,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                widget.course.title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  shadows: [Shadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 1))],
-                ),
-              ),
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: courseStyle.gradient,
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: -20,
-                    top: -20,
-                    child: CircleAvatar(
-                      radius: 80,
-                      backgroundColor: Colors.white.withOpacity(0.1),
-                    ),
-                  ),
-                  Center(
-                    child: Icon(
-                      courseStyle.icon,
-                      size: 80,
-                      color: Colors.white24,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          _buildSliverAppBar(courseStyle),
           FutureBuilder<List<Lesson>>(
             future: _lessonsFuture,
             builder: (context, snapshot) {
@@ -133,12 +86,12 @@ class _LessonListPageState extends State<LessonListPage> {
                 return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
               }
               if (snapshot.hasError) {
-                return SliverFillRemaining(child: Center(child: Text(snapshot.error.toString())));
+                return SliverFillRemaining(child: Center(child: Text('Lỗi: ${snapshot.error}')));
               }
 
               final lessons = snapshot.data ?? [];
               if (lessons.isEmpty) {
-                return const SliverFillRemaining(child: Center(child: Text('Chưa có bài học')));
+                return const SliverFillRemaining(child: Center(child: Text('Chưa có bài học nào trong khóa học này.')));
               }
 
               return FutureBuilder<Set<String>>(
@@ -152,17 +105,25 @@ class _LessonListPageState extends State<LessonListPage> {
 
                   final canShowFinalQuiz =
                       widget.course.comprehensiveQuizId != null &&
+                      requiredQuizLessons.isNotEmpty &&
                       requiredQuizLessons.every(completedLessonIds.contains);
 
                   return SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 40),
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
                           if (index < lessons.length) {
                             final lesson = lessons[index];
-                            final isQuiz = lesson.quizId != null;
-                            return _buildLessonCard(context, lesson, index, isQuiz, isDarkMode);
+                            final isCompleted = completedLessonIds.contains(lesson.id);
+                            return _buildModernLessonCard(
+                              context, 
+                              lesson, 
+                              index == lessons.length - 1 && !canShowFinalQuiz, 
+                              isCompleted, 
+                              isDarkMode, 
+                              courseStyle
+                            );
                           }
 
                           if (canShowFinalQuiz) {
@@ -183,79 +144,179 @@ class _LessonListPageState extends State<LessonListPage> {
     );
   }
 
-  Widget _buildLessonCard(BuildContext context, Lesson lesson, int index, bool isQuiz, bool isDarkMode) {
-    final courseStyle = courseVisualStyleFor(widget.course.id);
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+  Widget _buildSliverAppBar(CourseVisualStyle courseStyle) {
+    return SliverAppBar(
+      expandedHeight: 240,
+      pinned: true,
+      stretch: true,
+      elevation: 0,
+      backgroundColor: courseStyle.primary,
+      leading: IconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: const BoxDecoration(color: Colors.white24, shape: BoxShape.circle),
+          child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
+        ),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: courseStyle.primary.withOpacity(0.1),
-            shape: BoxShape.circle,
+      flexibleSpace: FlexibleSpaceBar(
+        centerTitle: true,
+        title: Text(
+          widget.course.title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w800,
+            fontSize: 18,
+            shadows: [Shadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 2))],
           ),
-          child: Center(
-            child: Text(
-              '${lesson.order}',
-              style: TextStyle(
-                color: courseStyle.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+        ),
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [courseStyle.primary, courseStyle.primary.withBlue(200)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
             ),
-          ),
-        ),
-        title: Text(
-          lesson.title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-        ),
-        subtitle: Row(
-          children: [
-            Icon(
-              isQuiz ? Icons.quiz_outlined : Icons.menu_book_rounded,
-              size: 14,
-              color: Colors.grey[600],
+            Positioned(
+              right: -30,
+              top: -30,
+              child: Icon(courseStyle.icon, size: 200, color: Colors.white.withOpacity(0.1)),
             ),
-            const SizedBox(width: 4),
-            Text(
-              isQuiz ? 'Bài học + Trắc nghiệm' : 'Lý thuyết',
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            Center(
+              child: Hero(
+                tag: 'course_icon_${widget.course.id}',
+                child: Icon(courseStyle.icon, size: 80, color: Colors.white.withOpacity(0.9)),
+              ),
             ),
           ],
         ),
-        trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey[400]),
-        onTap: () async {
-          await Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (_) => LessonDetailPage(
-                controller: widget.controller,
-                courseId: widget.course.id,
-                lesson: lesson,
-                learningRepository: widget.learningRepository,
-                quizRepository: widget.quizRepository,
+      ),
+    );
+  }
+
+  Widget _buildModernLessonCard(BuildContext context, Lesson lesson, bool isLast, bool isCompleted, bool isDarkMode, CourseVisualStyle style) {
+    final isQuiz = lesson.quizId != null && lesson.quizId!.isNotEmpty;
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Timeline logic
+          Column(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: isCompleted ? const Color(0xFF10B981) : (isDarkMode ? Colors.grey[800] : Colors.grey[300]),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isCompleted ? Colors.white : Colors.transparent,
+                    width: 2,
+                  ),
+                  boxShadow: isCompleted ? [
+                    BoxShadow(color: const Color(0xFF10B981).withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 3))
+                  ] : [],
+                ),
+                child: Center(
+                  child: isCompleted 
+                    ? const Icon(Icons.check, size: 16, color: Colors.white)
+                    : Text('${lesson.order}', style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.grey[700], fontWeight: FontWeight.bold, fontSize: 12)),
+                ),
+              ),
+              if (!isLast)
+                Expanded(
+                  child: Container(
+                    width: 2,
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    color: isCompleted ? const Color(0xFF10B981).withOpacity(0.5) : (isDarkMode ? Colors.grey[800] : Colors.grey[300]),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(width: 16),
+          // Content Card
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: GestureDetector(
+                onTap: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => LessonDetailPage(
+                        controller: widget.controller,
+                        courseId: widget.course.id,
+                        lesson: lesson,
+                        learningRepository: widget.learningRepository,
+                        quizRepository: widget.quizRepository,
+                      ),
+                    ),
+                  );
+                  if (mounted) _refreshCompletionState();
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: isCompleted ? Border.all(color: const Color(0xFF10B981).withOpacity(0.3), width: 1) : null,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(isDarkMode ? 0.3 : 0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              lesson.title,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w800, 
+                                fontSize: 16,
+                                color: isDarkMode ? Colors.white : Colors.indigo[900],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(
+                                  isQuiz ? Icons.assignment_turned_in_rounded : Icons.menu_book_rounded,
+                                  size: 14,
+                                  color: isQuiz ? Colors.orange : style.primary,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  isQuiz ? 'Lý thuyết + Bài tập' : 'Chỉ lý thuyết',
+                                  style: TextStyle(
+                                    fontSize: 12, 
+                                    color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.arrow_forward_ios_rounded, size: 14, color: isDarkMode ? Colors.grey[700] : Colors.grey[300]),
+                    ],
+                  ),
+                ),
               ),
             ),
-          );
-
-          if (!mounted) {
-            return;
-          }
-          _refreshCompletionState();
-        },
+          ),
+        ],
       ),
     );
   }
@@ -263,55 +324,72 @@ class _LessonListPageState extends State<LessonListPage> {
   Widget _buildFinalQuizBanner(BuildContext context, bool isDarkMode) {
     return Container(
       margin: const EdgeInsets.only(top: 12, bottom: 30),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFF59E0B), Color(0xFFEF4444)],
+          colors: [Color(0xFF6366F1), Color(0xFFA855F7)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.orange.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: const Color(0xFF6366F1).withOpacity(0.3),
+            blurRadius: 25,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
       child: Column(
         children: [
-          const Icon(Icons.workspace_premium_rounded, size: 48, color: Colors.white),
-          const SizedBox(height: 12),
-          const Text(
-            'CHÚC MỪNG!',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: 1),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'Bạn đã sẵn sàng cho bài thi tổng kết?',
-            style: TextStyle(color: Colors.white, fontSize: 13),
-            textAlign: TextAlign.center,
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.workspace_premium_rounded, size: 40, color: Colors.white),
           ),
           const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              if (widget.course.comprehensiveQuizId != null) {
-                _startComprehensiveQuiz(widget.course.comprehensiveQuizId!);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.orange[900],
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              elevation: 0,
+          const Text(
+            'THỬ THÁCH CUỐI CÙNG',
+            style: TextStyle(
+              color: Colors.white, 
+              fontWeight: FontWeight.w900, 
+              fontSize: 20, 
+              letterSpacing: 1.5
             ),
-            child: const Text('BẮT ĐẦU KIỂM TRA', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Bạn đã hoàn thành tất cả bài học! Hãy chinh phục bài thi tổng kết để nhận chứng chỉ.',
+            style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14, height: 1.4),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 28),
+          SizedBox(
+            width: double.infinity,
+            height: 54,
+            child: ElevatedButton(
+              onPressed: () {
+                if (widget.course.comprehensiveQuizId != null) {
+                  _startComprehensiveQuiz(widget.course.comprehensiveQuizId!);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF6366F1),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                elevation: 0,
+              ),
+              child: const Text(
+                'BẮT ĐẦU THI NGAY', 
+                style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5)
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 }
-

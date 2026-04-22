@@ -49,6 +49,13 @@
         ".write": "auth != null"
       }
     },
+    "notifications": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null",
+        ".indexOn": ["timestamp"]
+      }
+    },
     ".read": false,
     ".write": false
   }

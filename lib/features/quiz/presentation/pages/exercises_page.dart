@@ -107,11 +107,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
     final pool = _poolsByLevel[level];
     if (pool == null || pool.questions.isEmpty) return;
 
-    // Shuffle and pick 10
     final selected = List<QuizQuestion>.from(pool.questions)..shuffle(Random());
     final finalSelected = selected.take(_questionCountPerTest).toList();
 
-    // Gán ID duy nhất theo vị trí để tránh lỗi trùng ID gây tự chọn đáp án
     final sessionQuestions = <QuizQuestion>[];
     for (int i = 0; i < finalSelected.length; i++) {
       final q = finalSelected[i];
@@ -152,70 +150,150 @@ class _ExercisesPageState extends State<ExercisesPage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    int totalQuestions = _poolsByLevel.values.fold(0, (sum, pool) => sum + pool.questions.length);
 
     return Scaffold(
-      backgroundColor: isDarkMode ? const Color(0xFF121212) : Colors.grey[50],
-      appBar: AppBar(
-        title: const Text('Luyện tập tự do', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        centerTitle: true,
-        backgroundColor: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
-        foregroundColor: isDarkMode ? Colors.white : Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
+      backgroundColor: isDarkMode ? const Color(0xFF121212) : const Color(0xFFF8FAFC),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Chọn mức độ thử thách',
-                    style: TextStyle(
-                      fontSize: 22, 
-                      fontWeight: FontWeight.bold,
-                      color: isDarkMode ? Colors.white : Colors.black87,
+          : CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                _buildSliverAppBar(isDarkMode, totalQuestions),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Chọn mức độ thử thách',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: isDarkMode ? Colors.white : Colors.indigo[900],
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Hệ thống sẽ trộn ngẫu nhiên câu hỏi từ tất cả các khóa học phù hợp với trình độ của bạn.',
+                          style: TextStyle(
+                            color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Hệ thống sẽ trộn ngẫu nhiên câu hỏi từ tất cả các khóa học phù hợp với trình độ của bạn.',
-                    style: TextStyle(
-                      color: isDarkMode ? Colors.grey[400] : Colors.grey[600], 
-                      fontSize: 14,
-                    ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      _buildModernLevelCard(
+                        'easy',
+                        'Cơ bản',
+                        'Dành cho người mới bắt đầu hoặc muốn ôn lại kiến thức nền tảng.',
+                        [const Color(0xFF10B981), const Color(0xFF059669)],
+                        Icons.child_care_rounded,
+                      ),
+                      const SizedBox(height: 20),
+                      _buildModernLevelCard(
+                        'medium',
+                        'Trung bình',
+                        'Thử thách khả năng vận dụng kiến thức vào các bài toán thực tế.',
+                        [const Color(0xFFF59E0B), const Color(0xFFD97706)],
+                        Icons.psychology_rounded,
+                      ),
+                      const SizedBox(height: 20),
+                      _buildModernLevelCard(
+                        'hard',
+                        'Nâng cao',
+                        'Dành cho những chuyên gia muốn chinh phục những kiến thức khó nhất.',
+                        [const Color(0xFF6366F1), const Color(0xFF4F46E5)],
+                        Icons.workspace_premium_rounded,
+                      ),
+                      const SizedBox(height: 40),
+                    ]),
                   ),
-                  const SizedBox(height: 24),
-                  _buildModernLevelCard(
-                    'easy',
-                    'Cơ bản',
-                    'Dành cho người mới bắt đầu hoặc muốn ôn lại kiến thức nền tảng.',
-                    [const Color(0xFF4CAF50), const Color(0xFF2E7D32)],
-                    Icons.speed_rounded,
-                  ),
-                  const SizedBox(height: 20),
-                  _buildModernLevelCard(
-                    'medium',
-                    'Trung bình',
-                    'Thử thách khả năng vận dụng kiến thức vào các bài toán thực tế.',
-                    [const Color(0xFFFF9800), const Color(0xFFEF6C00)],
-                    Icons.bolt_rounded,
-                  ),
-                  const SizedBox(height: 20),
-                  _buildModernLevelCard(
-                    'hard',
-                    'Nâng cao',
-                    'Dành cho những chuyên gia muốn chinh phục những kiến thức khó nhất.',
-                    [const Color(0xFFF44336), const Color(0xFFC62828)],
-                    Icons.workspace_premium_rounded,
-                  ),
-                ],
+                ),
+              ],
+            ),
+    );
+  }
+
+  Widget _buildSliverAppBar(bool isDarkMode, int totalQuestions) {
+    return SliverAppBar(
+      expandedHeight: 200,
+      pinned: true,
+      elevation: 0,
+      stretch: true,
+      backgroundColor: Colors.indigo[700],
+      leading: IconButton(
+        onPressed: () => Navigator.of(context).pop(),
+        icon: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: const BoxDecoration(color: Colors.white24, shape: BoxShape.circle),
+          child: const Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: Colors.white),
+        ),
+      ),
+      centerTitle: true,
+      title: const Text('Luyện tập tự do', style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white)),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.indigo[800]!, Colors.indigo[500]!],
+                ),
               ),
             ),
+            Positioned(
+              right: -30,
+              bottom: -30,
+              child: Icon(Icons.quiz_rounded, size: 180, color: Colors.white.withOpacity(0.1)),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildStatChip(Icons.library_books_rounded, '$totalQuestions câu hỏi có sẵn'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatChip(IconData icon, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white24),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white, size: 18),
+          const SizedBox(width: 8),
+          Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+        ],
+      ),
     );
   }
 
@@ -227,7 +305,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
     return GestureDetector(
       onTap: canStart ? () => _startLevelTest(level) : () {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Cần ít nhất 5 câu hỏi trong hệ thống cho mức độ $title để bắt đầu.')),
+          SnackBar(content: Text('Cần ít nhất 5 câu hỏi để bắt đầu mức độ $title.')),
         );
       },
       child: Container(
@@ -242,9 +320,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
         child: Stack(
           children: [
             Positioned(
-              right: -20,
-              top: -20,
-              child: Icon(icon, size: 140, color: Colors.white.withOpacity(0.15)),
+              right: -10,
+              top: -10,
+              child: Icon(icon, size: 100, color: Colors.white.withOpacity(0.15)),
             ),
             Padding(
               padding: const EdgeInsets.all(24),
@@ -254,32 +332,29 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
-                        child: Icon(icon, color: Colors.white, size: 24),
+                        child: Icon(icon, color: Colors.white, size: 26),
                       ),
                       const SizedBox(width: 12),
-                      Text(title, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                      Text(title, style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w900)),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Text(desc, style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14)),
-                  const SizedBox(height: 20),
+                  Text(desc, style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14, height: 1.4)),
+                  const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(color: Colors.black.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
-                        child: Text('Ngân hàng: $count câu', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500)),
-                      ),
+                      Text('$count câu hỏi', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       if (canStart)
-                        const Row(
-                          children: [
-                            Text('Bắt đầu ngay', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                            SizedBox(width: 4),
-                            Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 14),
-                          ],
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                          child: Text(
+                            'Bắt đầu học',
+                            style: TextStyle(color: colors.last, fontWeight: FontWeight.w900, fontSize: 13),
+                          ),
                         )
                       else
                         const Text('Chưa đủ dữ liệu', style: TextStyle(color: Colors.white70, fontSize: 12)),
