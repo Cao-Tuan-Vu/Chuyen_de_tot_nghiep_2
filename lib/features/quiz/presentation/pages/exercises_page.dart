@@ -16,7 +16,6 @@ class ExercisesPage extends StatefulWidget {
 
 class _ExercisesPageState extends State<ExercisesPage> {
   static const int _questionCountPerTest = 10;
-
   final db = FirebaseDatabase.instance.ref();
   bool _loading = true;
   Map<String, _LevelPool> _poolsByLevel = {
@@ -32,240 +31,107 @@ class _ExercisesPageState extends State<ExercisesPage> {
   }
 
   Future<void> _loadAllQuizzes() async {
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
     setState(() => _loading = true);
-    final coursesSnap = await db.child('courses').get();
-    final lessonsSnap = await db.child('lessons').get();
-    final quizzesSnap = await db.child('quizzes').get();
+    try {
+      final coursesSnap = await db.child('courses').get();
+      final lessonsSnap = await db.child('lessons').get();
+      final quizzesSnap = await db.child('quizzes').get();
 
-    final courseLevels = <String, String>{};
-    if (coursesSnap.exists && coursesSnap.value is Map) {
-      final allCourses = Map<String, dynamic>.from(coursesSnap.value as Map);
-      for (final entry in allCourses.entries) {
-        final value = entry.value;
-        if (value is Map) {
-          final level = value['level']?.toString() ?? '';
-          courseLevels[entry.key] = _normalizeLevel(level);
+      final courseLevels = <String, String>{};
+      if (coursesSnap.exists && coursesSnap.value is Map) {
+        final allCourses = Map<String, dynamic>.from(coursesSnap.value as Map);
+        for (final entry in allCourses.entries) {
+          final value = entry.value;
+          if (value is Map) {
+            courseLevels[entry.key] = _normalizeLevel(value['level']?.toString() ?? '');
+          }
         }
       }
+
+      final pools = {'easy': <QuizQuestion>[], 'medium': <QuizQuestion>[], 'hard': <QuizQuestion>[]};
+      final allLessons = lessonsSnap.exists && lessonsSnap.value is Map ? Map<String, dynamic>.from(lessonsSnap.value as Map) : <String, dynamic>{};
+      final allQuizzes = quizzesSnap.exists && quizzesSnap.value is Map ? Map<String, dynamic>.from(quizzesSnap.value as Map) : <String, dynamic>{};
+
+      for (final lesson in allLessons.values) {
+        if (lesson is! Map) continue;
+        final courseId = (lesson['courseId'] ?? lesson['course'] ?? '').toString();
+        final quizId = (lesson['quizId'] ?? lesson['quiz'] ?? '').toString();
+        if (quizId.isEmpty || !allQuizzes.containsKey(quizId)) continue;
+
+        final rawQuiz = allQuizzes[quizId];
+        if (rawQuiz is! Map) continue;
+
+        final quizJson = Map<String, dynamic>.from(rawQuiz);
+        quizJson.putIfAbsent('id', () => quizId);
+        quizJson.putIfAbsent('title', () => lesson['title']?.toString() ?? 'Quiz');
+        final parsedQuiz = Quiz.fromJson(quizJson);
+
+        final level = _normalizeLevel(lesson['level']?.toString() ?? quizJson['level']?.toString() ?? courseLevels[courseId] ?? 'medium');
+        for (int i = 0; i < parsedQuiz.questions.length; i++) {
+          final q = parsedQuiz.questions[i];
+          pools[level]!.add(QuizQuestion(
+            id: '${quizId}_${q.id}_$i',
+            prompt: q.prompt,
+            options: List<String>.from(q.options),
+            correctIndex: q.correctIndex,
+            explanation: q.explanation,
+          ));
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _poolsByLevel = {
+            'easy': _LevelPool(level: 'easy', questions: pools['easy'] ?? []),
+            'medium': _LevelPool(level: 'medium', questions: pools['medium'] ?? []),
+            'hard': _LevelPool(level: 'hard', questions: pools['hard'] ?? []),
+          };
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _loading = false);
     }
-
-    final pools = {
-      'easy': <QuizQuestion>[],
-      'medium': <QuizQuestion>[],
-      'hard': <QuizQuestion>[],
-    };
-
-    final allLessons = lessonsSnap.exists && lessonsSnap.value is Map
-        ? Map<String, dynamic>.from(lessonsSnap.value as Map)
-        : <String, dynamic>{};
-    final allQuizzes = quizzesSnap.exists && quizzesSnap.value is Map
-        ? Map<String, dynamic>.from(quizzesSnap.value as Map)
-        : <String, dynamic>{};
-
-    for (final lesson in allLessons.values) {
-      if (lesson is! Map) {
-        continue;
-      }
-      final courseId = (lesson['courseId'] ?? lesson['course'] ?? '').toString();
-      if (courseId.isEmpty) {
-        continue;
-      }
-      final quizId = (lesson['quizId'] ?? lesson['quiz'] ?? '').toString();
-      if (quizId.isEmpty || !allQuizzes.containsKey(quizId)) {
-        continue;
-      }
-
-      final rawQuiz = allQuizzes[quizId];
-      if (rawQuiz is! Map) {
-        continue;
-      }
-
-      final quizJson = Map<String, dynamic>.from(rawQuiz);
-      quizJson.putIfAbsent('id', () => quizId);
-      quizJson.putIfAbsent('title', () => lesson['title']?.toString() ?? 'Quiz');
-      final parsedQuiz = Quiz.fromJson(quizJson);
-
-      final level = _normalizeLevel(
-        lesson['level']?.toString() ??
-            quizJson['level']?.toString() ??
-            courseLevels[courseId] ??
-            'medium',
-      );
-      for (int i = 0; i < parsedQuiz.questions.length; i++) {
-        final question = parsedQuiz.questions[i];
-        pools[level]!.add(QuizQuestion(
-          id: '${quizId}_${question.id}_$i',
-          prompt: question.prompt,
-          options: List<String>.from(question.options),
-          correctIndex: question.correctIndex,
-          explanation: question.explanation,
-        ));
-      }
-    }
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _poolsByLevel = {
-        'easy': _LevelPool(level: 'easy', questions: pools['easy'] ?? []),
-        'medium': _LevelPool(level: 'medium', questions: pools['medium'] ?? []),
-        'hard': _LevelPool(level: 'hard', questions: pools['hard'] ?? []),
-      };
-      _loading = false;
-    });
   }
 
   String _normalizeLevel(String raw) {
-    final normalized = raw.trim().toLowerCase();
-    if (normalized == 'easy' || normalized == 'beginner') {
-      return 'easy';
-    }
-    if (normalized == 'hard' || normalized == 'advanced') {
-      return 'hard';
-    }
+    final n = raw.trim().toLowerCase();
+    if (n == 'easy' || n == 'beginner' || n.contains('cơ bản')) return 'easy';
+    if (n == 'hard' || n == 'advanced' || n.contains('nâng cao')) return 'hard';
+    if (n == 'medium' || n == 'intermediate' || n.contains('trung bình')) return 'medium';
     return 'medium';
-  }
-
-  String _levelTitle(String level) {
-    switch (level) {
-      case 'easy':
-        return 'Easy';
-      case 'medium':
-        return 'Medium';
-      case 'hard':
-        return 'Hard';
-      default:
-        return level;
-    }
-  }
-
-  Map<String, dynamic> _asMap(Object? value) {
-    if (value is Map<String, dynamic>) {
-      return value;
-    }
-    if (value is Map) {
-      return value.map((key, dynamic item) => MapEntry(key.toString(), item));
-    }
-    return <String, dynamic>{};
-  }
-
-  Set<String> _extractQuestionIds(Object? value) {
-    final result = <String>{};
-    if (value is List) {
-      for (final item in value) {
-        if (item is Map) {
-          final map = _asMap(item);
-          final id = map['questionId']?.toString();
-          if (id != null && id.trim().isNotEmpty) {
-            result.add(id.trim());
-          }
-          continue;
-        }
-
-        final id = item?.toString();
-        if (id != null && id.trim().isNotEmpty && id != 'null') {
-          result.add(id.trim());
-        }
-      }
-    }
-    return result;
-  }
-
-  Future<Set<String>> _loadSeenQuestionIdsForLevel(String level) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      return <String>{};
-    }
-
-    final seen = <String>{};
-    final needFallbackAttemptIds = <String>[];
-    final attemptsIndexSnap = await db.child('users/${user.uid}/quizAttempts').get();
-    final attemptsIndex = _asMap(attemptsIndexSnap.value);
-
-    for (final entry in attemptsIndex.entries) {
-      final basic = _asMap(entry.value);
-      final attemptType = basic['attemptType']?.toString();
-      final attemptLevel = _normalizeLevel((basic['level'] ?? '').toString());
-      if (attemptType != 'level_test' || attemptLevel != level) {
-        continue;
-      }
-
-      final fromIndex = _extractQuestionIds(basic['questionIds']);
-      if (fromIndex.isNotEmpty) {
-        seen.addAll(fromIndex);
-      } else {
-        needFallbackAttemptIds.add(entry.key);
-      }
-    }
-
-    if (needFallbackAttemptIds.isEmpty) {
-      return seen;
-    }
-
-    final attemptsDetailSnap = await db.child('attempts').get();
-    final attemptsDetail = _asMap(attemptsDetailSnap.value);
-    for (final attemptId in needFallbackAttemptIds) {
-      final detail = _asMap(attemptsDetail[attemptId]);
-      final detailAttemptType = detail['attemptType']?.toString();
-      final detailLevel = _normalizeLevel((detail['level'] ?? '').toString());
-      if (detailAttemptType != 'level_test' || detailLevel != level) {
-        continue;
-      }
-
-      final fromDetails = _extractQuestionIds(detail['questionIds']);
-      if (fromDetails.isNotEmpty) {
-        seen.addAll(fromDetails);
-        continue;
-      }
-
-      seen.addAll(_extractQuestionIds(detail['review']));
-    }
-
-    return seen;
-  }
-
-  List<QuizQuestion> _selectQuestionsForAttempt(List<QuizQuestion> pool, Set<String> seenQuestionIds) {
-    final unseen = <QuizQuestion>[];
-    final seen = <QuizQuestion>[];
-
-    for (final question in pool) {
-      if (seenQuestionIds.contains(question.id)) {
-        seen.add(question);
-      } else {
-        unseen.add(question);
-      }
-    }
-
-    unseen.shuffle(Random());
-    seen.shuffle(Random());
-    final merged = <QuizQuestion>[...unseen, ...seen];
-    return merged.take(min(_questionCountPerTest, merged.length)).toList();
   }
 
   Future<void> _startLevelTest(String level) async {
     final pool = _poolsByLevel[level];
-    if (pool == null || pool.questions.isEmpty) {
-      return;
+    if (pool == null || pool.questions.isEmpty) return;
+
+    // Shuffle and pick 10
+    final selected = List<QuizQuestion>.from(pool.questions)..shuffle(Random());
+    final finalSelected = selected.take(_questionCountPerTest).toList();
+
+    // Gán ID duy nhất theo vị trí để tránh lỗi trùng ID gây tự chọn đáp án
+    final sessionQuestions = <QuizQuestion>[];
+    for (int i = 0; i < finalSelected.length; i++) {
+      final q = finalSelected[i];
+      sessionQuestions.add(QuizQuestion(
+        id: 'test_${level}_${i}_${q.id}',
+        prompt: q.prompt,
+        options: q.options,
+        correctIndex: q.correctIndex,
+        explanation: q.explanation,
+      ));
     }
 
-    final seenQuestionIds = await _loadSeenQuestionIdsForLevel(level);
-    if (!mounted) {
-      return;
-    }
-    final selected = _selectQuestionsForAttempt(pool.questions, seenQuestionIds);
-    final testId = '${level}_assessment_${DateTime.now().millisecondsSinceEpoch}';
-    final testTitle = 'Kiểm tra ${_levelTitle(level)}';
+    final testId = '${level}_random_${DateTime.now().millisecondsSinceEpoch}';
+    final testTitle = 'Kiểm tra ${level.toUpperCase()}';
     final generatedQuiz = Quiz(
       id: testId,
-      courseId: 'all_courses',
-      lessonId: 'level_test_$level',
-      title: '$testTitle (${selected.length} câu)',
-      questions: selected,
+      courseId: 'random_mix',
+      lessonId: 'random_$level',
+      title: '$testTitle (${sessionQuestions.length} câu)',
+      questions: sessionQuestions,
     );
 
     await Navigator.of(context).push(
@@ -280,63 +146,146 @@ class _ExercisesPageState extends State<ExercisesPage> {
         ),
       ),
     );
-
-    if (!mounted) {
-      return;
-    }
     _loadAllQuizzes();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Kiểm tra random toàn hệ thống')),
+      backgroundColor: isDarkMode ? const Color(0xFF121212) : Colors.grey[50],
+      appBar: AppBar(
+        title: const Text('Luyện tập tự do', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        centerTitle: true,
+        backgroundColor: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
+        foregroundColor: isDarkMode ? Colors.white : Colors.black,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(12),
-              children: [
-                _buildLevelCard('easy', Colors.green.shade600),
-                const SizedBox(height: 10),
-                _buildLevelCard('medium', Colors.orange.shade700),
-                const SizedBox(height: 10),
-                _buildLevelCard('hard', Colors.red.shade700),
-              ],
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Chọn mức độ thử thách',
+                    style: TextStyle(
+                      fontSize: 22, 
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Hệ thống sẽ trộn ngẫu nhiên câu hỏi từ tất cả các khóa học phù hợp với trình độ của bạn.',
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.grey[400] : Colors.grey[600], 
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildModernLevelCard(
+                    'easy',
+                    'Cơ bản',
+                    'Dành cho người mới bắt đầu hoặc muốn ôn lại kiến thức nền tảng.',
+                    [const Color(0xFF4CAF50), const Color(0xFF2E7D32)],
+                    Icons.speed_rounded,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildModernLevelCard(
+                    'medium',
+                    'Trung bình',
+                    'Thử thách khả năng vận dụng kiến thức vào các bài toán thực tế.',
+                    [const Color(0xFFFF9800), const Color(0xFFEF6C00)],
+                    Icons.bolt_rounded,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildModernLevelCard(
+                    'hard',
+                    'Nâng cao',
+                    'Dành cho những chuyên gia muốn chinh phục những kiến thức khó nhất.',
+                    [const Color(0xFFF44336), const Color(0xFFC62828)],
+                    Icons.workspace_premium_rounded,
+                  ),
+                ],
+              ),
             ),
     );
   }
 
-  Widget _buildLevelCard(String level, Color color) {
-    final pool = _poolsByLevel[level] ?? _LevelPool(level: level, questions: const []);
-    final count = pool.questions.length;
-    final canStart = count > 0;
+  Widget _buildModernLevelCard(String level, String title, String desc, List<Color> colors, IconData icon) {
+    final pool = _poolsByLevel[level];
+    final count = pool?.questions.length ?? 0;
+    final bool canStart = count >= 5;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      onTap: canStart ? () => _startLevelTest(level) : () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Cần ít nhất 5 câu hỏi trong hệ thống cho mức độ $title để bắt đầu.')),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          gradient: LinearGradient(colors: colors, begin: Alignment.topLeft, end: Alignment.bottomRight),
+          boxShadow: [
+            BoxShadow(color: colors.last.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 6)),
+          ],
+        ),
+        child: Stack(
           children: [
-            Row(
-              children: [
-                Icon(Icons.fact_check_rounded, color: color),
-                const SizedBox(width: 8),
-                Text(
-                  'Kiểm tra ${_levelTitle(level)}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ],
+            Positioned(
+              right: -20,
+              top: -20,
+              child: Icon(icon, size: 140, color: Colors.white.withOpacity(0.15)),
             ),
-            const SizedBox(height: 8),
-            Text('Ngân hàng câu hỏi: $count câu'),
-            Text('Trộn câu hỏi từ toàn bộ khóa học, random tối đa $_questionCountPerTest câu/lần.'),
-            const Text('Ưu tiên câu bạn chưa từng gặp ở mức này.'),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: canStart ? () => _startLevelTest(level) : null,
-                child: Text(canStart ? 'Bắt đầu kiểm tra ${_levelTitle(level)}' : 'Chưa đủ dữ liệu'),
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
+                        child: Icon(icon, color: Colors.white, size: 24),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(title, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(desc, style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14)),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(color: Colors.black.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
+                        child: Text('Ngân hàng: $count câu', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500)),
+                      ),
+                      if (canStart)
+                        const Row(
+                          children: [
+                            Text('Bắt đầu ngay', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                            SizedBox(width: 4),
+                            Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 14),
+                          ],
+                        )
+                      else
+                        const Text('Chưa đủ dữ liệu', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
@@ -348,8 +297,6 @@ class _ExercisesPageState extends State<ExercisesPage> {
 
 class _LevelPool {
   const _LevelPool({required this.level, required this.questions});
-
   final String level;
   final List<QuizQuestion> questions;
 }
-

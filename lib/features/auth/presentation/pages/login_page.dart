@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:btl/features/admin/presentation/pages/admin_page.dart';
 import 'package:btl/features/home/presentation/pages/home_page.dart';
 import 'package:btl/features/auth/presentation/controllers/auth_controller.dart';
 
@@ -152,10 +151,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (!mounted) return;
     if (widget.controller.isLoggedIn) {
-      final isAdmin = widget.controller.currentUser?.role == 'admin';
-      Navigator.of(context).pushReplacementNamed(
-        isAdmin ? AdminPage.routeName : HomePage.routeName,
-      );
+      Navigator.of(context).pushReplacementNamed(HomePage.routeName);
     }
   }
 
@@ -165,6 +161,10 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+        ),
         title: Text(_isRegisterMode ? 'Tạo Tài Khoản' : 'Đăng Nhập'),
         centerTitle: true,
         elevation: 0,

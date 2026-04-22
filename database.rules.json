@@ -2,38 +2,38 @@
   "rules": {
     "users": {
       "$uid": {
-        ".read": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
-        ".write": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid",
         ".indexOn": ["email", "uid"]
       }
     },
     "profiles": {
       "$uid": {
-        ".read": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
-        ".write": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')"
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
       }
     },
     "sessions": {
       "$uid": {
-        ".read": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
-        ".write": "auth != null && (auth.uid == $uid || root.child('users').child(auth.uid).child('role').val() == 'admin')"
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
       }
     },
     "courses": {
       ".read": "auth != null",
-      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+      ".write": false
     },
     "lessons": {
       ".read": "auth != null",
-      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+      ".write": false
     },
     "quizzes": {
       ".read": "auth != null",
-      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+      ".write": false
     },
     "attempts": {
       "$attemptId": {
-        ".read": "auth != null && (data.child('userId').val() == auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+        ".read": "auth != null && data.child('userId').val() == auth.uid",
         ".write": "auth != null && newData.child('userId').val() == auth.uid"
       }
     },
@@ -45,7 +45,7 @@
     },
     "contacts": {
       "$messageId": {
-        ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+        ".read": false,
         ".write": "auth != null"
       }
     },
@@ -53,4 +53,3 @@
     ".write": false
   }
 }
-

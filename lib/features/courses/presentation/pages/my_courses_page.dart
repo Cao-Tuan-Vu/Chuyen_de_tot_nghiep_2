@@ -299,6 +299,10 @@ class _CourseCatalogPageState extends State<CourseCatalogPage> {
     return Scaffold(
       backgroundColor: isDarkMode ? const Color(0xFF121212) : const Color(0xFFF8FAFC),
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+        ),
         title: const Text('Khám phá khóa học',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
         elevation: 0,

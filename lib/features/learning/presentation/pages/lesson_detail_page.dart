@@ -49,7 +49,7 @@ class _LessonDetailPageState extends State<LessonDetailPage> {
           onPressed: () => Navigator.of(context).maybePop(),
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
-            size: 18,
+            size: 20,
             color: isDarkMode ? Colors.white : const Color(0xFF111827),
           ),
           style: IconButton.styleFrom(

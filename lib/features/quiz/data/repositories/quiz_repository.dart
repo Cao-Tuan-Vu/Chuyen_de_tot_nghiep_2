@@ -6,7 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:btl/features/quiz/domain/entities/quiz.dart';
 
 class QuizRepository {
-  late final FirebaseDatabase _database = _buildDatabase();
+  final FirebaseDatabase _database = FirebaseDatabase.instance;
 
   DatabaseReference get _quizzesRef => _database.ref('quizzes');
   DatabaseReference get _attemptsRef => _database.ref('attempts');
@@ -33,29 +33,71 @@ class QuizRepository {
   Future<Quiz> getQuiz(String quizId) async {
     final snapshot = await _quizzesRef.child(quizId).get();
     if (!snapshot.exists || snapshot.value == null) {
-      if (kDebugMode) {
-        // Helpful debug log when a quiz is not found during development
-        // ignore: avoid_print
-        print('QuizRepository.getQuiz: quizId=$quizId not found; snapshot.exists=${snapshot.exists}; value=${snapshot.value}');
-        try {
-          final app = Firebase.app();
-          // ignore: avoid_print
-          print('Firebase.app().options.databaseURL=${app.options.databaseURL}');
-        } catch (_) {}
-        try {
-          final all = await _quizzesRef.get();
-          // ignore: avoid_print
-          print('Quizzes node exists=${all.exists}; sample=${all.value}');
-        } catch (e) {
-          // ignore
-        }
-      }
       throw Exception('Tai quiz that bai (404): $quizId');
     }
 
     final data = _asMap(snapshot.value);
     data.putIfAbsent('id', () => quizId);
-    return Quiz.fromJson(data);
+    final quiz = Quiz.fromJson(data);
+
+    // Xác định số lượng câu hỏi mục tiêu: 10 cho Final Exam, 5 cho bài học thường
+    final isFinal = await _isFinalQuiz(quizId);
+    final targetCount = isFinal ? 10 : 5;
+
+    if (quiz.questions.length == targetCount) return quiz;
+
+    if (quiz.questions.length > targetCount) {
+      return Quiz(
+        id: quiz.id,
+        courseId: quiz.courseId,
+        lessonId: quiz.lessonId,
+        title: quiz.title,
+        questions: quiz.questions.take(targetCount).toList(),
+      );
+    }
+
+    // Nếu thiếu câu hỏi, lấy thêm từ các quiz khác
+    try {
+      final allQuizzesSnap = await _quizzesRef.get();
+      final List<QuizQuestion> additionalQuestions = [];
+      if (allQuizzesSnap.exists && allQuizzesSnap.value is Map) {
+        final all = _asMap(allQuizzesSnap.value);
+        for (final qData in all.values) {
+          final otherQuiz = Quiz.fromJson(_asMap(qData));
+          for (final q in otherQuiz.questions) {
+            if (!quiz.questions.any((existing) => existing.prompt == q.prompt)) {
+              additionalQuestions.add(q);
+            }
+          }
+        }
+      }
+      
+      additionalQuestions.shuffle();
+      final combined = [...quiz.questions, ...additionalQuestions].take(targetCount).toList();
+      
+      // Đảm bảo ID duy nhất cho phiên làm bài này để tránh lỗi UI tự chọn đáp án
+      final sessionQuestions = <QuizQuestion>[];
+      for (int i = 0; i < combined.length; i++) {
+        final q = combined[i];
+        sessionQuestions.add(QuizQuestion(
+          id: 's${i}_${q.id}', 
+          prompt: q.prompt,
+          options: q.options,
+          correctIndex: q.correctIndex,
+          explanation: q.explanation,
+        ));
+      }
+
+      return Quiz(
+        id: quiz.id,
+        courseId: quiz.courseId,
+        lessonId: quiz.lessonId,
+        title: quiz.title,
+        questions: sessionQuestions,
+      );
+    } catch (_) {
+      return quiz;
+    }
   }
 
   Future<QuizAttemptResult> submitQuiz({
@@ -306,11 +348,7 @@ class QuizRepository {
   /// implement this debug helper.
   static Future<Map<String, dynamic>> listAllQuizzesStatic() async {
     try {
-      final app = Firebase.app();
-      final databaseUrl = app.options.databaseURL;
-      final db = (databaseUrl != null && databaseUrl.isNotEmpty)
-          ? FirebaseDatabase.instanceFor(app: app, databaseURL: databaseUrl)
-          : FirebaseDatabase.instance;
+      final db = FirebaseDatabase.instance;
       final snapshot = await db.ref('quizzes').get();
       if (!snapshot.exists || snapshot.value == null) {
         return {};
@@ -327,17 +365,5 @@ class QuizRepository {
     }
   }
 
-  FirebaseDatabase _buildDatabase() {
-    try {
-      final app = Firebase.app();
-      final databaseUrl = app.options.databaseURL;
-      if (databaseUrl != null && databaseUrl.isNotEmpty) {
-        return FirebaseDatabase.instanceFor(app: app, databaseURL: databaseUrl);
-      }
-    } catch (_) {
-      // ignore and fall back to default instance
-    }
-    return FirebaseDatabase.instance;
-  }
 }
 

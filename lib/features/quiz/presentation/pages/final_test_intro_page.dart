@@ -40,6 +40,10 @@ class FinalTestIntroPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+        ),
         title: const Text('Test Tổng Hợp'),
         centerTitle: true,
         elevation: 0,

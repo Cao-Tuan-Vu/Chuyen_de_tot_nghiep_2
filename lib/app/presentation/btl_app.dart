@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:btl/features/admin/presentation/pages/admin_page.dart';
 import 'package:btl/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:btl/features/auth/presentation/pages/login_page.dart';
 import 'package:btl/features/home/presentation/pages/contact_page.dart';
@@ -40,7 +39,6 @@ class _BtlAppState extends State<BtlApp> {
     final targetRoute = AppRouteGuard.resolveNamedRoute(
       requestedRoute: requestedRoute,
       isLoggedIn: _authController.isLoggedIn,
-      role: _authController.currentUser?.role,
     );
 
     return MaterialPageRoute<void>(
@@ -60,8 +58,6 @@ class _BtlAppState extends State<BtlApp> {
       case CourseListPage.routeName:
         // Keep existing CourseListPage route for compatibility
         return CourseListPage(controller: _authController);
-      case AdminPage.routeName:
-        return AdminPage(controller: _authController);
       case ContactPage.routeName:
         return const ContactPage();
       case PolicyPage.routeName:
@@ -80,7 +76,6 @@ class _BtlAppState extends State<BtlApp> {
       builder: (context, _) {
         final initialRoute = AppRouteGuard.resolveInitialRoute(
           isLoggedIn: _authController.isLoggedIn,
-          role: _authController.currentUser?.role,
         );
 
         return MaterialApp(

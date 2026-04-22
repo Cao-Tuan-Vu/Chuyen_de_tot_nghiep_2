@@ -8,7 +8,7 @@ import 'package:btl/features/learning/domain/entities/course.dart';
 import 'package:btl/features/learning/domain/entities/lesson.dart';
 
 class LearningRepository {
-  late final FirebaseDatabase _database = _buildDatabase();
+  final FirebaseDatabase _database = FirebaseDatabase.instance;
   static const Duration _requestTimeout = Duration(seconds: 15);
 
   DatabaseReference get _coursesRef => _database.ref('courses');
@@ -135,13 +135,4 @@ class LearningRepository {
     }
   }
 
-  FirebaseDatabase _buildDatabase() {
-    final app = Firebase.app();
-    final databaseUrl = app.options.databaseURL;
-    if (databaseUrl != null && databaseUrl.isNotEmpty) {
-      return FirebaseDatabase.instanceFor(app: app, databaseURL: databaseUrl);
-    }
-
-    return FirebaseDatabase.instance;
-  }
 }

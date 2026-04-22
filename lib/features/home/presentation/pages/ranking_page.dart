@@ -349,7 +349,7 @@ class _RankingPageState extends State<RankingPage> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FF),
+      backgroundColor: isDarkMode ? const Color(0xFF121212) : const Color(0xFFF5F7FF),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
@@ -367,7 +367,7 @@ class _RankingPageState extends State<RankingPage> {
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 120),
                     sliver: _rankings.length <= 3
                             ? (_rankings.isEmpty
-                                ? SliverToBoxAdapter(child: _buildEmptyRankingState())
+                                ? SliverToBoxAdapter(child: _buildEmptyRankingState(isDarkMode))
                                 : const SliverToBoxAdapter(child: SizedBox.shrink()))
                         : SliverList(
                             delegate: SliverChildBuilderDelegate(
@@ -398,7 +398,7 @@ class _RankingPageState extends State<RankingPage> {
         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
         onPressed: () => Navigator.pop(context),
       ),
       actions: [
@@ -461,12 +461,12 @@ class _RankingPageState extends State<RankingPage> {
     );
   }
 
-  Widget _buildEmptyRankingState() {
+  Widget _buildEmptyRankingState(bool isDarkMode) {
     return Container(
       margin: const EdgeInsets.only(top: 28),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -488,15 +488,15 @@ class _RankingPageState extends State<RankingPage> {
             child: const Icon(Icons.emoji_events_outlined, color: Color(0xFF6366F1), size: 30),
           ),
           const SizedBox(height: 14),
-          const Text(
+          Text(
             'Chưa có dữ liệu kiểm tra',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: isDarkMode ? Colors.white : const Color(0xFF0F172A)),
           ),
           const SizedBox(height: 6),
           Text(
             'Hãy hoàn thành các bài kiểm tra Dễ / Trung bình / Khó để xuất hiện trên bảng xếp hạng.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13, color: Colors.grey[600], height: 1.4),
+            style: TextStyle(fontSize: 13, color: isDarkMode ? Colors.grey[400] : Colors.grey[600], height: 1.4),
           ),
         ],
       ),

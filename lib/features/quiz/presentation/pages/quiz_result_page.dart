@@ -22,42 +22,29 @@ class _QuizResultPageState extends State<QuizResultPage> {
   final _db = FirebaseDatabase.instance.ref();
 
   String? _readStringField(Map? data, List<String> keys) {
-    if (data == null) {
-      return null;
-    }
+    if (data == null) return null;
     for (final key in keys) {
       final value = data[key];
-      if (value is String && value.isNotEmpty) {
-        return value;
-      }
+      if (value is String && value.isNotEmpty) return value;
     }
     return null;
   }
 
   Future<String?> _resolveLessonId() async {
-    // 1) Prefer lessonId already attached in loaded quiz object.
-    if (widget.quiz.lessonId.isNotEmpty) {
-      return widget.quiz.lessonId;
-    }
+    if (widget.quiz.lessonId.isNotEmpty) return widget.quiz.lessonId;
 
-    // 2) Try read from quizzes/{quizId} with both new/legacy keys.
     final quizSnap = await _db.child('quizzes/${widget.quiz.id}').get();
     if (quizSnap.exists && quizSnap.value is Map) {
       final quizData = quizSnap.value as Map;
       final fromQuiz = _readStringField(quizData, const ['lessonId', 'lesson']);
-      if (fromQuiz != null) {
-        return fromQuiz;
-      }
+      if (fromQuiz != null) return fromQuiz;
     }
 
-    // 3) Fallback: find lesson by matching lesson.quizId/lesson.quiz == quizId.
     final lessonsSnap = await _db.child('lessons').get();
     if (lessonsSnap.exists && lessonsSnap.value is Map) {
       final lessons = Map<String, dynamic>.from(lessonsSnap.value as Map);
       for (final entry in lessons.entries) {
-        if (entry.value is! Map) {
-          continue;
-        }
+        if (entry.value is! Map) continue;
         final lessonData = entry.value as Map;
         final quizRef = _readStringField(lessonData, const ['quizId', 'quiz']);
         if (quizRef == widget.quiz.id) {
@@ -66,15 +53,11 @@ class _QuizResultPageState extends State<QuizResultPage> {
         }
       }
     }
-
     return null;
   }
 
   void _goBackToPreviousPage() {
-    final navigator = Navigator.of(context);
-    if (navigator.canPop()) {
-      navigator.pop();
-    }
+    Navigator.of(context).pop();
   }
 
   @override
@@ -83,515 +66,316 @@ class _QuizResultPageState extends State<QuizResultPage> {
     _markLessonCompleted();
   }
 
-  /// Mark lesson hoàn thành khi quiz được submit
   Future<void> _markLessonCompleted() async {
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId == null) return;
-
       final lessonId = await _resolveLessonId();
-      if (lessonId == null || lessonId.isEmpty) {
-        return;
-      }
+      if (lessonId == null || lessonId.isEmpty) return;
 
-      // Mark lesson hoàn thành
       await _db.child('users/$userId/completedLessons/$lessonId').set({
         'completedAt': DateTime.now().toIso8601String(),
       });
-
-    } catch (e) {
-      return;
-    }
+    } catch (_) {}
   }
 
   @override
   Widget build(BuildContext context) {
-    final percentage = ((widget.result.score / widget.result.total) * 100).toStringAsFixed(1);
-    final isPassed = widget.result.score >= (widget.result.total * 0.6); // 60% để pass
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scoreRatio = widget.result.total == 0 ? 0.0 : widget.result.score / widget.result.total;
+    final percentage = (scoreRatio * 100).toStringAsFixed(1);
+    final isPassed = scoreRatio >= 0.6;
+    
     final correctCount = widget.result.review.where((item) => item.isCorrect).length;
     final wrongCount = widget.result.review.where((item) => !item.isCorrect && item.selectedIndex != null).length;
     final unansweredCount = widget.result.review.where((item) => item.selectedIndex == null).length;
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) {
-          _goBackToPreviousPage();
-        }
-      },
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: _goBackToPreviousPage,
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
         ),
-        title: const Text('Kết quả Quiz'),
+        title: const Text('Kết quả bài thi', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
         elevation: 0,
-        backgroundColor: const Color(0xFF6366F1),
+        backgroundColor: isPassed ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+        foregroundColor: Colors.white,
       ),
-      body: Column(
-        children: [
-          // ==================== SCORE BANNER ====================
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF6366F1), Color(0xFF818CF8)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildScoreBanner(isPassed, percentage, scoreRatio, isDark),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  _buildSummaryRow(correctCount, wrongCount, unansweredCount),
+                  const SizedBox(height: 24),
+                  _buildReviewList(isDark),
+                  const SizedBox(height: 24),
+                  _buildActionButtons(isDark),
+                  const SizedBox(height: 40),
+                ],
               ),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
-            child: Column(
-              children: [
-                Text(
-                  widget.quiz.title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                // Score Display
-                Container(
-                  width: 140,
-                  height: 140,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.2),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 3,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '${widget.result.score}/${widget.result.total}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 42,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        '$percentage%',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Status
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isPassed ? Colors.green : Colors.orange,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    isPassed ? '✅ Đạt yêu cầu' : '⚠️ Chưa đạt',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
+        ),
+      ),
+    );
+  }
 
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+  Widget _buildScoreBanner(bool isPassed, String percentage, double scoreRatio, bool isDark) {
+    final baseColor = isPassed ? const Color(0xFF10B981) : const Color(0xFFF59E0B);
+    
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: baseColor,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(40),
+          bottomRight: Radius.circular(40),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(24, 10, 24, 40),
+      child: Column(
+        children: [
+          Icon(
+            isPassed ? Icons.emoji_events_rounded : Icons.sentiment_dissatisfied_rounded,
+            size: 80,
+            color: Colors.white.withOpacity(0.9),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            isPassed ? 'XUẤT SẮC!' : 'CỐ GẮNG HƠN NHÉ!',
+            style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            isPassed ? 'Bạn đã hoàn thành bài thi đạt yêu cầu.' : 'Bạn cần đạt tối thiểu 60% để vượt qua.',
+            style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 30),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 140,
+                height: 140,
+                child: CircularProgressIndicator(
+                  value: scoreRatio,
+                  strokeWidth: 12,
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$percentage%',
+                    style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900),
+                  ),
+                  Text(
+                    '${widget.result.score}/${widget.result.total}',
+                    style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryRow(int correct, int wrong, int unanswered) {
+    return Row(
+      children: [
+        _SummaryCard(label: 'Đúng', value: '$correct', color: const Color(0xFF10B981), icon: Icons.check_circle_rounded),
+        const SizedBox(width: 12),
+        _SummaryCard(label: 'Sai', value: '$wrong', color: const Color(0xFFEF4444), icon: Icons.cancel_rounded),
+        const SizedBox(width: 12),
+        _SummaryCard(label: 'Bỏ qua', value: '$unanswered', color: const Color(0xFF64748B), icon: Icons.remove_circle_outline_rounded),
+      ],
+    );
+  }
+
+  Widget _buildReviewList(bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Xem lại đáp án',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        ...List.generate(widget.result.review.length, (index) {
+          final review = widget.result.review[index];
+          final question = widget.quiz.questions.firstWhere((q) => q.id == review.questionId, 
+              orElse: () => QuizQuestion(id: '', prompt: 'Câu hỏi không tồn tại', options: []));
+          
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: review.isCorrect 
+                    ? const Color(0xFF10B981).withOpacity(0.3) 
+                    : const Color(0xFFEF4444).withOpacity(0.3),
+                width: 1,
+              ),
+            ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Expanded(
-                      child: _MiniSummaryCard(
-                        title: 'Đúng',
-                        value: '$correctCount',
-                        icon: Icons.check_circle_rounded,
-                        color: Colors.green,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: (review.isCorrect ? const Color(0xFF10B981) : const Color(0xFFEF4444)).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        'Câu ${index + 1}',
+                        style: TextStyle(
+                          color: review.isCorrect ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _MiniSummaryCard(
-                        title: 'Sai',
-                        value: '$wrongCount',
-                        icon: Icons.cancel_rounded,
-                        color: Colors.red,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _MiniSummaryCard(
-                        title: 'Bỏ qua',
-                        value: '$unansweredCount',
-                        icon: Icons.remove_circle_outline_rounded,
-                        color: Colors.orange,
-                      ),
+                    const Spacer(),
+                    Icon(
+                      review.isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                      color: review.isCorrect ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                      size: 20,
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 14,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Tiến độ tổng kết',
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
-                          ),
-                          Text(
-                            '$percentage%',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w900,
-                              color: isPassed ? Colors.green : Colors.orange,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(999),
-                        child: LinearProgressIndicator(
-                          minHeight: 10,
-                          value: widget.result.total == 0 ? 0 : widget.result.score / widget.result.total,
-                          backgroundColor: Colors.grey.withValues(alpha: 0.15),
-                          color: isPassed ? Colors.green : const Color(0xFFF59E0B),
-                        ),
-                      ),
-                    ],
-                  ),
+                Text(
+                  question.prompt,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
+                const SizedBox(height: 12),
+                if (!review.isCorrect) ...[
+                  _AnswerInfo(
+                    label: 'Bạn chọn:', 
+                    value: review.selectedIndex != null ? question.options[review.selectedIndex!] : 'Chưa chọn',
+                    color: const Color(0xFFEF4444),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+                _AnswerInfo(
+                  label: 'Đáp án đúng:', 
+                  value: question.options[review.correctIndex],
+                  color: const Color(0xFF10B981),
+                ),
+                if (review.explanation.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'Giải thích: ${review.explanation}',
+                      style: const TextStyle(fontSize: 13, fontStyle: FontStyle.italic, color: Colors.blue),
+                    ),
+                  ),
+                ],
               ],
             ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons(bool isDark) {
+    return Column(
+      children: [
+        ElevatedButton(
+          onPressed: _goBackToPreviousPage,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue[600],
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 56),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 0,
           ),
-
-          // ==================== DETAILS ====================
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: widget.result.review.length,
-              itemBuilder: (context, index) {
-                final review = widget.result.review[index];
-                final question = widget.quiz.questions.firstWhere(
-                  (item) => item.id == review.questionId,
-                  orElse: () => QuizQuestion(
-                    id: '',
-                    prompt: '(Câu hỏi không tìm thấy)',
-                    options: <String>[],
-                  ),
-                );
-
-                final hasOptions = question.options.isNotEmpty;
-                final validIndex =
-                    review.correctIndex >= 0 &&
-                    review.correctIndex < question.options.length;
-                final correctAnswer = (hasOptions && validIndex)
-                    ? question.options[review.correctIndex]
-                    : '(không có đáp án)';
-                final validSelectedIndex =
-                    review.selectedIndex != null &&
-                    review.selectedIndex! >= 0 &&
-                    review.selectedIndex! < question.options.length;
-                final selectedAnswer = validSelectedIndex
-                    ? question.options[review.selectedIndex!]
-                    : null;
-
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: review.isCorrect
-                          ? Colors.green.withValues(alpha: 0.3)
-                          : Colors.red.withValues(alpha: 0.3),
-                      width: 2,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Question Number and Status
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'Câu ${index + 1}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                            Icon(
-                              review.isCorrect
-                                  ? Icons.check_circle
-                                  : Icons.cancel,
-                              color: review.isCorrect
-                                  ? Colors.green
-                                  : Colors.red,
-                              size: 28,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        // Question Text
-                        Text(
-                          question.prompt,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        // Status Detail
-                        if (review.isCorrect)
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.green.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.check,
-                                  color: Colors.green,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    'Đúng. ${review.explanation}',
-                                    style: const TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        else
-                          Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.red.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.close,
-                                      color: Colors.red,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        'Sai. ${review.explanation}',
-                                        style: const TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.lightbulb,
-                                      color: Colors.blue,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Đáp án đúng:',
-                                            style: TextStyle(
-                                              color: Colors.blue,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            correctAnswer,
-                                            style: const TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.orange.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.person_outline,
-                                color: Colors.orange,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Bạn đã chọn:',
-                                      style: TextStyle(
-                                        color: Colors.orange,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      selectedAnswer ?? '(chưa chọn đáp án)',
-                                      style: const TextStyle(
-                                        color: Colors.orange,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+          child: const Text('QUAY LẠI KHÓA HỌC', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
+        ),
+        const SizedBox(height: 12),
+        TextButton(
+          onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+          child: Text(
+            'Về trang chủ',
+            style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600], fontWeight: FontWeight.w600),
           ),
-
-          // ==================== BACK BUTTON ====================
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _goBackToPreviousPage,
-                icon: const Icon(Icons.arrow_back),
-                label: const Text('Quay lại khóa học'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6366F1),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
+        ),
+      ],
     );
   }
 }
 
-class _MiniSummaryCard extends StatelessWidget {
-  const _MiniSummaryCard({
-    required this.title,
-    required this.value,
-    required this.icon,
-    required this.color,
-  });
-
-  final String title;
+class _SummaryCard extends StatelessWidget {
+  final String label;
   final String value;
-  final IconData icon;
   final Color color;
+  final IconData icon;
+
+  const _SummaryCard({required this.label, required this.value, required this.color, required this.icon});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.18)),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: color),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            title,
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.grey[700]),
-          ),
-        ],
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withOpacity(0.2)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(height: 8),
+            Text(value, style: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.w900)),
+            Text(label, style: TextStyle(color: color.withOpacity(0.8), fontSize: 12, fontWeight: FontWeight.bold)),
+          ],
+        ),
       ),
     );
   }
 }
 
+class _AnswerInfo extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _AnswerInfo({required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey[600])),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: color)),
+        ),
+      ],
+    );
+  }
+}

@@ -1,0 +1,1963 @@
+{
+  "attempts": {
+    "-OqiDBFH-H4eNe_oKkAm": {
+      "attemptId": "-OqiDBFH-H4eNe_oKkAm",
+      "attemptType": "level_test",
+      "level": "easy",
+      "questionIds": [
+        "quiz_d001_q3_2",
+        "quiz_d004_q2_1",
+        "quiz_d005_q1_0",
+        "quiz_d004_q1_0",
+        "quiz_d001_q2_1",
+        "quiz_d003_q4_3",
+        "quiz_d003_q5_4",
+        "quiz_d005_q3_2",
+        "quiz_d003_q3_2",
+        "quiz_d002_q1_0"
+      ],
+      "quizId": "easy_assessment_1776744441392",
+      "quizTitle": "Kiểm tra Easy",
+      "review": [
+        {
+          "correctIndex": 2,
+          "explanation": "",
+          "isCorrect": false,
+          "questionId": "quiz_d001_q3_2",
+          "selectedIndex": 0
+        },
+        {
+          "correctIndex": 1,
+          "explanation": "",
+          "isCorrect": true,
+          "questionId": "quiz_d004_q2_1",
+          "selectedIndex": 1
+        },
+        {
+          "correctIndex": 0,
+          "explanation": "",
+          "isCorrect": true,
+          "questionId": "quiz_d005_q1_0",
+          "selectedIndex": 0
+        },
+        {
+          "correctIndex": 0,
+          "explanation": "",
+          "isCorrect": false,
+          "questionId": "quiz_d004_q1_0",
+          "selectedIndex": 3
+        },
+        {
+          "correctIndex": 2,
+          "explanation": "",
+          "isCorrect": true,
+          "questionId": "quiz_d001_q2_1",
+          "selectedIndex": 2
+        },
+        {
+          "correctIndex": 2,
+          "explanation": "",
+          "isCorrect": true,
+          "questionId": "quiz_d003_q4_3",
+          "selectedIndex": 2
+        },
+        {
+          "correctIndex": 1,
+          "explanation": "",
+          "isCorrect": false,
+          "questionId": "quiz_d003_q5_4",
+          "selectedIndex": 0
+        },
+        {
+          "correctIndex": 1,
+          "explanation": "",
+          "isCorrect": true,
+          "questionId": "quiz_d005_q3_2",
+          "selectedIndex": 1
+        },
+        {
+          "correctIndex": 3,
+          "explanation": "",
+          "isCorrect": true,
+          "questionId": "quiz_d003_q3_2",
+          "selectedIndex": 3
+        },
+        {
+          "correctIndex": 1,
+          "explanation": "",
+          "isCorrect": false,
+          "questionId": "quiz_d002_q1_0",
+          "selectedIndex": 0
+        }
+      ],
+      "score": 6,
+      "submittedAt": "2026-04-21T04:07:29.041900Z",
+      "total": 10,
+      "userId": "CcMUHVMhEsNICagTAPyz2C3V9mu1"
+    }
+  },
+  "contacts": {
+    "msg001": {
+      "email": "user@btl.com",
+      "msg": "Help needed",
+      "name": "User",
+      "subj": "Support"
+    }
+  },
+  "courses": {
+    "dart_basics": {
+      "desc": "Học ngôn ngữ Dart từ cơ bản dành cho người mới bắt đầu",
+      "finalQuiz": "quiz_dart_final",
+      "id": "dart_basics",
+      "level": "beginner",
+      "title": "Lập trình Dart Cơ bản"
+    },
+    "flutter_ui": {
+      "desc": "Xây dựng giao diện ứng dụng hiện đại và đẹp mắt với Flutter",
+      "id": "flutter_ui",
+      "level": "intermediate",
+      "title": "Thiết kế Giao diện Flutter"
+    },
+    "oop": {
+      "desc": "Tìm hiểu các nguyên lý lập trình hướng đối tượng trong phát triển phần mềm",
+      "finalQuiz": "quiz_oop_final",
+      "id": "oop",
+      "level": "advanced",
+      "title": "Lập trình Hướng đối tượng"
+   },
+    "laravel": {
+      "id": "laravel",
+      "title": "Lập trình Laravel",
+      "desc": "Học Laravel từ cơ bản đến phát triển ứng dụng web thực tế",
+      "description": "Học Laravel từ cơ bản đến phát triển ứng dụng web thực tế",
+      "level": "intermediate",
+      "finalQuiz": "quiz_laravel_final"
+    },
+    "firebase_fundamentals": {
+      "id": "firebase_fundamentals",
+      "title": "Cơ bản về Firebase",
+      "desc": "Sử dụng các dịch vụ Firebase cho ứng dụng di động và web",
+      "description": "Sử dụng các dịch vụ Firebase cho ứng dụng di động và web",
+      "level": "intermediate",
+      "finalQuiz": "quiz_firebase_final"
+    },
+    "php_basics": {
+      "id": "php_basics",
+      "title": "Lập trình PHP Cơ bản",
+      "desc": "Học cú pháp PHP, logic backend và căn bản về phía máy chủ",
+      "description": "Học cú pháp PHP, logic backend và căn bản về phía máy chủ",
+      "level": "beginner",
+      "finalQuiz": "quiz_php_final"
+    },
+    "python_basics": {
+      "id": "python_basics",
+      "title": "Lập trình Python Cơ bản",
+      "desc": "Nắm vững các khái niệm lập trình Python nền tảng",
+      "description": "Nắm vững các khái niệm lập trình Python nền tảng",
+      "level": "beginner",
+      "finalQuiz": "quiz_python_final"
+    },
+    "java_core": {
+      "id": "java_core",
+      "title": "Lập trình Java Core",
+      "desc": "Các khái niệm Java cốt lõi cho phát triển backend và hướng đối tượng",
+      "description": "Các khái niệm Java cốt lõi cho phát triển backend và hướng đối tượng",
+      "level": "advanced",
+      "finalQuiz": "quiz_java_final"
+    },
+     "sql_fundamentals": {
+       "id": "sql_fundamentals",
+       "title": "Cơ sở dữ liệu SQL",
+       "desc": "Học truy vấn SQL và các khái niệm cơ bản về cơ sở dữ liệu quan hệ",
+       "description": "Học truy vấn SQL và các khái niệm cơ bản về cơ sở dữ liệu quan hệ",
+       "level": "advanced",
+       "finalQuiz": "quiz_sql_final"
+     },
+     "dart_advanced": {
+       "id": "dart_advanced",
+       "title": "Dart Nâng cao",
+       "desc": "Xử lý ngoại lệ, async/await, package quản lý và kỹ thuật Dart tiên tiến",
+       "description": "Xử lý ngoại lệ, async/await, package quản lý và kỹ thuật Dart tiên tiến",
+       "level": "advanced",
+       "finalQuiz": "quiz_dart_advanced_final"
+     },
+     "flutter_advanced": {
+       "id": "flutter_advanced",
+       "title": "Flutter Nâng cao",
+       "desc": "Kiến trúc clean code, state management, animation, custom widgets và performance optimization",
+       "description": "Kiến trúc clean code, state management, animation, custom widgets và performance optimization",
+       "level": "advanced",
+       "finalQuiz": "quiz_flutter_advanced_final"
+     },
+     "php_advanced": {
+       "id": "php_advanced",
+       "title": "PHP Nâng cao",
+       "desc": "OOP, Namespace, PSR standards, Composer, Testing và Design Patterns",
+       "description": "OOP, Namespace, PSR standards, Composer, Testing và Design Patterns",
+       "level": "advanced",
+       "finalQuiz": "quiz_php_advanced_final"
+     },
+     "python_advanced": {
+       "id": "python_advanced",
+       "title": "Python Nâng cao",
+       "desc": "Functional programming, Decorator, Context manager, Testing, Async programming",
+       "description": "Functional programming, Decorator, Context manager, Testing, Async programming",
+       "level": "advanced",
+       "finalQuiz": "quiz_python_advanced_final"
+     },
+     "java_advanced": {
+       "id": "java_advanced",
+       "title": "Java Nâng cao",
+       "desc": "Stream API, Collections Framework, Multithreading, Networking, Reflection",
+       "description": "Stream API, Collections Framework, Multithreading, Networking, Reflection",
+       "level": "advanced",
+       "finalQuiz": "quiz_java_advanced_final"
+     },
+     "sql_advanced": {
+       "id": "sql_advanced",
+       "title": "SQL Nâng cao",
+       "desc": "Index, Stored Procedures, Transactions, Window Functions, Query Optimization",
+       "description": "Index, Stored Procedures, Transactions, Window Functions, Query Optimization",
+       "level": "advanced",
+       "finalQuiz": "quiz_sql_advanced_final"
+     },
+     "laravel_advanced": {
+       "id": "laravel_advanced",
+       "title": "Laravel Nâng cao",
+       "desc": "Authentication, Authorization, API Development, Queue, Testing, Deployment",
+       "description": "Authentication, Authorization, API Development, Queue, Testing, Deployment",
+       "level": "advanced",
+       "finalQuiz": "quiz_laravel_advanced_final"
+     },
+     "firebase_advanced": {
+       "id": "firebase_advanced",
+       "title": "Firebase Nâng cao",
+       "desc": "Cloud Functions, Cloud Messaging, Analytics, Performance Monitoring, Security Rules",
+       "description": "Cloud Functions, Cloud Messaging, Analytics, Performance Monitoring, Security Rules",
+       "level": "advanced",
+       "finalQuiz": "quiz_firebase_advanced_final"
+     },
+     "oop_advanced": {
+       "id": "oop_advanced",
+       "title": "OOP Nâng cao",
+       "desc": "Design Patterns, SOLID Principles, Clean Code, Refactoring, Best Practices",
+       "description": "Design Patterns, SOLID Principles, Clean Code, Refactoring, Best Practices",
+       "level": "advanced",
+       "finalQuiz": "quiz_oop_advanced_final"
+     }
+  },
+  "exercises": {
+    "ex_d001": {
+      "description": "Viết hàm main() in ra 'Hello, Dart!'",
+      "hint": "Sử dụng print() trong hàm main để in chuỗi ra console.",
+      "id": "ex_d001",
+      "language": "dart",
+      "lessonId": "lesson_d001",
+      "solution": "void main() {\n  print('Hello, Dart!');\n}\n",
+      "starterCode": "void main() {\n  // TODO: in ra 'Hello, Dart!'\n}\n",
+      "tests": [
+        {
+          "expected": "Hello, Dart!",
+          "input": ""
+        }
+      ],
+      "title": "Hello Dart"
+    },
+    "ex_d002": {
+      "description": "Viết hàm sum(List<int> a) trả về tổng các phần tử trong a.",
+      "hint": "Dùng vòng lặp for hoặc methods của Iterable như fold/reduce để tính tổng.",
+      "id": "ex_d002",
+      "language": "dart",
+      "lessonId": "lesson_d002",
+      "solution": "int sum(List<int> a) {\n  var total = 0;\n  for (var v in a) {\n    total += v;\n  }\n  return total;\n}\n",
+      "starterCode": "int sum(List<int> a) {\n  // TODO: trả về tổng các phần tử\n  return 0;\n}\n",
+      "tests": [
+        {
+          "expected": "6",
+          "input": "[1,2,3]"
+        },
+        {
+          "expected": "0",
+          "input": "[]"
+        },
+        {
+          "expected": "0",
+          "input": "[-1,1]"
+        }
+      ],
+      "title": "Tính tổng mảng"
+    },
+    "ex_d003": {
+      "description": "Viết hàm countEven(List<int> a) trả về số lượng số chẵn trong a.",
+      "hint": "Dò từng phần tử và kiểm tra v % 2 == 0 hoặc dùng where và đếm kết quả.",
+      "id": "ex_d003",
+      "language": "dart",
+      "lessonId": "lesson_d003",
+      "solution": "int countEven(List<int> a) {\n  var cnt = 0;\n  for (var v in a) {\n    if (v % 2 == 0) cnt++;\n  }\n  return cnt;\n}\n",
+      "starterCode": "int countEven(List<int> a) {\n  // TODO\n  return 0;\n}\n",
+      "tests": [
+        {
+          "expected": "2",
+          "input": "[1,2,3,4]"
+        },
+        {
+          "expected": "0",
+          "input": "[1,3,5]"
+        }
+      ],
+      "title": "Đếm số chẵn"
+    },
+    "ex_d004": {
+      "description": "Viết hàm increase(x) trả về x + 1, dùng arrow syntax.",
+      "hint": "Arrow function là cú pháp ngắn: (args) => expression; trả về expression đó.",
+      "id": "ex_d004",
+      "language": "dart",
+      "lessonId": "lesson_d004",
+      "solution": "int increase(int x) => x + 1;\n",
+      "starterCode": "int increase(int x) => x + 1;\n",
+      "tests": [
+        {
+          "expected": "2",
+          "input": "1"
+        },
+        {
+          "expected": "1",
+          "input": "0"
+        }
+      ],
+      "title": "Hàm Arrow"
+    },
+    "ex_d005": {
+      "description": "Viết hàm countChars(String s) trả về số ký tự của s.",
+      "hint": "String có property length trả về số ký tự.",
+      "id": "ex_d005",
+      "language": "dart",
+      "lessonId": "lesson_d005",
+      "solution": "int countChars(String s) {\n  return s.length;\n}\n",
+      "starterCode": "int countChars(String s) {\n  return s.length;\n}\n",
+      "tests": [
+        {
+          "expected": "5",
+          "input": "hello"
+        },
+        {
+          "expected": "0",
+          "input": ""
+        }
+      ],
+      "title": "Đếm ký tự"
+    },
+    "ex_f001": {
+      "description": "Tạo widget đơn giản hiển thị 'Hello Flutter' trong một Text widget.",
+      "hint": "Tạo StatelessWidget và trả về Text('Hello Flutter') trong build.",
+      "id": "ex_f001",
+      "language": "dart",
+      "lessonId": "lesson_f001",
+      "solution": "import 'package:flutter/widgets.dart';\nclass HelloWidget extends StatelessWidget { @override Widget build(BuildContext context) { return Text('Hello Flutter'); } }\n",
+      "starterCode": "import 'package:flutter/widgets.dart';\nclass HelloWidget extends StatelessWidget { @override Widget build(BuildContext context) { return Text('Hello Flutter'); } }\n",
+      "tests": [
+        {
+          "expected": "Hello Flutter",
+          "input": ""
+        }
+      ],
+      "title": "Hiển thị Text"
+    },
+    "ex_f002": {
+      "description": "Tạo StatefulWidget chứa counter và nút increase; viết method to increase counter.",
+      "hint": "Sử dụng StatefulWidget, lưu _count trong State và tăng trong setState().",
+      "id": "ex_f002",
+      "language": "dart",
+      "lessonId": "lesson_f002",
+      "solution": "import 'package:flutter/material.dart';\nclass CounterWidget extends StatefulWidget { @override _CounterWidgetState createState() => _CounterWidgetState(); }\nclass _CounterWidgetState extends State<CounterWidget> { int _count = 0; void increase() { setState(() { _count++; }); } @override Widget build(BuildContext context) { return Column(children: [Text('$_count'), ElevatedButton(onPressed: increase, child: Text('Inc'))]); } }\n",
+      "starterCode": "import 'package:flutter/material.dart';\nclass CounterWidget extends StatefulWidget { @override _CounterWidgetState createState() => _CounterWidgetState(); }\nclass _CounterWidgetState extends State<CounterWidget> { int _count = 0; void increase() { setState(() { _count++; }); } @override Widget build(BuildContext context) { return Text('$_count'); } }\n",
+      "tests": [
+        {
+          "expected": "0",
+          "input": ""
+        }
+      ],
+      "title": "State Counter"
+    },
+    "ex_o001": {
+      "description": "Tạo class Person có fields name và age, và method greet() trả về 'Hi, I am <name>'.",
+      "hint": "Khai báo các field và constructor; phương thức greet trả về chuỗi sử dụng name.",
+      "id": "ex_o001",
+      "language": "dart",
+      "lessonId": "lesson_o001",
+      "solution": "class Person {\n  String name;\n  int age;\n  Person(this.name, this.age);\n  String greet() => 'Hi, I am ' + name;\n}\n",
+      "starterCode": "class Person {\n  String name;\n  int age;\n  Person(this.name, this.age);\n  String greet() => 'Hi, I am ' + name;\n}\n",
+      "tests": [
+        {
+          "expected": "Hi, I am Alice",
+          "input": "('Alice',20)"
+        }
+      ],
+      "title": "Tạo class Person"
+    },
+    "ex_o002": {
+      "description": "Tạo class Car extends Vehicle và override method info().",
+      "hint": "Sử dụng extends và gọi super(name) trong constructor; override info() để trả về 'Car: '+name.",
+      "id": "ex_o002",
+      "language": "dart",
+      "lessonId": "lesson_o002",
+      "solution": "class Vehicle { String name; Vehicle(this.name); String info() => name; }\nclass Car extends Vehicle { Car(String name): super(name); @override String info() => 'Car: ' + name; }\n",
+      "starterCode": "class Vehicle { String name; Vehicle(this.name); String info() => name; }\nclass Car extends Vehicle { Car(String name): super(name); @override String info() => 'Car: ' + name; }\n",
+      "tests": [
+        {
+          "expected": "Car: Toyota",
+          "input": "('Toyota')"
+        }
+      ],
+      "title": "Kế thừa Vehicle"
+    }
+  },
+  "leaderboard": {
+    "CcMUHVMhEsNICagTAPyz2C3V9mu1": {
+      "activityCount": 0,
+      "displayName": "Phuc Anh",
+      "easyTestScore": 60,
+      "finalQuizPassed": false,
+      "finalTestScore": 0,
+      "hardTestScore": 0,
+      "hasEasyAttempt": true,
+      "hasHardAttempt": false,
+      "hasMediumAttempt": false,
+      "learningPassCount": 0,
+      "learningQuizCount": 0,
+      "learningScore": 0,
+      "levelAverageScore": 60,
+      "levelTests": {
+        "easy": {
+          "attemptId": "-OqiDBFH-H4eNe_oKkAm",
+          "attemptType": "level_test",
+          "level": "easy",
+          "passed": true,
+          "percentage": 60,
+          "quizId": "easy_assessment_1776744441392",
+          "quizTitle": "Kiểm tra Easy",
+          "score": 6,
+          "submittedAt": "2026-04-21T04:07:29.041900Z",
+          "total": 10
+        }
+      },
+      "mediumTestScore": 0,
+      "passedCount": 0,
+      "totalScore": 0,
+      "updatedAt": "2026-04-21T04:07:29.041900Z",
+      "userId": "CcMUHVMhEsNICagTAPyz2C3V9mu1"
+    }
+  },
+  "lessons": {
+    "lesson_d001": {
+      "content": "Giới thiệu về ngôn ngữ Dart",
+      "course": "dart_basics",
+      "id": "lesson_d001",
+      "order": 1,
+      "quiz": "quiz_d001",
+      "theory": "## Khái niệm\nDart là một ngôn ngữ lập trình hiện đại do Google phát triển, tối ưu cho việc viết ứng dụng client (web và mobile).\n\n## Đặc điểm\n- Hỗ trợ JIT (hot-reload) cho phát triển nhanh; AOT cho bản phát hành tối ưu hiệu năng.\n- Hệ thống null-safety giúp giảm lỗi null reference.\n- Cú pháp hỗ trợ cả hướng đối tượng (OOP) và functional style.\n\n## Ví dụ\n```dart\nvoid main() { print(\"Hello, Dart!\"); }\n```\n\n## Ghi chú\n- Công cụ: DartPad để thử nhanh; Dart SDK + IDE (VS Code/Android Studio) để phát triển dự án.\n- Thực hành: bắt đầu với biến, hàm, class, và làm quen với async/await.",
+      "title": "Giới thiệu Dart"
+    },
+    "lesson_d002": {
+      "content": "Biến và các kiểu dữ liệu cơ bản",
+      "course": "dart_basics",
+      "id": "lesson_d002",
+      "order": 2,
+      "quiz": "quiz_d002",
+      "theory": "## Khái niệm\nBiến (variable) là tên đại diện cho dữ liệu; kiểu (type) xác định dạng dữ liệu (int, double, String...).\n\n## Đặc điểm\n- var: compiler suy diễn kiểu; final/const cho giá trị không đổi; dynamic cho phép thay đổi kiểu runtime.\n- Nullable vs non-nullable: String vs String?.\n\n## Ví dụ\n```dart\nvar x = 1;\nfinal String name = \"Alice\";\nString? nick = null;\n```\n\n## Ghi chú\n- Dùng final và non-nullable khi có thể; tránh dynamic cho API công khai.",
+      "title": "Biến & Kiểu dữ liệu"
+    },
+    "lesson_d003": {
+      "content": "Vòng lặp và các câu lệnh điều kiện",
+      "course": "dart_basics",
+      "id": "lesson_d003",
+      "order": 3,
+      "quiz": "quiz_d003",
+      "theory": "## Khái niệm\nVòng lặp (loop) cho phép thực hiện lặp lại một khối lệnh; điều kiện (if/switch) quyết định luồng thực thi.\n\n## Đặc điểm\n- for: dùng khi biết số lần lặp.\n- for-in: hữu ích để duyệt collection.\n- while / do-while: while kiểm tra trước; do-while chạy ít nhất 1 lần.\n- break và continue điều khiển luồng vòng lặp.\n\n## Ví dụ\n```dart\nfor (int i = 0; i < 3; i++) { print(i); }\nfor (var x in items) { print(x); }\nif (x > 0) { print(\"pos\"); } else { print(\"non-pos\"); }\n```\n\n## Ghi chú\n- Tránh vòng lặp vô hạn; dùng API functional (map/where/fold) khi phù hợp để code ngắn và rõ ràng.",
+      "title": "Vòng lặp & Điều kiện"
+    },
+    "lesson_d004": {
+      "content": "Định nghĩa và sử dụng hàm",
+      "course": "dart_basics",
+      "id": "lesson_d004",
+      "order": 4,
+      "quiz": "quiz_d004",
+      "theory": "## Khái niệm\nHàm (function) là khối mã thực hiện một nhiệm vụ và có thể được gọi lại; Dart hỗ trợ hàm như đối tượng first-class.\n\n## Đặc điểm\n- Hỗ trợ positional, optional và named parameters; có async/await và Future cho bất đồng bộ.\n- Arrow syntax để viết ngắn gọn cho expression-bodied functions.\n\n## Ví dụ\n```dart\nint sum(int a, int b) => a + b;\nFuture<String> fetch() async { await Future.delayed(Duration(seconds:1)); return 'done'; }\n```\n\n## Ghi chú\n- Dùng named parameters cho hàm có nhiều tuỳ chọn; tách logic ra hàm nhỏ để dễ test.",
+      "title": "Hàm (Functions)"
+    },
+    "lesson_d005": {
+      "content": "Xử lý chuỗi và các loại tập hợp",
+      "course": "dart_basics",
+      "id": "lesson_d005",
+      "order": 5,
+      "quiz": "quiz_d005",
+      "theory": "## Khái niệm\nChuỗi (String) và Collections (List, Map, Set) là các cấu trúc dữ liệu cơ bản để lưu và thao tác dữ liệu.\n\n## Đặc điểm\n- String immutable; hỗ trợ interpolation và nhiều phương thức xử lý text.\n- List: ordered, có thể chứa duplicate; Map: key-value lookup; Set: unique, unordered.\n\n## Ví dụ\n```dart\nString s = 'Hello';\nList<int> nums = [1,2,3];\nMap<String,int> m = {'a':1};\nSet<int> uniq = {1,2};\n```\n\n## Ghi chú\n- Chọn collection phù hợp với yêu cầu (lookup vs ordered vs unique). Dùng Iterable APIs (map/where/fold) để viết code rõ ràng và functional.",
+      "title": "Chuỗi & Tập hợp"
+    },
+    "lesson_f001": {
+      "content": "Các Widget cơ bản trong Flutter",
+      "course": "flutter_ui",
+      "id": "lesson_f001",
+      "order": 1,
+      "quiz": "quiz_f001",
+      "theory": "## Khái niệm\nWidget là đơn vị cơ bản tạo nên giao diện trong Flutter; mọi thành phần (layout, control, decorator) đều là widget.\n\n## Đặc điểm\n- StatelessWidget: immutable, không lưu state nội bộ.\n- StatefulWidget: có State để lưu trạng thái và cập nhật UI bằng setState().\n- Widgets kết hợp theo mô hình composition (nesting).\n\n## Ví dụ\n```dart\n// StatelessWidget\nclass Hello extends StatelessWidget { @override Widget build(BuildContext c) => Text('Hello'); }\n\n// StatefulWidget (cơ bản)\nclass Counter extends StatefulWidget { @override _CounterState createState() => _CounterState(); }\n```\n\n## Ghi chú\n- Dùng const constructors càng nhiều càng tốt; tách widget để tái sử dụng và dễ test.",
+      "title": "Widget Cơ bản"
+    },
+    "lesson_f002": {
+      "content": "Quản lý trạng thái ứng dụng",
+      "course": "flutter_ui",
+      "id": "lesson_f002",
+      "order": 2,
+      "quiz": "quiz_f002",
+      "theory": "## Khái niệm\nState là dữ liệu quyết định giao diện tại một thời điểm; quản lý state là cách lưu, cập nhật và chia sẻ dữ liệu đó trong ứng dụng Flutter.\n\n## Đặc điểm\n- Local state (setState): phù hợp cho state cục bộ, đơn giản.\n- Shared/global state: Provider, Riverpod, Bloc... cho phép chia sẻ và tổ chức state trên toàn app.\n- Async patterns: FutureBuilder/StreamBuilder xử lý future/stream cho UI.\n\n## Ví dụ\n```dart\n// Local state\nclass _C extends State<MyWidget> { int c = 0; void inc() => setState(() => c++); }\n\n// Provider (conceptual)\n// ChangeNotifierProvider(create: (_) => Counter())\n```\n\n## Ghi chú\n- Chọn pattern phù hợp với quy mô app; tách logic khỏi UI; viết unit tests cho business logic.",
+      "title": "Quản lý Trạng thái"
+    },
+     "lesson_lv001": {
+       "id": "lesson_lv001",
+       "course": "laravel",
+       "courseId": "laravel",
+       "title": "Giới thiệu & Kiến trúc Laravel",
+       "order": 1,
+       "content": "Tổng quan về kiến trúc Laravel và cấu trúc dự án",
+       "theory": "## Tổng quan bài học\nLaravel là framework PHP theo mô hình MVC, giúp tách rõ phần route, xử lý logic và hiển thị giao diện.\n\n## Lý thuyết cốt lõi\n- Model quản lý dữ liệu và thao tác CSDL.\n- View hiển thị giao diện cho người dùng.\n- Controller nhận request và điều phối xử lý.\n\n## Mục tiêu cần đạt\n- Hiểu được luồng request trong Laravel.\n- Biết vị trí file routes/web.php và app/Http/Controllers.\n- Tạo route có callback đơn giản.\n\n## Ví dụ code ngắn\n```php\nRoute::get('/hello', function () {\n    return 'Xin chào Laravel';\n});\n```\n\n## Tự kiểm tra\nNếu bạn tạo được route mới và truy cập thành công trên trình duyệt, bạn đã nắm được bài này.",
+       "quiz": "quiz_lv001",
+       "quizId": "quiz_lv001"
+     },
+     "lesson_lv002": {
+       "id": "lesson_lv002",
+       "course": "laravel",
+       "courseId": "laravel",
+       "title": "Định tuyến, Controller và Blade",
+       "order": 2,
+       "content": "Xây dựng route, controller actions và Blade templates",
+       "theory": "## Tổng quan bài học\nBài học tập trung vào định tuyến URL và đưa xử lý vào controller để code rõ ràng, dễ mở rộng.\n\n## Lý thuyết cốt lõi\n- Route nhận URL và method HTTP (GET/POST/PUT/DELETE).\n- Controller chứa business logic thay vì viết trực tiếp trong route.\n- Blade dùng để render dữ liệu động ra giao diện.\n\n## Mục tiêu cần đạt\n- Tạo route có tham số.\n- Viết method show() trong controller.\n- Trả dữ liệu về view hoặc JSON.\n\n## Ví dụ code ngắn\n```php\nRoute::get('/products/{id}', [ProductController::class, 'show']);\n\npublic function show($id) {\n    return \"Product ID: $id\";\n}\n```\n\n## Tự kiểm tra\nBạn thử đổi id trên URL và kiểm tra kết quả trả về đã đúng chưa.",
+       "quiz": "quiz_lv002",
+       "quizId": "quiz_lv002"
+     },
+    "lesson_fb001": {
+      "id": "lesson_fb001",
+      "course": "firebase_fundamentals",
+      "courseId": "firebase_fundamentals",
+      "title": "Giới thiệu Firebase",
+      "order": 1,
+      "content": "Các sản phẩm Firebase và kiến trúc phổ biến",
+      "theory": "## Tổng quan bài học\nFirebase cung cấp hệ sinh thái backend sẵn có để phát triển app nhanh mà không cần tự dựng server từ đầu.\n\n## Lý thuyết cốt lõi\n- Auth: quản lý đăng nhập/đăng ký.\n- Realtime Database / Firestore: lưu dữ liệu.\n- Storage: lưu tệp media.\n- Functions: xử lý logic backend theo sự kiện.\n\n## Mục tiêu cần đạt\n- Biết mỗi dịch vụ dùng cho bài toán nào.\n- Chọn đúng dịch vụ cho app học lập trình.\n\n## Ví dụ code ngắn\n```text\nApp -> Firebase Auth -> Realtime DB -> UI update\n      -> Cloud Functions (xử lý sự kiện)\n```\n\n## Tự kiểm tra\nBạn có thể mô tả được kiến trúc app bằng 3-4 thành phần Firebase là đạt.",
+      "quiz": "quiz_fb001",
+      "quizId": "quiz_fb001"
+    },
+    "lesson_fb002": {
+      "id": "lesson_fb002",
+      "course": "firebase_fundamentals",
+      "courseId": "firebase_fundamentals",
+      "title": "Xác thực & Cơ sở dữ liệu",
+      "order": 2,
+      "content": "Luồng đăng nhập và lưu trữ dữ liệu ứng dụng",
+      "theory": "## Tổng quan bài học\nXác thực và lưu dữ liệu là hai khối chức năng trung tâm trong ứng dụng sử dụng Firebase.\n\n## Lý thuyết cốt lõi\n- Firebase Auth xử lý danh tính người dùng.\n- Realtime Database/Firestore lưu dữ liệu có cấu trúc.\n- Security Rules kiểm soát quyền đọc/ghi theo user.\n\n## Mục tiêu cần đạt\n- Đăng nhập email/password thành công.\n- Lưu dữ liệu theo users/{uid}.\n- Chặn truy cập trái phép bằng rules.\n\n## Ví dụ code ngắn\n```dart\nawait FirebaseAuth.instance.signInWithEmailAndPassword(\n  email: email,\n  password: password,\n);\n```\n\n## Tự kiểm tra\nSau đăng nhập, hãy thử ghi dữ liệu vào node của mình và đọc lại để xác nhận.",
+      "quiz": "quiz_fb002",
+      "quizId": "quiz_fb002"
+    },
+    "lesson_php001": {
+      "id": "lesson_php001",
+      "course": "php_basics",
+      "courseId": "php_basics",
+      "title": "Cú pháp & Biến trong PHP",
+      "order": 1,
+      "content": "Học thẻ PHP, khai báo biến và xuất dữ liệu cơ bản",
+      "theory": "## Tổng quan bài học\nPHP là ngôn ngữ xử lý phía server, thường dùng để tạo web động và API backend.\n\n## Lý thuyết cốt lõi\n- Biến trong PHP bắt đầu bằng ký tự $.\n- PHP hỗ trợ nhiều kiểu dữ liệu cơ bản: string, int, float, bool.\n- Có thể nối chuỗi và in dữ liệu nhanh với echo.\n\n## Mục tiêu cần đạt\n- Khai báo biến đúng cú pháp.\n- In dữ liệu ra trình duyệt.\n- Hiểu sự khác nhau giữa chuỗi và số.\n\n## Ví dụ code ngắn\n```php\n<?php\n$name = \"Phuc\";\necho \"Xin chào, $name\";\n```\n\n## Tự kiểm tra\nThử thay đổi giá trị biến và kiểm tra kết quả in ra màn hình.",
+      "quiz": "quiz_php001",
+      "quizId": "quiz_php001"
+    },
+    "lesson_php002": {
+      "id": "lesson_php002",
+      "course": "php_basics",
+      "courseId": "php_basics",
+      "title": "Hàm & Mảng trong PHP",
+      "order": 2,
+      "content": "Sử dụng hàm và mảng trong PHP",
+      "theory": "## Tổng quan bài học\nHàm giúp tái sử dụng code, còn mảng giúp lưu nhiều giá trị trong một biến duy nhất.\n\n## Lý thuyết cốt lõi\n- function dùng để đóng gói logic.\n- Mảng indexed truy cập bằng số.\n- Mảng associative truy cập bằng key.\n\n## Mục tiêu cần đạt\n- Viết hàm có tham số và giá trị trả về.\n- Duyệt mảng và lấy dữ liệu cần thiết.\n\n## Ví dụ code ngắn\n```php\nfunction sum($a, $b) {\n  return $a + $b;\n}\necho sum(2, 3);\n```\n\n## Tự kiểm tra\nHãy viết thêm một hàm tính trung bình 3 số và thử chạy với dữ liệu khác nhau.",
+      "quiz": "quiz_php002",
+      "quizId": "quiz_php002"
+    },
+    "lesson_py001": {
+      "id": "lesson_py001",
+      "course": "python_basics",
+      "courseId": "python_basics",
+      "title": "Giới thiệu & Kiểu dữ liệu Python",
+      "order": 1,
+      "content": "Biến, số, chuỗi và kiểu đúng/sai",
+      "theory": "## Tổng quan bài học\nPython có cú pháp gọn, dễ đọc, phù hợp cho người mới học lập trình.\n\n## Lý thuyết cốt lõi\n- Không cần khai báo kiểu biến từ đầu (dynamic typing).\n- Thư viện chuẩn phong phú cho nhiều bài toán.\n- Dùng thụt lề (indentation) để định nghĩa khối lệnh.\n\n## Mục tiêu cần đạt\n- Khai báo biến và in dữ liệu.\n- Sử dụng f-string để định dạng chuỗi.\n\n## Ví dụ code ngắn\n```python\nname = \"Phuc\"\nscore = 8.5\nprint(f\"{name}: {score}\")\n```\n\n## Tự kiểm tra\nThử thay đổi kiểu dữ liệu của biến và xem kết quả hiển thị.",
+      "quiz": "quiz_py001",
+      "quizId": "quiz_py001"
+    },
+    "lesson_py002": {
+      "id": "lesson_py002",
+      "course": "python_basics",
+      "courseId": "python_basics",
+      "title": "Điều kiện & Vòng lặp Python",
+      "order": 2,
+      "content": "Câu lệnh if, vòng lặp for và while",
+      "theory": "## Tổng quan bài học\nĐiều kiện và vòng lặp giúp điều khiển chương trình chạy theo tình huống dữ liệu.\n\n## Lý thuyết cốt lõi\n- if/elif/else để rẽ nhánh logic.\n- for để duyệt danh sách hoặc range.\n- while lặp đến khi điều kiện không còn đúng.\n\n## Mục tiêu cần đạt\n- Viết câu lệnh if đúng thụt lề.\n- Duyệt dữ liệu bằng for.\n- Tránh while vô hạn.\n\n## Ví dụ code ngắn\n```python\nfor i in range(1, 4):\n    if i % 2 == 0:\n        print(\"chan\", i)\n```\n\n## Tự kiểm tra\nHãy viết đoạn code in các số lẻ từ 1 đến 9.",
+      "quiz": "quiz_py002",
+      "quizId": "quiz_py002"
+    },
+    "lesson_jv001": {
+      "id": "lesson_jv001",
+      "course": "java_core",
+      "courseId": "java_core",
+      "title": "Cơ bản về Java",
+      "order": 1,
+      "content": "Cú pháp Java, JVM và cấu trúc lớp cơ bản",
+      "theory": "## Tổng quan bài học\nJava là ngôn ngữ hướng đối tượng, kiểu dữ liệu rõ ràng, chạy trên máy ảo JVM.\n\n## Lý thuyết cốt lõi\n- Mã nguồn .java được compile thành bytecode.\n- JVM thực thi bytecode trên nhiều hệ điều hành.\n- Hệ thống type chặt chẽ giúp hạn chế lỗi runtime.\n\n## Mục tiêu cần đạt\n- Hiểu chu trình compile -> run.\n- Viết class và hàm main đơn giản.\n\n## Ví dụ code ngắn\n```java\npublic class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Hello Java\");\n  }\n}\n```\n\n## Tự kiểm tra\nThử đổi chuỗi in ra và chạy lại chương trình.",
+      "quiz": "quiz_jv001",
+      "quizId": "quiz_jv001"
+    },
+    "lesson_jv002": {
+      "id": "lesson_jv002",
+      "course": "java_core",
+      "courseId": "java_core",
+      "title": "Lập trình Hướng đối tượng Java",
+      "order": 2,
+      "content": "Lớp, đối tượng, kế thừa và giao diện",
+      "theory": "## Tổng quan bài học\nLập trình hướng đối tượng trong Java giúp tổ chức code dễ mở rộng và dễ bảo trì hơn.\n\n## Lý thuyết cốt lõi\n- Encapsulation: đóng gói dữ liệu trong class.\n- Inheritance: tái sử dụng logic từ lớp cha.\n- Polymorphism: một interface, nhiều cách triển khai.\n\n## Mục tiêu cần đạt\n- Tạo interface và class implement.\n- Override method đúng cú pháp.\n\n## Ví dụ code ngắn\n```java\ninterface Payment { void pay(double amount); }\nclass CardPayment implements Payment {\n  public void pay(double amount) { System.out.println(amount); }\n}\n```\n\n## Tự kiểm tra\nBạn thử tạo thêm class CashPayment và gọi chung qua kiểu Payment.",
+      "quiz": "quiz_jv002",
+      "quizId": "quiz_jv002"
+    },
+    "lesson_sql001": {
+      "id": "lesson_sql001",
+      "course": "sql_fundamentals",
+      "courseId": "sql_fundamentals",
+      "title": "Truy vấn SELECT Cơ bản",
+      "order": 1,
+      "content": "Lọc và lấy dữ liệu",
+      "theory": "## Tổng quan bài học\nSQL giúp truy vấn dữ liệu trong cơ sở dữ liệu quan hệ một cách chính xác và có cấu trúc.\n\n## Lý thuyết cốt lõi\n- SELECT lấy cột dữ liệu cần thiết.\n- WHERE lọc bản ghi theo điều kiện.\n- ORDER BY sắp xếp kết quả.\n- LIMIT giới hạn số dòng trả về.\n\n## Mục tiêu cần đạt\n- Viết truy vấn lấy top dữ liệu.\n- Kết hợp điều kiện lọc và sắp xếp.\n\n## Ví dụ code ngắn\n```sql\nSELECT name, score\nFROM leaderboard\nWHERE level = 'easy'\nORDER BY score DESC\nLIMIT 10;\n```\n\n## Tự kiểm tra\nThử đổi level thành hard và so sánh kết quả.",
+      "quiz": "quiz_sql001",
+      "quizId": "quiz_sql001"
+    },
+    "lesson_sql002": {
+      "id": "lesson_sql002",
+      "course": "sql_fundamentals",
+      "courseId": "sql_fundamentals",
+      "title": "JOIN và Hàm Tổng hợp",
+      "order": 2,
+      "content": "Kết hợp các bảng và tóm tắt dữ liệu",
+      "theory": "## Tổng quan bài học\nJOIN và GROUP BY là nhóm câu lệnh quan trọng để tổng hợp dữ liệu từ nhiều bảng.\n\n## Lý thuyết cốt lõi\n- JOIN nối dữ liệu theo khóa liên kết.\n- GROUP BY nhóm dữ liệu theo cột.\n- COUNT/SUM/AVG để tính toán thống kê.\n\n## Mục tiêu cần đạt\n- Nối được users và attempts.\n- Tính được trung bình điểm theo user.\n\n## Ví dụ code ngắn\n```sql\nSELECT u.name, AVG(a.score) AS avg_score\nFROM users u\nJOIN attempts a ON a.user_id = u.id\nGROUP BY u.name;\n```\n\n## Tự kiểm tra\nThử thay AVG bằng COUNT để đếm số lần làm bài của mỗi user.",
+      "quiz": "quiz_sql002",
+      "quizId": "quiz_sql002"
+    },
+    "lesson_o001": {
+      "content": "Lớp và Đối tượng",
+      "course": "oop",
+      "id": "lesson_o001",
+      "order": 1,
+      "quiz": "quiz_o001",
+      "theory": "## Khái niệm\nClass là khuôn mẫu mô tả dữ liệu (fields) và hành vi (methods); object là instance cụ thể của class.\n\n## Đặc điểm\n- Fields lưu trạng thái; methods xử lý hành vi.\n- Constructor khởi tạo object; có named constructors và initializer list.\n- Encapsulation: private bằng tiền tố underscore (_).\n\n## Ví dụ\n```dart\nclass Person { String name; int age; Person(this.name, this.age); String greet() => 'Hi, I am $name'; }\n```\n\n## Ghi chú\n- Giữ class nhỏ, immutable khi có thể; dùng getters/setters để kiểm soát access.",
+      "title": "Lớp & Đối tượng"
+    },
+     "lesson_o002": {
+       "content": "Kế thừa và Đa hình",
+       "course": "oop",
+       "id": "lesson_o002",
+       "order": 2,
+       "quiz": "quiz_o002",
+       "theory": "## Khái niệm\nInheritance (kế thừa) cho phép một class tái sử dụng hoặc mở rộng hành vi từ class khác; Polymorphism (đa hình) cho phép các object khác nhau phản hồi cùng một interface.\n\n## Đặc điểm\n- extends để kế thừa implementation; implements để tuân thủ interface; with để dùng mixin.\n- super để gọi constructor hoặc method của lớp cha.\n\n## Ví dụ\n```dart\nclass Animal { void speak() => print('...'); }\nclass Dog extends Animal { @override void speak() => print('Woof'); }\n```\n\n## Ghi chú\n- Tránh cây kế thừa quá sâu; ưu tiên composition khi có thể.",
+       "title": "Kế thừa & Đa hình"
+     },
+     "lesson_d006": {
+       "content": "Xử lý ngoại lệ và Debug trong Dart",
+       "course": "dart_basics",
+       "id": "lesson_d006",
+       "order": 6,
+       "quiz": "quiz_d006",
+       "theory": "## Khái niệm\nXử lý ngoại lệ giúp quản lý lỗi runtime; debug giúp tìm và khắc phục lỗi logic.\n\n## Đặc điểm\n- try-catch-finally để bắt và xử lý ngoại lệ.\n- throw để ném ngoại lệ tùy chỉnh.\n- assert để kiểm tra điều kiện trong quá trình phát triển.\n\n## Ví dụ\n```dart\ntry {\n  int result = 10 ~/ 0;\n} on IntegerDivisionByZeroException {\n  print('Không được chia cho 0');\n} catch (e) {\n  print('Lỗi: $e');\n} finally {\n  print('Kết thúc xử lý');\n}\n```\n\n## Ghi chú\n- Luôn định nghĩa ngoại lệ rõ ràng; tránh catch quá rộng.",
+       "title": "Nâng cao: Xử lý ngoại lệ"
+     },
+     "lesson_f003": {
+       "content": "Kiến trúc và Mô hình thiết kế Flutter nâng cao",
+       "course": "flutter_ui",
+       "id": "lesson_f003",
+       "order": 3,
+       "quiz": "quiz_f003",
+       "theory": "## Khái niệm\nKiến trúc clean code và mô hình thiết kế giúp tổ chức ứng dụng lớn một cách hiệu quả.\n\n## Đặc điểm\n- MVVM, Clean Architecture để tách biệt concern.\n- GetX, Riverpod, Bloc để quản lý state phức tạp.\n- Dependency Injection để tăng tính kiểm thử.\n\n## Ví dụ\n```dart\n// Sử dụng GetX\nclass CounterController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n}\n```\n\n## Ghi chú\n- Chọn pattern phù hợp với quy mô; không quá-thiết kế khi không cần.",
+       "title": "Nâng cao: Kiến trúc Flutter"
+     },
+     "lesson_php003": {
+       "id": "lesson_php003",
+       "course": "php_basics",
+       "courseId": "php_basics",
+       "title": "Nâng cao: OOP và Namespace",
+       "order": 3,
+       "content": "Kỹ thuật hướng đối tượng nâng cao trong PHP",
+       "theory": "## Tổng quan bài học\nOOP trong PHP giúp tổ chức code theo cấu trúc rõ ràng và tái sử dụng hiệu quả.\n\n## Lý thuyết cốt lõi\n- Class, Object, Property, Method với access modifier.\n- Namespace để tổ chức và tránh xung đột tên.\n- Trait để chia sẻ phương thức giữa các class.\n\n## Mục tiêu cần đạt\n- Viết class với encapsulation.\n- Sử dụng namespace để tổ chức code.\n- Triển khai interface và trait.\n\n## Ví dụ code ngắn\n```php\nnamespace App\\Models;\n\nclass Product {\n  private $name;\n  public function __construct($name) {\n    $this->name = $name;\n  }\n}\n```\n\n## Tự kiểm tra\nThử tạo class với private property và public getter/setter.",
+       "quiz": "quiz_php003",
+       "quizId": "quiz_php003"
+     },
+     "lesson_py003": {
+       "id": "lesson_py003",
+       "course": "python_basics",
+       "courseId": "python_basics",
+       "title": "Nâng cao: Hàm và Module",
+       "order": 3,
+       "content": "Lập trình hàm nâng cao và sử dụng module trong Python",
+       "theory": "## Tổng quan bài học\nHàm nâng cao và module giúp viết code modulan, tái sử dụng và dễ bảo trì.\n\n## Lý thuyết cốt lõi\n- Lambda, map, filter, reduce cho functional programming.\n- Decorator để mở rộng hàm.\n- Import module và tạo module riêng.\n\n## Mục tiêu cần đạt\n- Sử dụng lambda và hàm bậc cao.\n- Tạo decorator đơn giản.\n- Tổ chức code thành module.\n\n## Ví dụ code ngắn\n```python\nfrom functools import reduce\n\ndata = [1, 2, 3, 4]\nresult = reduce(lambda x, y: x + y, data)\nprint(result)  # 10\n```\n\n## Tự kiểm tra\nHãy viết decorator để tính thời gian chạy của hàm.",
+       "quiz": "quiz_py003",
+       "quizId": "quiz_py003"
+     },
+     "lesson_jv003": {
+       "id": "lesson_jv003",
+       "course": "java_core",
+       "courseId": "java_core",
+       "title": "Nâng cao: Collections và Stream",
+       "order": 3,
+       "content": "Sử dụng Collections Framework và Stream API trong Java",
+       "theory": "## Tổng quan bài học\nCollections và Stream API cung cấp cách hiệu quả để xử lý tập hợp dữ liệu.\n\n## Lý thuyết cốt lõi\n- List, Set, Map và các triển khai của chúng.\n- Iterator để duyệt collection.\n- Stream API cho xử lý dữ liệu functional.\n\n## Mục tiêu cần đạt\n- Chọn collection phù hợp.\n- Duyệt và lọc dữ liệu với Stream.\n- Thực hiện map, flatMap, reduce.\n\n## Ví dụ code ngắn\n```java\nList<String> names = Arrays.asList(\"Alice\", \"Bob\", \"Charlie\");\nnames.stream()\n  .filter(n -> n.length() > 3)\n  .map(String::toUpperCase)\n  .forEach(System.out::println);\n```\n\n## Tự kiểm tra\nThử tính tổng các số trong list bằng Stream.reduce().",
+       "quiz": "quiz_jv003",
+       "quizId": "quiz_jv003"
+     },
+     "lesson_sql003": {
+       "id": "lesson_sql003",
+       "course": "sql_fundamentals",
+       "courseId": "sql_fundamentals",
+       "title": "Nâng cao: Index và Performance",
+       "order": 3,
+       "content": "Tối ưu hiệu năng cơ sở dữ liệu với Index và kỹ thuật advanced",
+       "theory": "## Tổng quan bài học\nIndex và các kỹ thuật tối ưu giúp truy vấn nhanh hơn trên dữ liệu lớn.\n\n## Lý thuyết cốt lõi\n- Index giúp tăng tốc độ tìm kiếm.\n- Explain plan để phân tích truy vấn.\n- Chuẩn hóa schema để tránh dữ liệu dư thừa.\n\n## Mục tiêu cần đạt\n- Tạo index trên cột thường xuyên tìm kiếm.\n- Phân tích performance của truy vấn.\n- Viết truy vấn hiệu quả.\n\n## Ví dụ code ngắn\n```sql\nCREATE INDEX idx_email ON users(email);\nEXPLAIN PLAN FOR SELECT * FROM users WHERE email = 'test@example.com';\n```\n\n## Tự kiểm tra\nSo sánh performance của truy vấn có và không có index.",
+       "quiz": "quiz_sql003",
+       "quizId": "quiz_sql003"
+     },
+     "lesson_lv003": {
+       "id": "lesson_lv003",
+       "course": "laravel",
+       "courseId": "laravel",
+       "title": "Nâng cao: Authentication & Authorization",
+       "order": 3,
+       "content": "Xây dựng hệ thống xác thực và phân quyền trong Laravel",
+       "theory": "## Tổng quan bài học\nAuthentication và Authorization là hai yếu tố quan trọng của bảo mật ứng dụng.\n\n## Lý thuyết cốt lõi\n- Authentication (xác thực): xác định người dùng là ai.\n- Authorization (phân quyền): xác định người dùng có quyền gì.\n- Laravel Sanctum cho API authentication.\n\n## Mục tiêu cần đạt\n- Triển khai login/logout.\n- Bảo vệ route với middleware.\n- Kiểm soát quyền với Policies.\n\n## Ví dụ code ngắn\n```php\nRoute::middleware('auth:sanctum')->group(function () {\n    Route::get('/user', function (Request $request) {\n        return $request->user();\n    });\n});\n```\n\n## Tự kiểm tra\nThử tạo policy để kiểm soát ai được phép chỉnh sửa bài viết.",
+       "quiz": "quiz_lv003",
+       "quizId": "quiz_lv003"
+     },
+     "lesson_fb003": {
+       "id": "lesson_fb003",
+       "course": "firebase_fundamentals",
+       "courseId": "firebase_fundamentals",
+       "title": "Nâng cao: Cloud Functions & Analytics",
+       "order": 3,
+       "content": "Xây dựng logic backend với Cloud Functions và tracking với Analytics",
+       "theory": "## Tổng quan bài học\nCloud Functions cho phép xử lý logic backend mà không cần máy chủ; Analytics giúp theo dõi hành vi người dùng.\n\n## Lý thuyết cốt lõi\n- Cloud Functions được trigger bởi sự kiện.\n- Realtime Database triggers, HTTPS triggers.\n- Firebase Analytics để track events và user behavior.\n\n## Mục tiêu cần đạt\n- Viết Cloud Function đơn giản.\n- Xử lý dữ liệu khi thay đổi trong database.\n- Tracking events trong app.\n\n## Ví dụ code ngắn\n```dart\nFirebaseAnalytics().logEvent(\n  name: 'lesson_completed',\n  parameters: {'lesson_id': 'lesson_d001'},\n);\n```\n\n## Tự kiểm tra\nThử tạo function tự động xóa dữ liệu cũ hơn 30 ngày.",
+       "quiz": "quiz_fb003",
+       "quizId": "quiz_fb003"
+     }
+  },
+  "profiles": {
+    "CcMUHVMhEsNICagTAPyz2C3V9mu1": {
+      "avatarUrl": "data:image/jpeg;base64,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",
+      "displayName": "Phuc Anh",
+      "updatedAt": "2026-04-22T02:06:12.361Z",
+      "userId": "CcMUHVMhEsNICagTAPyz2C3V9mu1"
+    }
+  },
+  "quizzes": {
+    "quiz_d001": {
+      "id": "quiz_d001",
+      "q1": "Ai phát triển ngôn ngữ Dart?",
+      "q1_ans": 1,
+      "q1_expl": "Dart được phát triển bởi Google.",
+      "q1_opts": [
+        "Microsoft",
+        "Google",
+        "Apple",
+        "Meta"
+      ],
+      "q2": "Framework nào sử dụng Dart làm ngôn ngữ chính?",
+      "q2_ans": 2,
+      "q2_expl": "Flutter là framework UI do Google phát triển và sử dụng Dart.",
+      "q2_opts": [
+        "React",
+        "Vue",
+        "Flutter",
+        "Angular"
+      ],
+      "q3": "Dart hỗ trợ chế độ biên dịch nào?",
+      "q3_ans": 2,
+      "q3_expl": "Dart hỗ trợ JIT (phát triển) và AOT (bản phát hành).",
+      "q3_opts": [
+        "Chỉ JIT",
+        "Chỉ AOT",
+        "Cả JIT và AOT",
+        "Chỉ thông dịch"
+      ],
+      "q4": "Mục đích chính của Dart là gì?",
+      "q4_ans": 1,
+      "q4_expl": "Dart thiết kế chính cho ứng dụng client (web & di động), đặc biệt với Flutter.",
+      "q4_opts": [
+        "Lập trình hệ thống",
+        "Ứng dụng web & di động",
+        "Truy vấn cơ sở dữ liệu",
+        "Hệ điều hành"
+      ],
+      "q5": "Công ty nào duy trì Flutter?",
+      "q5_ans": 1,
+      "q5_expl": "Flutter được phát triển và duy trì bởi Google.",
+      "q5_opts": [
+        "Facebook",
+        "Google",
+        "Microsoft",
+        "Apple"
+      ]
+    },
+    "quiz_d002": {
+      "id": "quiz_d002",
+      "q1": "Từ khóa nào khai báo biến không thể thay đổi sau khi khởi tạo?",
+      "q1_ans": 1,
+      "q1_expl": "final khai báo biến chỉ được gán một lần sau khi khởi tạo.",
+      "q1_opts": [
+        "var",
+        "final",
+        "dynamic",
+        "let"
+      ],
+      "q2": "Kiểu nào dùng cho số nguyên trong Dart?",
+      "q2_ans": 1,
+      "q2_expl": "int là kiểu cho số nguyên trong Dart.",
+      "q2_opts": [
+        "String",
+        "int",
+        "double",
+        "num"
+      ],
+      "q3": "Từ khóa nào cho phép biến giữ bất kỳ kiểu nào ở runtime?",
+      "q3_ans": 2,
+      "q3_expl": "dynamic cho phép biến thay đổi kiểu tại runtime.",
+      "q3_opts": [
+        "var",
+        "final",
+        "dynamic",
+        "const"
+      ],
+      "q4": "Từ khóa 'late' có tác dụng gì?",
+      "q4_ans": 1,
+      "q4_expl": "late hoãn việc khởi tạo biến đến khi nó được truy cập.",
+      "q4_opts": [
+        "Biến không đổi",
+        "Hoãn khởi tạo đến lần sử dụng đầu tiên",
+        "Đánh dấu nullable",
+        "Khai báo hằng"
+      ],
+      "q5": "Kiểu nào có thể chứa cả số nguyên và số thực?",
+      "q5_ans": 2,
+      "q5_expl": "num có thể chứa int và double.",
+      "q5_opts": [
+        "int",
+        "double",
+        "num",
+        "Object"
+      ]
+    },
+    "quiz_d003": {
+      "id": "quiz_d003",
+      "q1": "Vòng lặp nào đảm bảo thân vòng lặp chạy ít nhất một lần?",
+      "q1_ans": 2,
+      "q1_expl": "do-while thực hiện thân rồi mới kiểm tra điều kiện.",
+      "q1_opts": [
+        "for",
+        "while",
+        "do-while",
+        "for-in"
+      ],
+      "q2": "Câu lệnh nào thoát ngay khỏi vòng lặp hiện tại?",
+      "q2_ans": 1,
+      "q2_expl": "break thoát khỏi vòng lặp hiện tại.",
+      "q2_opts": [
+        "continue",
+        "break",
+        "return",
+        "exit"
+      ],
+      "q3": "Vòng lặp nào thường dùng để duyệt phần tử của collection?",
+      "q3_ans": 3,
+      "q3_expl": "for-in (hoặc forEach) dùng để duyệt collection trong Dart.",
+      "q3_opts": [
+        "for",
+        "while",
+        "do-while",
+        "for-in"
+      ],
+      "q4": "Từ khóa nào dùng để chuyển sang lần lặp tiếp theo?",
+      "q4_ans": 2,
+      "q4_expl": "continue bỏ qua phần còn lại của lần lặp hiện tại và tiếp tục lần lặp kế tiếp.",
+      "q4_opts": [
+        "break",
+        "skip",
+        "continue",
+        "next"
+      ],
+      "q5": "Cách khởi tạo for đúng là?",
+      "q5_ans": 1,
+      "q5_expl": "for (int i = 0; i < n; i++) là cú pháp đúng trong Dart.",
+      "q5_opts": [
+        "for (int i; i < n; i++)",
+        "for (int i = 0; i < n; i++)",
+        "for i in 0..n",
+        "for i := 0; i < n; i++"
+      ]
+    },
+    "quiz_d004": {
+      "id": "quiz_d004",
+      "q1": "Cách khai báo hàm trả về int tên sum() như nào?",
+      "q1_ans": 0,
+      "q1_expl": "int sum() { } là cú pháp Dart để khai báo hàm trả về int.",
+      "q1_opts": [
+        "int sum() { }",
+        "sum int() { }",
+        "function sum():int { }",
+        "def sum(): int"
+      ],
+      "q2": "Closure là gì trong Dart?",
+      "q2_ans": 1,
+      "q2_expl": "Closure là hàm nhớ được các biến từ ngữ cảnh bên ngoài.",
+      "q2_opts": [
+        "Constructor đặt tên",
+        "Hàm giữ tham chiếu đến biến ngoại cảnh",
+        "Một lớp đặc biệt",
+        "Phương thức build"
+      ],
+      "q3": "Viết arrow function để cộng 1 cho x như nào?",
+      "q3_ans": 0,
+      "q3_expl": "(x) => x + 1 là cú pháp arrow function trong Dart.",
+      "q3_opts": [
+        "(x) => x + 1",
+        "(x) -> x + 1",
+        "(x) => { return x + 1; }",
+        "func(x) = x + 1"
+      ],
+      "q4": "Từ khóa nào đánh dấu hàm là bất đồng bộ?",
+      "q4_ans": 0,
+      "q4_expl": "async kết hợp với await để xử lý bất đồng bộ.",
+      "q4_opts": [
+        "async",
+        "await",
+        "future",
+        "then"
+      ],
+      "q5": "Cách định nghĩa tham số tên có giá trị mặc định?",
+      "q5_ans": 0,
+      "q5_expl": "Tham số tên với {int x = 1} cung cấp giá trị mặc định.",
+      "q5_opts": [
+        "{int x = 1}",
+        "[int x = 1]",
+        "(int x = 1)",
+        "{required int x = 1}"
+      ]
+    },
+    "quiz_d005": {
+      "id": "quiz_d005",
+      "q1": "Lớp nào biểu diễn chuỗi ký tự trong Dart?",
+      "q1_ans": 0,
+      "q1_expl": "String dùng để chứa chuỗi ký tự trong Dart.",
+      "q1_opts": [
+        "String",
+        "List",
+        "Map",
+        "Char"
+      ],
+      "q2": "Lấy độ dài chuỗi s bằng cách nào?",
+      "q2_ans": 1,
+      "q2_expl": "s.length trả về số ký tự của chuỗi.",
+      "q2_opts": [
+        "s.count",
+        "s.length",
+        "len(s)",
+        "s.size"
+      ],
+      "q3": "Phương thức nào trả về chuỗi mới với nội dung được thay thế?",
+      "q3_ans": 1,
+      "q3_expl": "replaceAll thay thế mọi phần phù hợp bằng chuỗi mới.",
+      "q3_opts": [
+        "replace",
+        "replaceAll",
+        "swap",
+        "substitute"
+      ],
+      "q4": "Nối hai chuỗi a và b bằng cách nào?",
+      "q4_ans": 0,
+      "q4_expl": "Dùng toán tử + để nối chuỗi trong Dart.",
+      "q4_opts": [
+        "a + b",
+        "concat(a,b)",
+        "a.concat(b)",
+        "join(a,b)"
+      ],
+      "q5": "Kiểu nào lưu cặp khóa-giá trị?",
+      "q5_ans": 1,
+      "q5_expl": "Map lưu trữ cặp khóa-giá trị.",
+      "q5_opts": [
+        "List",
+        "Map",
+        "Set",
+        "Tuple"
+      ]
+    },
+    "quiz_dart_final": {
+      "id": "quiz_dart_final",
+      "q1": "Công ty nào tạo ra Dart?",
+      "q10": "Ký hiệu nào cho biết kiểu có thể null?",
+      "q10_ans": 0,
+      "q10_expl": "Sử dụng ? sau tên kiểu để cho phép giá trị null, ví dụ String?.",
+      "q10_opts": [
+        "? sau kiểu",
+        "! sau kiểu",
+        "nullable",
+        "opt"
+      ],
+      "q1_ans": 1,
+      "q1_expl": "Dart được phát triển bởi Google.",
+      "q1_opts": [
+        "Microsoft",
+        "Google",
+        "Apple",
+        "Meta"
+      ],
+      "q2": "Kiểu nào dùng cho số nguyên?",
+      "q2_ans": 1,
+      "q2_expl": "int là kiểu cho số nguyên.",
+      "q2_opts": [
+        "double",
+        "int",
+        "String",
+        "bool"
+      ],
+      "q3": "Vòng lặp nào chạy ít nhất một lần?",
+      "q3_ans": 2,
+      "q3_expl": "do-while thực hiện thân rồi mới kiểm tra điều kiện.",
+      "q3_opts": [
+        "for",
+        "while",
+        "do-while",
+        "foreach"
+      ],
+      "q4": "Viết hàm một dòng trả về x+1?",
+      "q4_ans": 0,
+      "q4_expl": "Cú pháp arrow (=>) dùng trong Dart cho hàm một dòng.",
+      "q4_opts": [
+        "(x) => x + 1",
+        "(x) -> x + 1",
+        "func(x) = x + 1",
+        "lambda x: x+1"
+      ],
+      "q5": "Phương thức nào để nối chuỗi?",
+      "q5_ans": 0,
+      "q5_expl": "Dùng + để nối chuỗi.",
+      "q5_opts": [
+        "a + b",
+        "a.concat(b)",
+        "join(a,b)",
+        "concat(a,b)"
+      ],
+      "q6": "Từ khóa nào khai báo hằng thời gian biên dịch?",
+      "q6_ans": 2,
+      "q6_expl": "const là hằng thời gian biên dịch trong Dart.",
+      "q6_opts": [
+        "var",
+        "final",
+        "const",
+        "static"
+      ],
+      "q7": "Kiểu tập hợp nào không có thứ tự và phần tử duy nhất?",
+      "q7_ans": 1,
+      "q7_expl": "Set là tập hợp không có thứ tự và không chứa phần tử trùng lặp.",
+      "q7_opts": [
+        "List",
+        "Set",
+        "Map",
+        "Queue"
+      ],
+      "q8": "Chế độ biên dịch nào tối ưu hóa mã cho bản phát hành?",
+      "q8_ans": 1,
+      "q8_expl": "AOT tạo mã máy tối ưu cho release builds.",
+      "q8_opts": [
+        "JIT",
+        "AOT",
+        "Interpreter",
+        "Hot-reload"
+      ],
+      "q9": "Toán tử nào dùng để truy cập null-safe (null-aware)?",
+      "q9_ans": 2,
+      "q9_expl": "Toán tử '??' trả về giá trị bên trái nếu không null, ngược lại bên phải.",
+      "q9_opts": [
+        "?",
+        "!",
+        "??",
+        "?."
+      ]
+    },
+    "quiz_f001": {
+      "id": "quiz_f001",
+      "q1": "Widget nào hiển thị một chuỗi văn bản trong Flutter?",
+      "q1_ans": 1,
+      "q1_expl": "Text dùng để hiển thị văn bản trong Flutter.",
+      "q1_opts": [
+        "Container",
+        "Text",
+        "Row",
+        "Column"
+      ],
+      "q2": "Widget nào sắp xếp con theo chiều dọc?",
+      "q2_ans": 1,
+      "q2_expl": "Column sắp xếp các widget con theo chiều dọc.",
+      "q2_opts": [
+        "Row",
+        "Column",
+        "Stack",
+        "ListView"
+      ],
+      "q3": "Widget nào cung cấp khung giao diện Material?",
+      "q3_ans": 0,
+      "q3_expl": "Scaffold cung cấp cấu trúc cơ bản như AppBar, body, floatingActionButton.",
+      "q3_opts": [
+        "Scaffold",
+        "MaterialApp",
+        "Container",
+        "SafeArea"
+      ],
+      "q4": "Widget nào dùng để phát hiện thao tác chạm?",
+      "q4_ans": 0,
+      "q4_expl": "GestureDetector lắng nghe các tương tác như tap, swipe.",
+      "q4_opts": [
+        "GestureDetector",
+        "Clickable",
+        "Touchable",
+        "Responder"
+      ],
+      "q5": "Widget nào phù hợp cho danh sách dài có thể cuộn?",
+      "q5_ans": 2,
+      "q5_expl": "ListView cung cấp danh sách có thể cuộn hiệu quả.",
+      "q5_opts": [
+        "Column",
+        "Row",
+        "ListView",
+        "Container"
+      ]
+    },
+    "quiz_f002": {
+      "id": "quiz_f002",
+      "q1": "State trong Flutter là gì?",
+      "q1_ans": 1,
+      "q1_expl": "State là dữ liệu ảnh hưởng trực tiếp đến giao diện tại một thời điểm.",
+      "q1_opts": [
+        "Màu giao diện",
+        "Dữ liệu làm thay đổi UI",
+        "Tên route",
+        "Kích thước màn hình"
+      ],
+      "q2": "Widget nào dùng khi cần thay đổi UI theo dữ liệu nội bộ?",
+      "q2_ans": 1,
+      "q2_expl": "StatefulWidget có State nên có thể cập nhật UI bằng setState.",
+      "q2_opts": [
+        "StatelessWidget",
+        "StatefulWidget",
+        "InheritedWidget",
+        "MaterialApp"
+      ],
+      "q3": "Hàm nào thường dùng để cập nhật state cục bộ?",
+      "q3_ans": 0,
+      "q3_expl": "setState báo cho Flutter biết cần render lại giao diện.",
+      "q3_opts": [
+        "setState",
+        "rebuild",
+        "refresh",
+        "notify"
+      ],
+      "q4": "Khi nào nên dùng Provider/Riverpod/Bloc?",
+      "q4_ans": 1,
+      "q4_expl": "Các state management tool phù hợp khi state được dùng nhiều nơi.",
+      "q4_opts": [
+        "App nhỏ 1 màn",
+        "Khi cần chia sẻ state giữa nhiều màn",
+        "Khi viết animation",
+        "Khi đổi theme"
+      ],
+      "q5": "Widget nào phù hợp để hiển thị dữ liệu bất đồng bộ từ Future?",
+      "q5_ans": 1,
+      "q5_expl": "FutureBuilder giúp xử lý trạng thái loading/success/error cho Future.",
+      "q5_opts": [
+        "ListView",
+        "FutureBuilder",
+        "GestureDetector",
+        "Container"
+      ]
+    },
+    "quiz_o001": {
+      "id": "quiz_o001",
+      "q1": "Lớp (class) là gì?",
+      "q1_ans": 1,
+      "q1_expl": "Class là khuôn mẫu để tạo object (instance).",
+      "q1_opts": [
+        "Một thể hiện (instance)",
+        "Bản thiết kế cho đối tượng",
+        "Một hàm",
+        "Một kiểu dữ liệu"
+      ],
+      "q2": "Từ khóa nào dùng để kế thừa lớp trong Dart?",
+      "q2_ans": 0,
+      "q2_expl": "extends được dùng để tạo quan hệ kế thừa giữa lớp con và lớp cha.",
+      "q2_opts": [
+        "extends",
+        "implements",
+        "with",
+        "uses"
+      ],
+      "q3": "Mục đích của constructor là gì?",
+      "q3_ans": 1,
+      "q3_expl": "Constructor khởi tạo trạng thái ban đầu cho object.",
+      "q3_opts": [
+        "Hủy đối tượng",
+        "Khởi tạo đối tượng mới",
+        "Khai báo biến",
+        "Định nghĩa phương thức"
+      ],
+      "q4": "Từ khóa nào tham chiếu instance hiện tại?",
+      "q4_ans": 0,
+      "q4_expl": "this tham chiếu đến đối tượng hiện tại trong Dart.",
+      "q4_opts": [
+        "this",
+        "self",
+        "me",
+        "that"
+      ],
+      "q5": "Làm sao để biến thành viên của lớp được coi là riêng tư theo quy ước?",
+      "q5_ans": 0,
+      "q5_expl": "Quy ước: đặt tên bắt đầu bằng _ để ẩn thành viên trong thư viện.",
+      "q5_opts": [
+        "leading underscore",
+        "private keyword",
+        "static",
+        "protected"
+      ]
+    },
+    "quiz_o002": {
+      "id": "quiz_o002",
+      "q1": "Kế thừa (inheritance) cho phép gì?",
+      "q1_ans": 1,
+      "q1_expl": "Inheritance cho phép lớp con sử dụng tính năng của lớp cha.",
+      "q1_opts": [
+        "Sao chép mã",
+        "Chia sẻ hành vi giữa các lớp",
+        "Chạy mã",
+        "Ẩn dữ liệu"
+      ],
+      "q2": "Từ khóa nào gọi phương thức của lớp cha trong Dart?",
+      "q2_ans": 0,
+      "q2_expl": "super được dùng để gọi phương thức hoặc constructor của lớp cha.",
+      "q2_opts": [
+        "super",
+        "parent",
+        "base",
+        "this"
+      ],
+      "q3": "Ghi đè phương thức (override) nghĩa là gì?",
+      "q3_ans": 1,
+      "q3_expl": "Override là cung cấp một triển khai khác của phương thức cha trong lớp con.",
+      "q3_opts": [
+        "Xóa phương thức",
+        "Cung cấp triển khai mới trong lớp con",
+        "Đổi tên phương thức",
+        "Gọi phương thức hai lần"
+      ],
+      "q4": "Khái niệm nào cho phép các lớp khác nhau được xử lý bằng giao diện chung?",
+      "q4_ans": 1,
+      "q4_expl": "Polymorphism cho phép nhiều lớp được coi là cùng một kiểu bố cục.",
+      "q4_opts": [
+        "Encapsulation",
+        "Polymorphism",
+        "Inheritance",
+        "Abstraction"
+      ],
+      "q5": "Từ khóa nào dùng để triển khai interface?",
+      "q5_ans": 0,
+      "q5_expl": "implements dùng để đảm bảo lớp tuân thủ giao diện.",
+      "q5_opts": [
+        "implements",
+        "extends",
+        "with",
+        "uses"
+      ]
+    },
+    "quiz_lv001": {
+      "id": "quiz_lv001",
+      "title": "Trắc nghiệm: Giới thiệu Laravel",
+      "courseId": "laravel",
+      "lessonId": "lesson_lv001",
+      "q1": "Laravel được viết bằng ngôn ngữ nào?",
+      "q1_opts": ["Java", "PHP", "Python", "Go"],
+      "q1_ans": 1,
+      "q2": "Mô hình kiến trúc phổ biến của Laravel là gì?",
+      "q2_opts": ["MVP", "MVC", "MVVM", "Layered"],
+      "q2_ans": 1,
+      "q3": "Lệnh tạo project Laravel mới thường dùng là?",
+      "q3_opts": ["laravel new", "npm create laravel", "php make:app", "composer run create"],
+      "q3_ans": 0
+    },
+    "quiz_lv002": {
+      "id": "quiz_lv002",
+      "title": "Trắc nghiệm: Routing và Blade",
+      "courseId": "laravel",
+      "lessonId": "lesson_lv002",
+      "q1": "Tệp route web chính của Laravel nằm ở đâu?",
+      "q1_opts": ["routes/web.php", "app/routes.php", "config/routes.php", "public/routes.php"],
+      "q1_ans": 0,
+      "q2": "Blade là gì trong Laravel?",
+      "q2_opts": ["Hệ quản trị CSDL", "Template engine", "Queue worker", "Trình quản lý gói"],
+      "q2_ans": 1,
+      "q3": "Controller được tạo nhanh bởi lệnh nào?",
+      "q3_opts": ["php artisan make:controller", "php artisan controller:new", "php make controller", "artisan new controller"],
+      "q3_ans": 0
+    },
+    "quiz_laravel_final": {
+      "id": "quiz_laravel_final",
+      "title": "Kiểm tra cuối khóa: Laravel",
+      "courseId": "laravel",
+      "lessonId": "",
+      "q1": "Laravel ORM có tên là gì?",
+      "q1_opts": ["Prisma", "Doctrine", "Eloquent", "Hibernate"],
+      "q1_ans": 2,
+      "q2": "Lệnh chạy migration là gì?",
+      "q2_opts": ["php artisan migrate", "php migrate run", "artisan db:migrate", "composer migrate"],
+      "q2_ans": 0,
+      "q3": "Middleware trong Laravel dùng để làm gì?",
+      "q3_opts": ["Vẽ giao diện", "Xử lý request trước khi vào controller", "Tạo model", "Quản lý package"],
+      "q3_ans": 1
+    },
+    "quiz_fb001": {
+      "id": "quiz_fb001",
+      "title": "Trắc nghiệm: Giới thiệu Firebase",
+      "courseId": "firebase_fundamentals",
+      "lessonId": "lesson_fb001",
+      "q1": "Firebase là nền tảng của công ty nào?",
+      "q1_opts": ["Amazon", "Google", "Microsoft", "Meta"],
+      "q1_ans": 1,
+      "q2": "Dịch vụ quản lý người dùng của Firebase là gì?",
+      "q2_opts": ["Firebase Auth", "Firebase Connect", "Firebase Member", "Firebase Sign"],
+      "q2_ans": 0,
+      "q3": "Dịch vụ lưu trữ tệp tin (ảnh, video) là gì?",
+      "q3_opts": ["Firestore", "Realtime DB", "Storage", "Functions"],
+      "q3_ans": 2
+    },
+    "quiz_fb002": {
+      "id": "quiz_fb002",
+      "title": "Trắc nghiệm: Auth và Database",
+      "courseId": "firebase_fundamentals",
+      "lessonId": "lesson_fb002",
+      "q1": "Realtime Database lưu dữ liệu theo dạng nào?",
+      "q1_opts": ["Bảng SQL", "Cấu trúc cây JSON", "CSV", "Đồ thị"],
+      "q1_ans": 1,
+      "q2": "Security Rules dùng để làm gì?",
+      "q2_opts": ["Tăng tốc độ", "Kiểm soát quyền đọc ghi", "Vẽ biểu đồ", "Tạo API key"],
+      "q2_ans": 1,
+      "q3": "Đăng nhập bằng email/password thuộc dịch vụ nào?",
+      "q3_opts": ["Functions", "Authentication", "Hosting", "Analytics"],
+      "q3_ans": 1
+    },
+    "quiz_firebase_final": {
+      "id": "quiz_firebase_final",
+      "title": "Kiểm tra cuối khóa: Firebase",
+      "courseId": "firebase_fundamentals",
+      "lessonId": "",
+      "q1": "Cloud Firestore khác Realtime Database ở điểm chính nào?",
+      "q1_opts": ["Không có khác biệt", "Firestore là database dạng document", "Realtime chỉ cho phép đọc", "Firestore không có rules"],
+      "q1_ans": 1,
+      "q2": "Cloud Functions thường dùng để?",
+      "q2_opts": ["Vẽ giao diện", "Xử lý logic backend theo sự kiện", "Thay đổi màn hình chào", "Tạo trình giả lập"],
+      "q2_ans": 1,
+      "q3": "Hosting của Firebase phù hợp nhất để?",
+      "q3_opts": ["Chạy máy ảo", "Triển khai web tĩnh nhanh chóng", "Lưu trữ ảnh dung lượng lớn", "Chạy SQL server"],
+      "q3_ans": 1
+    },
+    "quiz_php001": {
+      "id": "quiz_php001",
+      "title": "Trắc nghiệm: Cú pháp PHP",
+      "courseId": "php_basics",
+      "lessonId": "lesson_php001",
+      "q1": "Biến trong PHP luôn bắt đầu bằng ký tự nào?",
+      "q1_opts": ["#", "$", "@", "&"],
+      "q1_ans": 1,
+      "q2": "Ký hiệu mở thẻ PHP chuẩn là?",
+      "q2_opts": ["<php>", "<?php", "{{php", "<%php"],
+      "q2_ans": 1,
+      "q3": "Hàm dùng để in chuỗi ra màn hình phổ biến nhất là?",
+      "q3_opts": ["echo", "printline", "console.log", "puts"],
+      "q3_ans": 0
+    },
+    "quiz_php002": {
+      "id": "quiz_php002",
+      "title": "Trắc nghiệm: Hàm và Mảng",
+      "courseId": "php_basics",
+      "lessonId": "lesson_php002",
+      "q1": "Mảng có cặp khóa-giá trị trong PHP gọi là gì?",
+      "q1_opts": ["Mảng tuần tự", "Mảng kết hợp (Associative)", "Tuple", "Set"],
+      "q1_ans": 1,
+      "q2": "Từ khóa khai báo hàm trong PHP là?",
+      "q2_opts": ["def", "function", "func", "method"],
+      "q2_ans": 1,
+      "q3": "Hàm đếm số phần tử của mảng là?",
+      "q3_opts": ["size()", "length()", "count()", "len()"],
+      "q3_ans": 2
+    },
+    "quiz_php_final": {
+      "id": "quiz_php_final",
+      "title": "Kiểm tra cuối khóa: PHP Cơ bản",
+      "courseId": "php_basics",
+      "lessonId": "",
+      "q1": "Biến siêu toàn cục chứa dữ liệu từ form POST là?",
+      "q1_opts": ["$_GET", "$_POST", "$_REQUEST_URI", "$_DATA"],
+      "q1_ans": 1,
+      "q2": "Để chèn nội dung tệp khác vào PHP, ta dùng?",
+      "q2_opts": ["import", "include", "requirement", "using"],
+      "q2_ans": 1,
+      "q3": "Toán tử nối chuỗi trong PHP là?",
+      "q3_opts": ["+", ".", "&", "++"],
+      "q3_ans": 1
+    },
+    "quiz_py001": {
+      "id": "quiz_py001",
+      "title": "Trắc nghiệm: Giới thiệu Python",
+      "courseId": "python_basics",
+      "lessonId": "lesson_py001",
+      "q1": "Python sử dụng hàm nào để in dữ liệu?",
+      "q1_opts": ["echo()", "print()", "console()", "write()"],
+      "q1_ans": 1,
+      "q2": "Kiểu dữ liệu danh sách thay đổi được trong Python là?",
+      "q2_opts": ["array", "list", "map", "setlist"],
+      "q2_ans": 1,
+      "q3": "Python có phân biệt hoa thường trong tên biến không?",
+      "q3_opts": ["Không", "Có", "Chỉ trên Linux", "Chỉ với số"],
+      "q3_ans": 1
+    },
+    "quiz_py002": {
+      "id": "quiz_py002",
+      "title": "Trắc nghiệm: Điều kiện & Vòng lặp",
+      "courseId": "python_basics",
+      "lessonId": "lesson_py002",
+      "q1": "Từ khóa rẽ nhánh chính trong Python là?",
+      "q1_opts": ["if", "switch", "case", "when"],
+      "q1_ans": 0,
+      "q2": "Vòng lặp duyệt phần tử trong list phổ biến nhất là?",
+      "q2_opts": ["for item in list", "foreach(item:list)", "loop list", "for(i=0;i<n;i++)"],
+      "q2_ans": 0,
+      "q3": "Khối lệnh trong Python được xác định bằng gì?",
+      "q3_opts": ["Dấu ngoặc {}", "Dấu ngoặc ()", "Thụt lề (Indentation)", "Từ khóa Begin/End"],
+      "q3_ans": 2
+    },
+    "quiz_python_final": {
+      "id": "quiz_python_final",
+      "title": "Kiểm tra cuối khóa: Python",
+      "courseId": "python_basics",
+      "lessonId": "",
+      "q1": "Hàm nào sắp xếp list và trả về một list mới?",
+      "q1_opts": ["sort()", "sorted()", "order()", "arrange()"],
+      "q1_ans": 1,
+      "q2": "Kiểu dữ liệu nào sau đây là bất biến (immutable)?",
+      "q2_opts": ["list", "dict", "set", "tuple"],
+      "q2_ans": 3,
+      "q3": "Công cụ quản lý thư viện phổ biến của Python là?",
+      "q3_opts": ["npm", "pip", "composer", "maven"],
+      "q3_ans": 1
+    },
+    "quiz_jv001": {
+      "id": "quiz_jv001",
+      "title": "Trắc nghiệm: Java Cơ bản",
+      "courseId": "java_core",
+      "lessonId": "lesson_jv001",
+      "q1": "Tệp mã nguồn Java có phần mở rộng là gì?",
+      "q1_opts": [".jav", ".java", ".jv", ".class"],
+      "q1_ans": 1,
+      "q2": "Java chạy trên nền tảng máy ảo nào?",
+      "q2_opts": ["CLR", "JVM", "V8", "CPython"],
+      "q2_ans": 1,
+      "q3": "Từ khóa để khai báo một lớp là?",
+      "q3_opts": ["class", "struct", "object", "define"],
+      "q3_ans": 0
+    },
+    "quiz_jv002": {
+      "id": "quiz_jv002",
+      "title": "Trắc nghiệm: OOP trong Java",
+      "courseId": "java_core",
+      "lessonId": "lesson_jv002",
+      "q1": "Java có hỗ trợ đa kế thừa trực tiếp từ class không?",
+      "q1_opts": ["Có", "Không", "Chỉ với lớp abstract", "Chỉ với lớp final"],
+      "q1_ans": 1,
+      "q2": "Annotation dùng để đánh dấu ghi đè phương thức là?",
+      "q2_opts": ["@Override", "@Overload", "@Replace", "@Method"],
+      "q2_ans": 0,
+      "q3": "Từ khóa gọi hàm khởi tạo của lớp cha là?",
+      "q3_opts": ["this", "super", "base", "parent"],
+      "q3_ans": 1
+    },
+    "quiz_java_final": {
+      "id": "quiz_java_final",
+      "title": "Kiểm tra cuối khóa: Java Core",
+      "courseId": "java_core",
+      "lessonId": "",
+      "q1": "Collection nào cho phép chứa phần tử trùng lặp?",
+      "q1_opts": ["Set", "List", "Map key", "EnumSet"],
+      "q1_ans": 1,
+      "q2": "Ngoại lệ nào thuộc loại 'checked exception'?",
+      "q2_opts": ["RuntimeException", "IOException", "NullPointerException", "ArithmeticException"],
+      "q2_ans": 1,
+      "q3": "Từ khóa dùng để tạo một đối tượng mới là?",
+      "q3_opts": ["create", "new", "make", "init"],
+      "q3_ans": 1
+    },
+    "quiz_sql001": {
+      "id": "quiz_sql001",
+      "title": "Trắc nghiệm: SQL Select",
+      "courseId": "sql_fundamentals",
+      "lessonId": "lesson_sql001",
+      "q1": "Câu lệnh chính để truy vấn dữ liệu là?",
+      "q1_opts": ["SELECT", "INSERT", "UPDATE", "DELETE"],
+      "q1_ans": 0,
+      "q2": "Mệnh đề dùng để lọc dữ liệu trong SQL là?",
+      "q2_opts": ["GROUP BY", "WHERE", "ORDER BY", "HAVING"],
+      "q2_ans": 1,
+      "q3": "Để sắp xếp kết quả truy vấn, ta dùng?",
+      "q3_opts": ["ORDER BY", "SORT", "ARRANGE", "RANK"],
+      "q3_ans": 0
+    },
+    "quiz_sql002": {
+      "id": "quiz_sql002",
+      "title": "Trắc nghiệm: Join & Tổng hợp",
+      "courseId": "sql_fundamentals",
+      "lessonId": "lesson_sql002",
+      "q1": "INNER JOIN trả về kết quả như thế nào?",
+      "q1_opts": ["Tất cả dòng bảng trái", "Tất cả dòng bảng phải", "Các dòng khớp ở cả hai bảng", "Không có dòng nào"],
+      "q1_ans": 2,
+      "q2": "Hàm dùng để đếm số dòng dữ liệu là?",
+      "q2_opts": ["SUM()", "COUNT()", "AVG()", "LEN()"],
+      "q2_ans": 1,
+      "q3": "GROUP BY dùng để làm gì?",
+      "q3_opts": ["Nối bảng", "Nhóm dữ liệu theo cột", "Xóa dữ liệu trùng", "Sắp xếp tăng dần"],
+      "q3_ans": 1
+    },
+    "quiz_sql_final": {
+      "id": "quiz_sql_final",
+      "title": "Kiểm tra cuối khóa: SQL Fundamentals",
+      "courseId": "sql_fundamentals",
+      "lessonId": "",
+      "q1": "Mệnh đề lọc sau khi đã GROUP BY là?",
+      "q1_opts": ["WHERE", "HAVING", "ORDER BY", "LIMIT"],
+      "q1_ans": 1,
+      "q2": "Câu lệnh thêm dữ liệu mới vào bảng là?",
+      "q2_opts": ["APPEND", "INSERT INTO", "ADD ROW", "CREATE ROW"],
+      "q2_ans": 1,
+      "q3": "Khóa dùng để định danh duy nhất mỗi dòng là?",
+      "q3_opts": ["PRIMARY KEY", "FOREIGN KEY", "UNIQUE KEY", "DEFAULT KEY"],
+      "q3_ans": 0
+    },
+     "quiz_oop_final": {
+       "id": "quiz_oop_final",
+       "q1": "Đóng gói (encapsulation) là gì?",
+       "q10": "Nguyên tắc thiết kế nào được viết tắt là DRY (Don't Repeat Yourself)?",
+       "q10_ans": 0,
+       "q10_expl": "DRY khuyến khích tránh lặp lại mã để dễ bảo trì.",
+       "q10_opts": [
+         "DRY",
+         "KISS",
+         "YAGNI",
+         "SOLID"
+       ],
+       "q1_ans": 1,
+       "q1_expl": "Encapsulation tập trung ẩn chi tiết hiện thực và chỉ lộ interface.",
+       "q1_opts": [
+         "Kết hợp dữ liệu và phương thức",
+         "Ẩn chi tiết hiện thực",
+         "Cơ chế kế thừa",
+         "Đa hình"
+       ],
+       "q2": "Interface là gì?",
+       "q2_ans": 1,
+       "q2_expl": "Interface định nghĩa các phương thức mà lớp phải triển khai.",
+       "q2_opts": [
+         "Một lớp cụ thể",
+         "Một hợp đồng phương thức",
+         "Một kiểu biến",
+         "Một constructor"
+       ],
+       "q3": "Từ khóa nào giới thiệu mixin trong Dart?",
+       "q3_ans": 0,
+       "q3_expl": "with dùng để áp dụng mixin vào một lớp trong Dart.",
+       "q3_opts": [
+         "with",
+         "extends",
+         "implements",
+         "mixin"
+       ],
+       "q4": "Chú thích @override có ý nghĩa gì?",
+       "q4_ans": 1,
+       "q4_expl": "@override cho biết phương thức ghi đè phương thức của lớp cha.",
+       "q4_opts": [
+         "Phương thức bị deprecated",
+         "Phương thức thay thế phương thức superclass",
+         "Phương thức riêng tư",
+         "Phương thức static"
+       ],
+       "q5": "Nguyên tắc nào khuyến khích tách gì khỏi như thế nào?",
+       "q5_ans": 1,
+       "q5_expl": "Abstraction tập trung vào ý nghĩa (what) thay vì cách thực hiện (how).",
+       "q5_opts": [
+         "Encapsulation",
+         "Abstraction",
+         "Polymorphism",
+         "Inheritance"
+       ],
+       "q6": "Thuật ngữ nào chỉ lớp con là dạng chuyên biệt của lớp cha?",
+       "q6_ans": 1,
+       "q6_expl": "Inheritance mô tả mối quan hệ 'is-a' giữa lớp con và lớp cha.",
+       "q6_opts": [
+         "Coupling",
+         "Inheritance",
+         "Aggregation",
+         "Composition"
+       ],
+       "q7": "Cơ chế nào cho phép thay đổi hành vi mà không sửa mã hiện có?",
+       "q7_ans": 1,
+       "q7_expl": "Polymorphism cho phép thay đổi hành vi thông qua lớp con.",
+       "q7_opts": [
+         "Inheritance",
+         "Polymorphism",
+         "Recursion",
+         "Global variables"
+       ],
+       "q8": "Từ khóa nào gọi constructor của superclass?",
+       "q8_ans": 0,
+       "q8_expl": "super(...) gọi constructor của lớp cha.",
+       "q8_opts": [
+         "super",
+         "this",
+         "base",
+         "parent"
+       ],
+       "q9": "Khái niệm nào nhóm các lớp liên quan lại với nhau?",
+       "q9_ans": 0,
+       "q9_expl": "Package thường dùng để tổ chức các thư viện và lớp liên quan.",
+       "q9_opts": [
+         "Package",
+         "Module",
+         "Namespace",
+         "Library"
+       ]
+     },
+     "quiz_d006": {
+       "id": "quiz_d006",
+       "title": "Trắc nghiệm: Xử lý ngoại lệ Dart",
+       "q1": "Từ khóa nào bắt ngoại lệ trong Dart?",
+       "q1_opts": ["handle", "catch", "trap", "grab"],
+       "q1_ans": 1,
+       "q2": "Từ khóa nào ném ngoại lệ?",
+       "q2_opts": ["exit", "break", "throw", "raise"],
+       "q2_ans": 2,
+       "q3": "Khối finally luôn thực thi khi nào?",
+       "q3_opts": ["Chỉ khi có lỗi", "Khi không có lỗi", "Luôn luôn", "Không bao giờ"],
+       "q3_ans": 2
+     },
+     "quiz_f003": {
+       "id": "quiz_f003",
+       "title": "Trắc nghiệm: Kiến trúc Flutter nâng cao",
+       "q1": "GetX là gì trong Flutter?",
+       "q1_opts": ["Widget", "State management library", "Animation", "Database"],
+       "q1_ans": 1,
+       "q2": "MVVM là viết tắt của?",
+       "q2_opts": ["Model View View-Model", "Mobile View Virtual Memory", "Module Validation View Model", "Model Virtual View Management"],
+       "q2_ans": 0,
+       "q3": "Dependency Injection dùng để làm gì?",
+       "q3_opts": ["Viết giao diện", "Tách biệt các dependency", "Tạo animation", "Quản lý database"],
+       "q3_ans": 1
+     },
+     "quiz_php003": {
+       "id": "quiz_php003",
+       "title": "Trắc nghiệm: OOP nâng cao PHP",
+       "q1": "Access modifier private trong PHP có thể truy cập từ?",
+       "q1_opts": ["Bất cứ đâu", "Chỉ từ trong lớp", "Từ lớp con", "Từ cùng package"],
+       "q1_ans": 1,
+       "q2": "Namespace dùng để?",
+       "q2_opts": ["Viết giao diện", "Tổ chức code tránh xung đột tên", "Quản lý database", "Tạo animation"],
+       "q2_ans": 1,
+       "q3": "Trait dùng để làm gì?",
+       "q3_opts": ["Kế thừa class", "Chia sẻ phương thức giữa các class", "Tạo interface", "Quản lý state"],
+       "q3_ans": 1
+     },
+     "quiz_py003": {
+       "id": "quiz_py003",
+       "title": "Trắc nghiệm: Hàm nâng cao Python",
+       "q1": "Lambda là gì?",
+       "q1_opts": ["Loop type", "Hàm vô danh", "Variable type", "Error type"],
+       "q1_ans": 1,
+       "q2": "Map() dùng để?",
+       "q2_opts": ["Tạo map", "Áp dụng hàm với mỗi phần tử", "Vẽ bản đồ", "Quản lý memory"],
+       "q2_ans": 1,
+       "q3": "Decorator dùng để?",
+       "q3_opts": ["Trang trí giao diện", "Mở rộng tính năng hàm", "Tạo class", "Quản lý file"],
+       "q3_ans": 1
+     },
+     "quiz_jv003": {
+       "id": "quiz_jv003",
+       "title": "Trắc nghiệm: Collections Java",
+       "q1": "Stream API dùng để?",
+       "q1_opts": ["Đọc file", "Xử lý dữ liệu functional", "Tạo network connection", "Quản lý memory"],
+       "q1_ans": 1,
+       "q2": "flatMap() có chức năng gì?",
+       "q2_opts": ["Vẽ bản đồ phẳng", "Map và flatten kết quả", "Tạo array", "Sắp xếp dữ liệu"],
+       "q2_ans": 1,
+       "q3": "Set khác List ở điểm nào?",
+       "q3_opts": ["Set có thứ tự, List không", "Set không chứa duplicate, List có", "Set chỉ có số, List có string", "Không khác"],
+       "q3_ans": 1
+     },
+     "quiz_sql003": {
+       "id": "quiz_sql003",
+       "title": "Trắc nghiệm: Index & Performance SQL",
+       "q1": "Index dùng để?",
+       "q1_opts": ["Sắp xếp dữ liệu", "Tăng tốc độ tìm kiếm", "Xóa dữ liệu", "Tạo backup"],
+       "q1_ans": 1,
+       "q2": "EXPLAIN PLAN dùng để?",
+       "q2_opts": ["Giải thích ngữ pháp SQL", "Phân tích kế hoạch thực thi truy vấn", "Tạo plan backup", "Tính toán chi phí"],
+       "q2_ans": 1,
+       "q3": "Chuẩn hóa (Normalization) là?",
+       "q3_opts": ["Tối ưu hiệu năng", "Tổ chức schema tránh dữ liệu dư thừa", "Tạo backup", "Mã hóa dữ liệu"],
+       "q3_ans": 1
+     },
+     "quiz_lv003": {
+       "id": "quiz_lv003",
+       "title": "Trắc nghiệm: Authentication Laravel",
+       "q1": "Authentication là?",
+       "q1_opts": ["Phân quyền người dùng", "Xác định người dùng là ai", "Tạo mật khẩu", "Lưu trữ dữ liệu"],
+       "q1_ans": 1,
+       "q2": "Authorization là?",
+       "q2_opts": ["Xác thực người dùng", "Xác định nguồn tin", "Kiểm soát quyền của người dùng", "Tạo token"],
+       "q2_ans": 2,
+       "q3": "Laravel Sanctum dùng cho?",
+       "q3_opts": ["Web auth", "API authentication", "Database auth", "File auth"],
+       "q3_ans": 1
+     },
+     "quiz_fb003": {
+       "id": "quiz_fb003",
+       "title": "Trắc nghiệm: Cloud Functions Firebase",
+       "q1": "Cloud Functions được trigger bởi?",
+       "q1_opts": ["User click", "Schedule time", "Database events", "Tất cả trên"],
+       "q1_ans": 3,
+       "q2": "Analytics trong Firebase dùng để?",
+       "q2_opts": ["Vẽ biểu đồ", "Theo dõi hành vi người dùng", "Tạo database", "Quản lý file"],
+       "q2_ans": 1,
+       "q3": "Khi nào Cloud Function thực thi?",
+       "q3_opts": ["Luôn luôn", "Khi được trigger", "Khi user đăng nhập", "Khi có lỗi"],
+       "q3_ans": 1
+      },
+      "quiz_dart_advanced_final": {
+        "id": "quiz_dart_advanced_final",
+        "title": "Kiểm tra cuối khóa: Dart Nâng cao",
+        "courseId": "dart_advanced",
+        "q1": "Xử lý ngoại lệ nào để bắt lỗi chia cho 0?",
+        "q1_opts": ["DartException", "ArithmeticException", "IntegerDivisionByZeroException", "RuntimeError"],
+        "q1_ans": 2,
+        "q2": "Từ khóa nào cho phép viết hàm bất đồng bộ?",
+        "q2_opts": ["sync", "async", "await", "future"],
+        "q2_ans": 1,
+        "q3": "Từ khóa nào dùng để đợi kết quả Future?",
+        "q3_opts": ["wait", "then", "await", "get"],
+        "q3_ans": 2
+      },
+      "quiz_flutter_advanced_final": {
+        "id": "quiz_flutter_advanced_final",
+        "title": "Kiểm tra cuối khóa: Flutter Nâng cao",
+        "courseId": "flutter_advanced",
+        "q1": "MVVM viết tắt là?",
+        "q1_opts": ["Model View Virtual Memory", "Model View ViewModel", "Mobile Virtual Video Module", "Monitor View VM"],
+        "q1_ans": 1,
+        "q2": "GetX dùng để quản lý cái gì?",
+        "q2_opts": ["Widget", "State + Dependencies", "Animation", "Navigation"],
+        "q2_ans": 1,
+        "q3": "Dependency Injection giúp?",
+        "q3_opts": ["Tăng tốc độ", "Tách biệt dependencies", "Giảm kích thước", "Tối ưu RAM"],
+        "q3_ans": 1
+      },
+      "quiz_php_advanced_final": {
+        "id": "quiz_php_advanced_final",
+        "title": "Kiểm tra cuối khóa: PHP Nâng cao",
+        "courseId": "php_advanced",
+        "q1": "Private property trong PHP có thể truy cập từ?",
+        "q1_opts": ["Bất cứ đâu", "Chỉ từ trong lớp", "Từ lớp con", "Tất cả"],
+        "q1_ans": 1,
+        "q2": "Namespace purpose là?",
+        "q2_opts": ["Tạo function", "Tổ chức code", "Quản lý DB", "Tạo class"],
+        "q2_ans": 1,
+        "q3": "Trait là?",
+        "q3_opts": ["Lớp", "Chia sẻ phương thức", "Interface", "Biến"],
+        "q3_ans": 1
+      },
+      "quiz_python_advanced_final": {
+        "id": "quiz_python_advanced_final",
+        "title": "Kiểm tra cuối khóa: Python Nâng cao",
+        "courseId": "python_advanced",
+        "q1": "Lambda dùng để?",
+        "q1_opts": ["Định nghĩa class", "Viết hàm vô danh", "Tạo variable", "Xóa dữ liệu"],
+        "q1_ans": 1,
+        "q2": "Map() trả về gì?",
+        "q2_opts": ["List", "Dict", "Iterator", "Set"],
+        "q2_ans": 2,
+        "q3": "Decorator là?",
+        "q3_opts": ["Class", "Mở rộng hàm", "Variable", "Exception"],
+        "q3_ans": 1
+      },
+      "quiz_java_advanced_final": {
+        "id": "quiz_java_advanced_final",
+        "title": "Kiểm tra cuối khóa: Java Nâng cao",
+        "courseId": "java_advanced",
+        "q1": "Stream API dùng để?",
+        "q1_opts": ["Đọc file", "Xử lý dữ liệu functional", "Network", "Graphics"],
+        "q1_ans": 1,
+        "q2": "flatMap() là?",
+        "q2_opts": ["Map object", "Map + flatten", "Flatten object", "Map đơn"],
+        "q2_ans": 1,
+        "q3": "Set vs List?",
+        "q3_opts": ["Giống nhau", "Set không duplicate", "List không duplicate", "Không khác"],
+        "q3_ans": 1
+      },
+      "quiz_sql_advanced_final": {
+        "id": "quiz_sql_advanced_final",
+        "title": "Kiểm tra cuối khóa: SQL Nâng cao",
+        "courseId": "sql_advanced",
+        "q1": "Index dùng để?",
+        "q1_opts": ["Sắp xếp", "Tăng tốc độ tìm kiếm", "Xóa dữ liệu", "Backup"],
+        "q1_ans": 1,
+        "q2": "EXPLAIN PLAN dùng?",
+        "q2_opts": ["Giải SQL", "Phân tích execution", "Tạo backup", "Mã hóa"],
+        "q2_ans": 1,
+        "q3": "Normalization là?",
+        "q3_opts": ["Tối ưu", "Tổ chức schema", "Join table", "Cache data"],
+        "q3_ans": 1
+      },
+      "quiz_laravel_advanced_final": {
+        "id": "quiz_laravel_advanced_final",
+        "title": "Kiểm tra cuối khóa: Laravel Nâng cao",
+        "courseId": "laravel_advanced",
+        "q1": "Authentication là?",
+        "q1_opts": ["Phân quyền", "Xác định user", "Tạo password", "Lưu dữ liệu"],
+        "q1_ans": 1,
+        "q2": "Authorization là?",
+        "q2_opts": ["Xác thực user", "Quyền hạn", "Tạo token", "Mã hóa"],
+        "q2_ans": 1,
+        "q3": "Sanctum dùng?",
+        "q3_opts": ["Web", "API auth", "DB", "File"],
+        "q3_ans": 1
+      },
+      "quiz_firebase_advanced_final": {
+        "id": "quiz_firebase_advanced_final",
+        "title": "Kiểm tra cuối khóa: Firebase Nâng cao",
+        "courseId": "firebase_advanced",
+        "q1": "Cloud Functions trigger?",
+        "q1_opts": ["Click", "Event", "Time", "Tất cả"],
+        "q1_ans": 3,
+        "q2": "Analytics dùng?",
+        "q2_opts": ["Vẽ", "Theo dõi user", "DB", "File"],
+        "q2_ans": 1,
+        "q3": "Khi nào function chạy?",
+        "q3_opts": ["Luôn", "Khi trigger", "Login", "Lỗi"],
+        "q3_ans": 1
+      },
+      "quiz_oop_advanced_final": {
+        "id": "quiz_oop_advanced_final",
+        "title": "Kiểm tra cuối khóa: OOP Nâng cao",
+        "courseId": "oop_advanced",
+        "q1": "Design Pattern là?",
+        "q1_opts": ["Lớp", "Giải pháp thiết kế", "Interface", "Exception"],
+        "q1_ans": 1,
+        "q2": "SOLID principles gồm?",
+        "q2_opts": ["5 nguyên tắc", "3 nguyên tắc", "7 nguyên tắc", "10 nguyên tắc"],
+        "q2_ans": 0,
+        "q3": "Clean Code là?",
+        "q3_opts": ["Code không lỗi", "Code dễ đọc", "Code ngắn", "Code nhanh"],
+        "q3_ans": 1
+      }
+   },
+  "sessions": {
+    "CcMUHVMhEsNICagTAPyz2C3V9mu1": {
+      "email": "phucanhta986@gmail.com",
+      "isActive": true,
+      "lastSeenAt": "2026-04-22T02:06:12.361Z",
+      "provider": "firebase_auth",
+      "role": "student",
+      "userId": "CcMUHVMhEsNICagTAPyz2C3V9mu1"
+    }
+  },
+  "users": {
+    "2tddo0wVX9cQkG5x54Ffyk3SIm03": {
+      "email": "vu@gmail.com",
+      "id": "2tddo0wVX9cQkG5x54Ffyk3SIm03",
+      "name": "Vu",
+      "role": "student"
+    },
+    "CcMUHVMhEsNICagTAPyz2C3V9mu1": {
+      "avatarUrl": "data:image/jpeg;base64,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",
+      "completedLessons": {
+        "level_test_easy": {
+          "completedAt": "2026-04-21T11:07:29.511292"
+        }
+      },
+      "displayName": "Phuc Anh",
+      "email": "phucanhta986@gmail.com",
+      "enrolledCourses": {
+        "dart_basics": {
+          "enrolledAt": "2026-04-21T17:33:50.080",
+          "status": "active"
+        },
+        "flutter_ui": {
+          "enrolledAt": "2026-04-21T17:33:49.688",
+          "status": "active"
+        },
+        "oop": {
+          "enrolledAt": "2026-04-21T16:23:17.498559",
+          "status": "active"
+        }
+      },
+      "id": "CcMUHVMhEsNICagTAPyz2C3V9mu1",
+      "name": "Phuc Anh",
+      "quizAttempts": {
+        "-OqiDBFH-H4eNe_oKkAm": {
+          "attemptId": "-OqiDBFH-H4eNe_oKkAm",
+          "attemptType": "level_test",
+          "isFinalQuiz": false,
+          "level": "easy",
+          "percentage": 60,
+          "questionIds": [
+            "quiz_d001_q3_2",
+            "quiz_d004_q2_1",
+            "quiz_d005_q1_0",
+            "quiz_d004_q1_0",
+            "quiz_d001_q2_1",
+            "quiz_d003_q4_3",
+            "quiz_d003_q5_4",
+            "quiz_d005_q3_2",
+            "quiz_d003_q3_2",
+            "quiz_d002_q1_0"
+          ],
+          "quizId": "easy_assessment_1776744441392",
+          "quizTitle": "Kiểm tra Easy",
+          "score": 6,
+          "submittedAt": "2026-04-21T04:07:29.041900Z",
+          "total": 10
+        }
+      },
+      "role": "student",
+      "uid": "CcMUHVMhEsNICagTAPyz2C3V9mu1",
+      "updatedAt": "2026-04-22T02:06:12.361Z"
+    },
+    "glwkFCNqCFZEK5eGaEDln7SKavw1": {
+      "email": "admin@gmail.com",
+      "id": "glwkFCNqCFZEK5eGaEDln7SKavw1",
+      "name": "Admin",
+      "role": "admin"
+    },
+    "qmq48dHiB1P5LkdZQE0AJWuJbse2": {
+      "email": "anh@gmail.com",
+      "id": "qmq48dHiB1P5LkdZQE0AJWuJbse2",
+      "name": "Anh",
+      "role": "student"
+    }
+  }
+}

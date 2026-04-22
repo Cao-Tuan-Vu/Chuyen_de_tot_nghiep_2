@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:btl/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:btl/features/profile/presentation/pages/admin_profile_page.dart';
 import 'package:btl/features/profile/presentation/pages/student_profile_page.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -13,13 +12,6 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = controller.currentUser;
-    final isAdmin = user?.role == 'admin';
-
-    if (isAdmin) {
-      return AdminProfilePage(controller: controller);
-    } else {
-      return StudentProfilePage(controller: controller);
-    }
+    return StudentProfilePage(controller: controller);
   }
 }

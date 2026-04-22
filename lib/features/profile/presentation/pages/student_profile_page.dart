@@ -1,9 +1,8 @@
-import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:btl/features/auth/presentation/controllers/auth_controller.dart';
 
@@ -19,12 +18,9 @@ class StudentProfilePage extends StatefulWidget {
 }
 
 class _StudentProfilePageState extends State<StudentProfilePage> {
-  static const String _avatarPrefsPrefix = 'local_avatar_path_';
-
   late final TextEditingController _displayNameController;
   final ImagePicker _imagePicker = ImagePicker();
   bool _isUploadingAvatar = false;
-  String? _localAvatarPath;
 
   @override
   void initState() {
@@ -32,33 +28,6 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
     _displayNameController = TextEditingController(
       text: widget.controller.currentUser?.displayName ?? '',
     );
-    _loadLocalAvatar();
-  }
-
-  String _avatarKeyForUser(String userId) => '$_avatarPrefsPrefix$userId';
-
-  Future<void> _loadLocalAvatar() async {
-    final userId = widget.controller.currentUser?.id;
-    if (userId == null || userId.isEmpty) {
-      return;
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    final savedPath = prefs.getString(_avatarKeyForUser(userId));
-    if (savedPath == null || savedPath.isEmpty) {
-      return;
-    }
-
-    final file = File(savedPath);
-    if (await file.exists()) {
-      if (!mounted) return;
-      setState(() {
-        _localAvatarPath = savedPath;
-      });
-      return;
-    }
-
-    await prefs.remove(_avatarKeyForUser(userId));
   }
 
   Future<void> _saveProfile() async {
@@ -89,9 +58,9 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
 
     final image = await _imagePicker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 80,
-      maxWidth: 1200,
-      maxHeight: 1200,
+      imageQuality: 50, // Nén mạnh để chuỗi Base64 không quá dài
+      maxWidth: 400,    // Kích thước nhỏ đủ dùng cho avatar
+      maxHeight: 400,
     );
 
     if (image == null) {
@@ -103,38 +72,24 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
     });
 
     try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final avatarsDir = Directory('${appDir.path}/avatars');
-      if (!await avatarsDir.exists()) {
-        await avatarsDir.create(recursive: true);
-      }
+      // Đọc ảnh dưới dạng bytes và chuyển sang Base64
+      final bytes = await image.readAsBytes();
+      final base64String = 'data:image/jpeg;base64,${base64Encode(bytes)}';
 
-      final savedFilePath = '${avatarsDir.path}/$userId.jpg';
-      final sourceFile = File(image.path);
-      await sourceFile.copy(savedFilePath);
+      // Lưu lên Firebase thông qua Controller
+      await widget.controller.updateAvatarUrl(base64String);
 
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_avatarKeyForUser(userId), savedFilePath);
-
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _localAvatarPath = savedFilePath;
-      });
-
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Đã lưu ảnh đại diện trên thiết bị này'),
+          content: Text('Cập nhật ảnh đại diện thành công'),
           backgroundColor: Colors.green,
         ),
       );
-    } catch (_) {
-      if (!mounted) {
-        return;
-      }
+    } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Không thể lưu ảnh. Vui lòng thử lại.')),
+        SnackBar(content: Text('Lỗi: ${e.toString()}')),
       );
     } finally {
       if (mounted) {
@@ -146,30 +101,13 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
   }
 
   Future<void> _removeLocalAvatar() async {
-    final userId = widget.controller.currentUser?.id;
-    if (userId == null || userId.isEmpty) {
-      return;
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    final existingPath = prefs.getString(_avatarKeyForUser(userId));
-
-    if (existingPath != null && existingPath.isNotEmpty) {
-      final file = File(existingPath);
-      if (await file.exists()) {
-        await file.delete();
-      }
-      await prefs.remove(_avatarKeyForUser(userId));
-    }
-
-    if (!mounted) {
-      return;
-    }
-    setState(() {
-      _localAvatarPath = null;
-    });
+    if (widget.controller.isLoading) return;
+    
+    await widget.controller.updateAvatarUrl(''); // Xóa avatar
+    
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã xóa ảnh đại diện trên thiết bị này')),
+      const SnackBar(content: Text('Đã xóa ảnh đại diện')),
     );
   }
 
@@ -177,12 +115,27 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
   Widget build(BuildContext context) {
     final user = widget.controller.currentUser;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ImageProvider<Object>? avatarImage = _localAvatarPath != null
-        ? FileImage(File(_localAvatarPath!))
-        : (user?.avatarUrl != null ? NetworkImage(user!.avatarUrl!) : null);
+
+    // Xử lý hiển thị ảnh từ URL hoặc chuỗi Base64
+    ImageProvider? avatarImage;
+    if (user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty) {
+      if (user.avatarUrl!.startsWith('data:image')) {
+        try {
+          // Giải mã chuỗi base64
+          final base64Data = user.avatarUrl!.split(',').last;
+          avatarImage = MemoryImage(base64Decode(base64Data));
+        } catch (_) {}
+      } else {
+        avatarImage = NetworkImage(user.avatarUrl!);
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+        ),
         title: const Text('Trang Cá Nhân'),
         elevation: 0,
         backgroundColor: isDark ? Colors.black : const Color(0xFFFFD700),
@@ -259,12 +212,12 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
                     user?.email ?? '',
                     style: TextStyle(fontSize: 16, color: Colors.white.withValues(alpha: 0.85)),
                   ),
-                  if (_localAvatarPath != null)
+                  if (user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty)
                     TextButton.icon(
                       onPressed: _isUploadingAvatar ? null : _removeLocalAvatar,
                       icon: const Icon(Icons.delete_outline_rounded, color: Colors.white),
                       label: const Text(
-                        'Xóa ảnh thiết bị',
+                        'Xóa ảnh đại diện',
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                       ),
                     ),

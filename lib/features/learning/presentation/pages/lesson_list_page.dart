@@ -78,8 +78,12 @@ class _LessonListPageState extends State<LessonListPage> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 220,
-            pinned: true,
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          ),
+          expandedHeight: 220,
+          pinned: true,
             backgroundColor: courseStyle.primary,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(

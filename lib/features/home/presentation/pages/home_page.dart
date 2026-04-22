@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -76,14 +77,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final user = widget.controller.currentUser;
 
+    // Prepare avatar image (supports both Base64 data URL and remote URL)
+    ImageProvider? avatarImage;
+    if (user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty) {
+      if (user.avatarUrl!.startsWith('data:image')) {
+        try {
+          final base64Data = user.avatarUrl!.split(',').last;
+          avatarImage = MemoryImage(base64Decode(base64Data));
+        } catch (_) {}
+      } else {
+        avatarImage = NetworkImage(user.avatarUrl!);
+      }
+    }
+
     return Theme(
       data: _isDarkMode ? ThemeData.dark() : ThemeData.light(),
       child: Scaffold(
-        drawer: _buildModernDrawer(context, user),
+        drawer: _buildModernDrawer(context, user, avatarImage: avatarImage),
         body: _selectedIndex == 0
             ? _HomeContent(
           controller: widget.controller,
-          isAdmin: user?.role == 'admin',
           learningRepository: _learningRepository,
           quizRepository: widget.quizRepository,
           isDarkMode: _isDarkMode,
@@ -96,7 +109,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   // ==================== DRAWER ====================
-  Widget _buildModernDrawer(BuildContext context, dynamic user) {
+  Widget _buildModernDrawer(BuildContext context, dynamic user, {ImageProvider? avatarImage}) {
     return Drawer(
       child: Column(
         children: [
@@ -110,11 +123,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             accountEmail: Text(user?.email ?? ""),
             currentAccountPicture: CircleAvatar(
+              radius: 28,
               backgroundColor: Colors.white,
-              child: Text(
-                _getFirstCharacter(user?.displayName),
-                style: const TextStyle(fontSize: 32, color: Color(0xFF4F46E5), fontWeight: FontWeight.bold),
-              ),
+              backgroundImage: avatarImage,
+              child: avatarImage == null
+                  ? Text(
+                      _getFirstCharacter(user?.displayName),
+                      style: const TextStyle(fontSize: 32, color: Color(0xFF4F46E5), fontWeight: FontWeight.bold),
+                    )
+                  : null,
             ),
           ),
           _drawerItem(Icons.person_outline_rounded, 'Trang cá nhân', () => _navigateTo(context, ProfilePage(controller: widget.controller))),
@@ -181,7 +198,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 class _HomeContent extends StatelessWidget {
   const _HomeContent({
     required this.controller,
-    required this.isAdmin,
     required this.learningRepository,
     this.quizRepository,
     required this.isDarkMode,
@@ -189,7 +205,6 @@ class _HomeContent extends StatelessWidget {
   });
 
   final AuthController controller;
-  final bool isAdmin;
   final LearningRepository learningRepository;
   final QuizRepository? quizRepository;
   final bool isDarkMode;
@@ -223,6 +238,19 @@ class _HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = controller.currentUser;
+
+    // Prepare avatar image for header (supports Base64 or remote URL)
+    ImageProvider? avatarImage;
+    if (user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty) {
+      if (user.avatarUrl!.startsWith('data:image')) {
+        try {
+          final base64Data = user.avatarUrl!.split(',').last;
+          avatarImage = MemoryImage(base64Decode(base64Data));
+        } catch (_) {}
+      } else {
+        avatarImage = NetworkImage(user.avatarUrl!);
+      }
+    }
 
     return CustomScrollView(
       slivers: [
@@ -280,10 +308,13 @@ class _HomeContent extends StatelessWidget {
                           child: CircleAvatar(
                             radius: 32,
                             backgroundColor: Colors.white,
-                            child: Text(
-                              _getFirstChar(user?.displayName),
-                              style: const TextStyle(fontSize: 32, color: Color(0xFF4F46E5), fontWeight: FontWeight.bold),
-                            ),
+                            backgroundImage: avatarImage,
+                            child: avatarImage == null
+                                ? Text(
+                                    _getFirstChar(user?.displayName),
+                                    style: const TextStyle(fontSize: 32, color: Color(0xFF4F46E5), fontWeight: FontWeight.bold),
+                                  )
+                                : null,
                           ),
                         ),
                         const SizedBox(width: 16),
