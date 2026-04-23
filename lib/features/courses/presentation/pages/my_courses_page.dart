@@ -6,7 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:btl/features/learning/presentation/theme/course_visuals.dart';
 
 class MyCoursesPage extends StatefulWidget {
-  const MyCoursesPage({Key? key}) : super(key: key);
+  const MyCoursesPage({super.key});
 
   @override
   State<MyCoursesPage> createState() => _MyCoursesPageState();
@@ -29,7 +29,7 @@ class _MyCoursesPageState extends State<MyCoursesPage> {
 
 	final firebaseUser = FirebaseAuth.instance.currentUser;
 	if (firebaseUser == null) {
-	  print('❌ [LOAD] No user signed in');
+	  debugPrint('❌ [LOAD] No user signed in');
 	  setState(() {
 		_userId = '';
 		_myCourses = [];
@@ -39,71 +39,71 @@ class _MyCoursesPageState extends State<MyCoursesPage> {
 	}
 
 	_userId = firebaseUser.uid;
-	print('📚 [LOAD] Loading courses for user: $_userId');
+	debugPrint('📚 [LOAD] Loading courses for user: $_userId');
 
 	try {
 	  final userSnap = await db.child('users/$_userId').get();
-	  print('📚 [LOAD] User snapshot exists: ${userSnap.exists}');
+	  debugPrint('📚 [LOAD] User snapshot exists: ${userSnap.exists}');
 	  
 	  final enrolled = <String>[];
 	  if (userSnap.exists) {
 		final data = userSnap.value;
-		print('📚 [LOAD] User data: $data');
+		debugPrint('📚 [LOAD] User data: $data');
 		
 		if (data is Map) {
 		  final map = Map<String, dynamic>.from(data);
 		  if (map.containsKey('enrolledCourses')) {
 			final raw = map['enrolledCourses'];
-			print('📚 [LOAD] enrolledCourses raw value: $raw');
-			print('📚 [LOAD] enrolledCourses type: ${raw.runtimeType}');
+			debugPrint('📚 [LOAD] enrolledCourses raw value: $raw');
+			debugPrint('📚 [LOAD] enrolledCourses type: ${raw.runtimeType}');
 			
 			if (raw is Map) {
 			  enrolled.addAll(raw.keys.map((k) => k.toString()));
-			  print('📚 [LOAD] Found ${enrolled.length} courses (Map type)');
+			  debugPrint('📚 [LOAD] Found ${enrolled.length} courses (Map type)');
 			} else if (raw is List) {
 			  for (var v in raw) {
 				if (v != null) enrolled.add(v.toString());
 			  }
-			  print('📚 [LOAD] Found ${enrolled.length} courses (List type)');
+			  debugPrint('📚 [LOAD] Found ${enrolled.length} courses (List type)');
 			}
 		  } else {
-			print('⚠️ [LOAD] No enrolledCourses field found');
+			debugPrint('⚠️ [LOAD] No enrolledCourses field found');
 		  }
 		}
 	  } else {
-		print('⚠️ [LOAD] User data not found in Firebase');
+		debugPrint('⚠️ [LOAD] User data not found in Firebase');
 	  }
 
-	print('📚 [LOAD] Total enrolled courses: ${enrolled.length}');
+	debugPrint('📚 [LOAD] Total enrolled courses: ${enrolled.length}');
 
 	final coursesSnap = await db.child('courses').get();
-	print('📚 [LOAD] Courses snapshot exists: ${coursesSnap.exists}');
+	debugPrint('📚 [LOAD] Courses snapshot exists: ${coursesSnap.exists}');
 	
 	final courses = <Map<String, dynamic>>[];
 	if (coursesSnap.exists && coursesSnap.value is Map) {
 	  final all = Map<String, dynamic>.from(coursesSnap.value as Map);
-	  print('📚 [LOAD] Total courses in database: ${all.length}');
+	  debugPrint('📚 [LOAD] Total courses in database: ${all.length}');
 	  
 	  for (final id in enrolled) {
 		if (all.containsKey(id)) {
 		  final c = Map<String, dynamic>.from(all[id] as Map);
 		  c['id'] = id;
 		  courses.add(c);
-		  print('✅ [LOAD] Added course: $id - ${c['title']}');
+		  debugPrint('✅ [LOAD] Added course: $id - ${c['title']}');
 		} else {
-		  print('⚠️ [LOAD] Course not found: $id');
+		  debugPrint('⚠️ [LOAD] Course not found: $id');
 		}
 	  }
 	}
 
-	print('📚 [LOAD] Final loaded courses: ${courses.length}');
+	debugPrint('📚 [LOAD] Final loaded courses: ${courses.length}');
 	setState(() {
 	  _myCourses = courses;
 	  _loading = false;
 	});
 	} catch (e) {
-	  print('❌ [LOAD] Error loading courses: $e');
-	  print('❌ [LOAD] Error type: ${e.runtimeType}');
+	  debugPrint('❌ [LOAD] Error loading courses: $e');
+	  debugPrint('❌ [LOAD] Error type: ${e.runtimeType}');
 	  setState(() => _loading = false);
 	}
   }
@@ -176,7 +176,7 @@ class _MyCoursesPageState extends State<MyCoursesPage> {
 class CourseCatalogPage extends StatefulWidget {
   final String userId;
   final String? initialQuery;
-  const CourseCatalogPage({Key? key, required this.userId, this.initialQuery}) : super(key: key);
+  const CourseCatalogPage({super.key, required this.userId, this.initialQuery});
 
   @override
   State<CourseCatalogPage> createState() => _CourseCatalogPageState();
@@ -232,7 +232,7 @@ class _CourseCatalogPageState extends State<CourseCatalogPage> {
         _filteredCourses = {};
       }
     } catch (e) {
-      print('❌ [CATALOG] Error: $e');
+      debugPrint('❌ [CATALOG] Error: $e');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -270,18 +270,18 @@ class _CourseCatalogPageState extends State<CourseCatalogPage> {
 	  return;
 	}
 	
-	print('📚 [ENROLLMENT] Starting enrollment process for course: $courseId');
-	print('📚 [ENROLLMENT] User ID: ${widget.userId}');
+	debugPrint('📚 [ENROLLMENT] Starting enrollment process for course: $courseId');
+	debugPrint('📚 [ENROLLMENT] User ID: ${widget.userId}');
 	
 	final userCourseRef = db.child('users/${widget.userId}/enrolledCourses/$courseId');
 	final isEnrolled = _enrolled.contains(courseId);
 	
 	try {
 	  if (isEnrolled) {
-		print('📚 [ENROLLMENT] Removing enrollment...');
+		debugPrint('📚 [ENROLLMENT] Removing enrollment...');
 		await userCourseRef.remove();
 		_enrolled.remove(courseId);
-		print('✅ [ENROLLMENT] Removed successfully');
+		debugPrint('✅ [ENROLLMENT] Removed successfully');
 		if (mounted) {
 		  ScaffoldMessenger.of(context).showSnackBar(
 			const SnackBar(
@@ -292,22 +292,22 @@ class _CourseCatalogPageState extends State<CourseCatalogPage> {
 		  );
 		}
 	  } else {
-		print('📚 [ENROLLMENT] Adding enrollment...');
+		debugPrint('📚 [ENROLLMENT] Adding enrollment...');
 		final enrollmentData = {
 		  'enrolledAt': DateTime.now().toIso8601String(),
 		  'status': 'active',
 		};
-		print('📚 [ENROLLMENT] Data to save: $enrollmentData');
+		debugPrint('📚 [ENROLLMENT] Data to save: $enrollmentData');
 		
 		await userCourseRef.set(enrollmentData);
 		
 		// Verify the data was written
 		final verification = await userCourseRef.get();
-		print('📚 [ENROLLMENT] Verification - Data exists: ${verification.exists}');
-		print('📚 [ENROLLMENT] Verification - Data value: ${verification.value}');
+		debugPrint('📚 [ENROLLMENT] Verification - Data exists: ${verification.exists}');
+		debugPrint('📚 [ENROLLMENT] Verification - Data value: ${verification.value}');
 		
 		_enrolled.add(courseId);
-		print('✅ [ENROLLMENT] Added successfully');
+		debugPrint('✅ [ENROLLMENT] Added successfully');
 		if (mounted) {
 		  ScaffoldMessenger.of(context).showSnackBar(
 			const SnackBar(
@@ -320,8 +320,8 @@ class _CourseCatalogPageState extends State<CourseCatalogPage> {
 	  }
 	  setState(() {});
 	} catch (e) {
-	  print('❌ [ENROLLMENT] Error: $e');
-	  print('❌ [ENROLLMENT] Error type: ${e.runtimeType}');
+	  debugPrint('❌ [ENROLLMENT] Error: $e');
+	  debugPrint('❌ [ENROLLMENT] Error type: ${e.runtimeType}');
 	  if (mounted) {
 		ScaffoldMessenger.of(context).showSnackBar(
 		  SnackBar(
@@ -459,7 +459,7 @@ class _CatalogCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-			color: Colors.black.withOpacity(0.05),
+			color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -473,7 +473,7 @@ class _CatalogCard extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: enrolled
-					  ? [courseStyle.primary.withOpacity(0.88), courseStyle.gradient[1].withOpacity(0.92)]
+					  ? [courseStyle.primary.withValues(alpha: 0.88), courseStyle.gradient[1].withValues(alpha: 0.92)]
 					  : courseStyle.gradient,
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,

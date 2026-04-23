@@ -114,8 +114,8 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
                             backgroundColor: Colors.grey[200],
                             child: (avatarImage == null)
                                 ? Text(
-                                    (user?.displayName != null && user!.displayName!.trim().isNotEmpty)
-                                        ? user.displayName!.trim()[0].toUpperCase()
+                                    (user?.displayName != null && user!.displayName.trim().isNotEmpty)
+                                        ? user.displayName.trim()[0].toUpperCase()
                                         : 'U',
                                     style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.indigo[400]),
                                   )
@@ -137,7 +137,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
                     const SizedBox(height: 12),
                     Text(
                       user?.email ?? '',
-                      style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14),
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 14),
                     ),
                   ],
                 ),
@@ -195,7 +195,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: Column(children: children),
     );
@@ -207,7 +207,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: Column(
         children: [
@@ -218,7 +218,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
               prefixIcon: const Icon(Icons.person_outline_rounded),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
               filled: true,
-              fillColor: Colors.grey.withOpacity(0.05),
+              fillColor: Colors.grey.withValues(alpha: 0.05),
             ),
           ),
           const SizedBox(height: 20),
@@ -248,7 +248,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [Colors.indigo[700]!, Colors.indigo[900]!]),
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.indigo.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 6))],
+        boxShadow: [BoxShadow(color: Colors.indigo.withValues(alpha: 0.3), blurRadius: 12, offset: const Offset(0, 6))],
       ),
       child: Material(
         color: Colors.transparent,
@@ -257,7 +257,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
           contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           leading: const CircleAvatar(backgroundColor: Colors.white24, child: Icon(Icons.auto_graph_rounded, color: Colors.white)),
           title: const Text('Admin Dashboard', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17)),
-          subtitle: Text('Quản lý hệ thống EduCode', style: TextStyle(color: Colors.white.withOpacity(0.7))),
+          subtitle: Text('Quản lý hệ thống EduCode', style: TextStyle(color: Colors.white.withValues(alpha: 0.7))),
           trailing: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 16),
         ),
       ),

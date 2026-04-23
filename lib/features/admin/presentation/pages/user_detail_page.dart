@@ -44,7 +44,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
         setState(() => _isLoading = false);
       }
     } catch (e) {
-      print("Error fetching user stats: $e");
+      debugPrint("Error fetching user stats: $e");
       setState(() => _isLoading = false);
     }
   }
@@ -132,7 +132,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.indigo.withOpacity(0.05),
+        color: Colors.indigo.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -173,9 +173,9 @@ class _UserDetailPageState extends State<UserDetailPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.2)),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
         child: Column(
           children: [

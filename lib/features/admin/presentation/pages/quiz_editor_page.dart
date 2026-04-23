@@ -190,10 +190,15 @@ class _QuizEditorPageState extends State<QuizEditorPage> {
                         for (int i = 0; i < 4; i++)
                           Row(
                             children: [
-                              Radio<int>(
+                              RadioMenuButton<int>(
                                 value: i,
-                                groupValue: q['correctIndex'],
-                                onChanged: (val) => setState(() => q['correctIndex'] = val),
+                                groupValue: q['correctIndex'] as int?,
+                                onChanged: (val) {
+                                  if (val != null) {
+                                    setState(() => q['correctIndex'] = val);
+                                  }
+                                },
+                                child: const SizedBox.shrink(),
                               ),
                               Expanded(
                                 child: TextFormField(

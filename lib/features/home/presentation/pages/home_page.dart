@@ -163,7 +163,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             title: const Text('Đăng xuất', style: TextStyle(color: Colors.redAccent)),
             onTap: () async {
               await widget.controller.logout();
-              if (mounted) Navigator.pushReplacementNamed(context, LoginPage.routeName);
+              if (context.mounted) {
+                Navigator.pushReplacementNamed(context, LoginPage.routeName);
+              }
             },
           ),
         ],
@@ -314,12 +316,12 @@ class _HomeContentState extends State<_HomeContent> {
                 Positioned(
                   top: -40,
                   right: -30,
-                  child: _buildDecorativeCircle(160, Colors.white.withOpacity(0.12)),
+                  child: _buildDecorativeCircle(160, Colors.white.withValues(alpha: 0.12)),
                 ),
                 Positioned(
                   bottom: 20,
                   left: -20,
-                  child: _buildDecorativeCircle(100, Colors.white.withOpacity(0.08)),
+                  child: _buildDecorativeCircle(100, Colors.white.withValues(alpha: 0.08)),
                 ),
                 // Layer 3: Main Content
                 SafeArea(
@@ -332,9 +334,9 @@ class _HomeContentState extends State<_HomeContent> {
                           padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white.withOpacity(0.5), width: 2),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 2),
                             boxShadow: [
-                              BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 15, spreadRadius: 2),
+                              BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 15, spreadRadius: 2),
                             ],
                           ),
                           child: CircleAvatar(
@@ -358,7 +360,7 @@ class _HomeContentState extends State<_HomeContent> {
                             children: [
                               Text(
                                 _getGreeting(),
-                                style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.9), fontWeight: FontWeight.w500),
+                                style: TextStyle(fontSize: 14, color: Colors.white.withValues(alpha: 0.9), fontWeight: FontWeight.w500),
                               ),
                               Text(
                                 "${user?.displayName ?? 'Học viên'}! 👋",
@@ -399,7 +401,7 @@ class _HomeContentState extends State<_HomeContent> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => NotificationPage(userId: user!.id!),
+                              builder: (_) => NotificationPage(userId: user?.id ?? ''),
                             ),
                           );
                         }
@@ -496,7 +498,7 @@ class _HomeContentState extends State<_HomeContent> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        boxShadow: [BoxShadow(color: Colors.cyan.withOpacity(0.4), blurRadius: 30, offset: const Offset(0, 15))],
+        boxShadow: [BoxShadow(color: Colors.cyan.withValues(alpha: 0.4), blurRadius: 30, offset: const Offset(0, 15))],
       ),
       child: Stack(
         children: [
@@ -528,7 +530,7 @@ class _HomeContentState extends State<_HomeContent> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.25),
+                    color: Colors.white.withValues(alpha: 0.25),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Row(
@@ -610,54 +612,54 @@ class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview
     final uid = widget.controller.currentUser?.id;
     final database = _database;
     if (uid == null || database == null) {
-      print('❌ [HOME] No user logged in');
+      debugPrint('❌ [HOME] No user logged in');
       return [];
     }
 
-    print('🏠 [HOME] Loading enrolled courses for user: $uid');
+    debugPrint('🏠 [HOME] Loading enrolled courses for user: $uid');
 
     try {
       final userSnap = await database.ref('users/$uid').get();
-      print('🏠 [HOME] User snapshot exists: ${userSnap.exists}');
+      debugPrint('🏠 [HOME] User snapshot exists: ${userSnap.exists}');
 
       final enrolled = <String>[];
 
       if (userSnap.exists) {
         final data = userSnap.value as Map?;
-        print('🏠 [HOME] User data: $data');
+        debugPrint('🏠 [HOME] User data: $data');
 
         if (data != null && data.containsKey('enrolledCourses')) {
           final raw = data['enrolledCourses'];
-          print('🏠 [HOME] enrolledCourses value: $raw');
-          print('🏠 [HOME] enrolledCourses type: ${raw.runtimeType}');
+          debugPrint('🏠 [HOME] enrolledCourses value: $raw');
+          debugPrint('🏠 [HOME] enrolledCourses type: ${raw.runtimeType}');
 
           if (raw is Map) {
             enrolled.addAll(raw.keys.map((k) => k.toString()));
-            print('🏠 [HOME] Found ${enrolled.length} courses (Map type)');
+            debugPrint('🏠 [HOME] Found ${enrolled.length} courses (Map type)');
           } else if (raw is List) {
             enrolled.addAll(raw.map((e) => e.toString()));
-            print('🏠 [HOME] Found ${enrolled.length} courses (List type)');
+            debugPrint('🏠 [HOME] Found ${enrolled.length} courses (List type)');
           }
         } else {
-          print('⚠️ [HOME] No enrolledCourses field');
+          debugPrint('⚠️ [HOME] No enrolledCourses field');
         }
       } else {
-        print('⚠️ [HOME] User data not found');
+        debugPrint('⚠️ [HOME] User data not found');
       }
 
       if (enrolled.isEmpty) {
-        print('⚠️ [HOME] No enrolled courses');
+        debugPrint('⚠️ [HOME] No enrolled courses');
         return [];
       }
 
       final coursesSnap = await database.ref('courses').get();
-      print('🏠 [HOME] Courses snapshot exists: ${coursesSnap.exists}');
+      debugPrint('🏠 [HOME] Courses snapshot exists: ${coursesSnap.exists}');
 
       final courses = <Course>[];
 
       if (coursesSnap.exists && coursesSnap.value is Map) {
         final all = Map<String, dynamic>.from(coursesSnap.value as Map);
-        print('🏠 [HOME] Total courses in DB: ${all.length}');
+        debugPrint('🏠 [HOME] Total courses in DB: ${all.length}');
 
         for (final id in enrolled) {
           if (all.containsKey(id)) {
@@ -669,18 +671,18 @@ class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview
               level: c['level'] ?? '',
               comprehensiveQuizId: c['finalQuiz'],
             ));
-            print('✅ [HOME] Added course: $id - ${c['title']}');
+            debugPrint('✅ [HOME] Added course: $id - ${c['title']}');
           } else {
-            print('⚠️ [HOME] Course not found in DB: $id');
+            debugPrint('⚠️ [HOME] Course not found in DB: $id');
           }
         }
       }
 
-      print('🏠 [HOME] Final loaded courses: ${courses.length}');
+      debugPrint('🏠 [HOME] Final loaded courses: ${courses.length}');
       return courses;
     } catch (e) {
-      print('❌ [HOME] Error loading courses: $e');
-      print('❌ [HOME] Error type: ${e.runtimeType}');
+      debugPrint('❌ [HOME] Error loading courses: $e');
+      debugPrint('❌ [HOME] Error type: ${e.runtimeType}');
       return [];
     }
   }
@@ -743,7 +745,7 @@ class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview
         color: widget.isDarkMode ? Colors.grey[900] : Colors.white,
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10)),
         ],
       ),
       child: Column(
@@ -752,7 +754,7 @@ class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.indigo.withOpacity(0.1),
+              color: Colors.indigo.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.auto_stories_outlined, size: 60, color: Colors.indigo[400]),
@@ -828,7 +830,7 @@ class _CourseCardState extends State<_CourseCard> {
       if (userId == null) return 0.0;
       return await widget.learningRepository.getCourseProgress(widget.course.id, userId);
     } catch (e) {
-      print('❌ Error loading progress: $e');
+      debugPrint('❌ Error loading progress: $e');
       return 0.0;
     }
   }
@@ -868,7 +870,7 @@ class _CourseCardState extends State<_CourseCard> {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: widget.isDarkMode ? Colors.black45 : Colors.black.withOpacity(0.08),
+              color: widget.isDarkMode ? Colors.black45 : Colors.black.withValues(alpha: 0.08),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -886,7 +888,7 @@ class _CourseCardState extends State<_CourseCard> {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: widget.isDarkMode
-                            ? courseStyle.gradient.map((color) => color.withOpacity(0.85)).toList()
+                            ? courseStyle.gradient.map((color) => color.withValues(alpha: 0.85)).toList()
                             : courseStyle.gradient,
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -896,7 +898,7 @@ class _CourseCardState extends State<_CourseCard> {
                       child: Icon(
                         courseStyle.icon,
                         size: 48,
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                       ),
                     ),
                   ),

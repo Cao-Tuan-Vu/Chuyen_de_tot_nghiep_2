@@ -42,7 +42,8 @@ class _ContactPageState extends State<ContactPage> {
     );
 
     try {
-      if (await canLaunchUrl(emailLaunchUri)) {
+      final canLaunch = await canLaunchUrl(emailLaunchUri);
+      if (canLaunch) {
         await launchUrl(emailLaunchUri);
         _subjectController.clear();
         _messageController.clear();
@@ -50,6 +51,7 @@ class _ContactPageState extends State<ContactPage> {
         throw 'Could not launch $emailLaunchUri';
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Không thể mở ứng dụng email: $e')),
       );

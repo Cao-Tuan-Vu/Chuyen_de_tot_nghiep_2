@@ -1,7 +1,6 @@
 import 'dart:async';
-
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import 'package:btl/features/learning/domain/entities/course.dart';
@@ -82,7 +81,7 @@ class LearningRepository {
       final data = _asMap(snapshot.value);
       return data.keys.toList();
     } catch (e) {
-      print('❌ Error loading completed lessons: $e');
+      debugPrint('❌ Error loading completed lessons: $e');
       return [];
     }
   }
@@ -101,7 +100,7 @@ class LearningRepository {
       // Tính %
       return (completedCount / lessons.length) * 100;
     } catch (e) {
-      print('❌ Error calculating progress: $e');
+      debugPrint('❌ Error calculating progress: $e');
       return 0.0;
     }
   }

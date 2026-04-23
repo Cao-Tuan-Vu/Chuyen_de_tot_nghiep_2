@@ -144,7 +144,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
           Icon(
             isPassed ? Icons.emoji_events_rounded : Icons.sentiment_dissatisfied_rounded,
             size: 80,
-            color: Colors.white.withOpacity(0.9),
+            color: Colors.white.withValues(alpha: 0.9),
           ),
           const SizedBox(height: 16),
           Text(
@@ -154,7 +154,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
           const SizedBox(height: 8),
           Text(
             isPassed ? 'Bạn đã hoàn thành bài thi đạt yêu cầu.' : 'Bạn cần đạt tối thiểu 60% để vượt qua.',
-            style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14),
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 14),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 30),
@@ -167,7 +167,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
                 child: CircularProgressIndicator(
                   value: scoreRatio,
                   strokeWidth: 12,
-                  backgroundColor: Colors.white.withOpacity(0.2),
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
                   valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               ),
@@ -180,7 +180,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
                   ),
                   Text(
                     '${widget.result.score}/${widget.result.total}',
-                    style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -225,8 +225,8 @@ class _QuizResultPageState extends State<QuizResultPage> {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: review.isCorrect 
-                    ? const Color(0xFF10B981).withOpacity(0.3) 
-                    : const Color(0xFFEF4444).withOpacity(0.3),
+                    ? const Color(0xFF10B981).withValues(alpha: 0.3) 
+                    : const Color(0xFFEF4444).withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -238,7 +238,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: (review.isCorrect ? const Color(0xFF10B981) : const Color(0xFFEF4444)).withOpacity(0.1),
+                        color: (review.isCorrect ? const Color(0xFF10B981) : const Color(0xFFEF4444)).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
@@ -283,7 +283,7 @@ class _QuizResultPageState extends State<QuizResultPage> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.05),
+                      color: Colors.blue.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -341,16 +341,16 @@ class _SummaryCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withOpacity(0.2)),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
         child: Column(
           children: [
             Icon(icon, color: color, size: 24),
             const SizedBox(height: 8),
             Text(value, style: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.w900)),
-            Text(label, style: TextStyle(color: color.withOpacity(0.8), fontSize: 12, fontWeight: FontWeight.bold)),
+            Text(label, style: TextStyle(color: color.withValues(alpha: 0.8), fontSize: 12, fontWeight: FontWeight.bold)),
           ],
         ),
       ),

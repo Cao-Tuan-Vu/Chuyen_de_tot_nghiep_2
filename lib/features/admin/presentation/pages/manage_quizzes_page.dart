@@ -42,7 +42,7 @@ class ManageQuizzesPage extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 12),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Colors.teal.withOpacity(0.1),
+                      backgroundColor: Colors.teal.withValues(alpha: 0.1),
                       child: const Icon(Icons.help_outline, color: Colors.teal),
                     ),
                     title: Text(quiz.title.isEmpty ? 'Chưa đặt tên' : quiz.title, style: const TextStyle(fontWeight: FontWeight.bold)),

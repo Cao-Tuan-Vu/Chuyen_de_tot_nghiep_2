@@ -54,7 +54,7 @@ class _LessonDetailPageState extends State<LessonDetailPage> {
           ),
           style: IconButton.styleFrom(
             backgroundColor: isDarkMode
-                ? Colors.white.withOpacity(0.12)
+                ? Colors.white.withValues(alpha: 0.12)
                 : const Color(0xFFE5E7EB),
             shape: const CircleBorder(),
           ),
@@ -98,7 +98,7 @@ class _LessonDetailPageState extends State<LessonDetailPage> {
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: bannerStyle.primary.withOpacity(0.28),
+                              color: bannerStyle.primary.withValues(alpha: 0.28),
                               blurRadius: 24,
                               offset: const Offset(0, 12),
                             ),
@@ -114,12 +114,12 @@ class _LessonDetailPageState extends State<LessonDetailPage> {
                             Positioned(
                               right: -24,
                               top: -18,
-                              child: _BannerBubble(color: Colors.white.withOpacity(0.12), size: 120),
+                              child: _BannerBubble(color: Colors.white.withValues(alpha: 0.12), size: 120),
                             ),
                             Positioned(
                               left: -16,
                               bottom: -24,
-                              child: _BannerBubble(color: Colors.white.withOpacity(0.08), size: 96),
+                              child: _BannerBubble(color: Colors.white.withValues(alpha: 0.08), size: 96),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(20),
@@ -130,9 +130,9 @@ class _LessonDetailPageState extends State<LessonDetailPage> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.18),
+                                      color: Colors.white.withValues(alpha: 0.18),
                                       borderRadius: BorderRadius.circular(999),
-                                      border: Border.all(color: Colors.white.withOpacity(0.18)),
+                                      border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
                                     ),
                                     child: Text(
                                       bannerStyle.title,
@@ -151,9 +151,9 @@ class _LessonDetailPageState extends State<LessonDetailPage> {
                                         width: 64,
                                         height: 64,
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.18),
+                                          color: Colors.white.withValues(alpha: 0.18),
                                           shape: BoxShape.circle,
-                                          border: Border.all(color: Colors.white.withOpacity(0.2)),
+                                          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                                         ),
                                         child: Icon(
                                           bannerStyle.icon,
@@ -243,7 +243,7 @@ class _LessonDetailPageState extends State<LessonDetailPage> {
                     color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 10,
                         offset: const Offset(0, -5),
                       )

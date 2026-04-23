@@ -185,12 +185,12 @@ class _LessonListPageState extends State<LessonListPage> {
             Positioned(
               right: -30,
               top: -30,
-              child: Icon(courseStyle.icon, size: 200, color: Colors.white.withOpacity(0.1)),
+              child: Icon(courseStyle.icon, size: 200, color: Colors.white.withValues(alpha: 0.1)),
             ),
             Center(
               child: Hero(
                 tag: 'course_icon_${widget.course.id}',
-                child: Icon(courseStyle.icon, size: 80, color: Colors.white.withOpacity(0.9)),
+                child: Icon(courseStyle.icon, size: 80, color: Colors.white.withValues(alpha: 0.9)),
               ),
             ),
           ],
@@ -220,7 +220,7 @@ class _LessonListPageState extends State<LessonListPage> {
                     width: 2,
                   ),
                   boxShadow: isCompleted ? [
-                    BoxShadow(color: const Color(0xFF10B981).withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 3))
+                    BoxShadow(color: const Color(0xFF10B981).withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 3))
                   ] : [],
                 ),
                 child: Center(
@@ -234,7 +234,7 @@ class _LessonListPageState extends State<LessonListPage> {
                   child: Container(
                     width: 2,
                     margin: const EdgeInsets.symmetric(vertical: 4),
-                    color: isCompleted ? const Color(0xFF10B981).withOpacity(0.5) : (isDarkMode ? Colors.grey[800] : Colors.grey[300]),
+                    color: isCompleted ? const Color(0xFF10B981).withValues(alpha: 0.5) : (isDarkMode ? Colors.grey[800] : Colors.grey[300]),
                   ),
                 ),
             ],
@@ -264,10 +264,10 @@ class _LessonListPageState extends State<LessonListPage> {
                   decoration: BoxDecoration(
                     color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
                     borderRadius: BorderRadius.circular(20),
-                    border: isCompleted ? Border.all(color: const Color(0xFF10B981).withOpacity(0.3), width: 1) : null,
+                    border: isCompleted ? Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3), width: 1) : null,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(isDarkMode ? 0.3 : 0.04),
+                        color: Colors.black.withValues(alpha: isDarkMode ? 0.3 : 0.04),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -334,7 +334,7 @@ class _LessonListPageState extends State<LessonListPage> {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6366F1).withOpacity(0.3),
+            color: const Color(0xFF6366F1).withValues(alpha: 0.3),
             blurRadius: 25,
             offset: const Offset(0, 12),
           ),
@@ -345,7 +345,7 @@ class _LessonListPageState extends State<LessonListPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.workspace_premium_rounded, size: 40, color: Colors.white),
@@ -363,7 +363,7 @@ class _LessonListPageState extends State<LessonListPage> {
           const SizedBox(height: 8),
           Text(
             'Bạn đã hoàn thành tất cả bài học! Hãy chinh phục bài thi tổng kết để nhận chứng chỉ.',
-            style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14, height: 1.4),
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 14, height: 1.4),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 28),

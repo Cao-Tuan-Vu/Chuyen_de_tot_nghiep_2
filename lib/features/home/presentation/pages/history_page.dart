@@ -4,7 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({Key? key}) : super(key: key);
+  const HistoryPage({super.key});
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -215,7 +215,7 @@ class _HistoryPageState extends State<HistoryPage> {
             Positioned(
               right: -50,
               top: -50,
-              child: CircleAvatar(radius: 100, backgroundColor: Colors.white.withOpacity(0.05)),
+              child: CircleAvatar(radius: 100, backgroundColor: Colors.white.withValues(alpha: 0.05)),
             ),
             // Stats content
             Column(
@@ -246,7 +246,7 @@ class _HistoryPageState extends State<HistoryPage> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Icon(icon, color: Colors.white, size: 24),
@@ -258,7 +258,7 @@ class _HistoryPageState extends State<HistoryPage> {
         ),
         Text(
           label,
-          style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12, fontWeight: FontWeight.w500),
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12, fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -272,7 +272,7 @@ class _HistoryPageState extends State<HistoryPage> {
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: Colors.indigo.withOpacity(0.05),
+              color: Colors.indigo.withValues(alpha: 0.05),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.auto_stories_rounded, size: 80, color: Colors.indigo[200]),
@@ -308,7 +308,7 @@ class _HistoryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDarkMode ? 0.4 : 0.05),
+            color: Colors.black.withValues(alpha: isDarkMode ? 0.4 : 0.05),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -326,7 +326,7 @@ class _HistoryCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: _getLevelColor(attempt.level).withOpacity(0.1),
+                      color: _getLevelColor(attempt.level).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -387,7 +387,7 @@ class _HistoryCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.1),
+                      color: statusColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(

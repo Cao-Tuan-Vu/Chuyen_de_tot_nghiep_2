@@ -47,7 +47,7 @@ class AdminController extends ChangeNotifier {
       } else {
         error = "Lỗi tải dữ liệu: ${e.toString()}";
       }
-      print("❌ AdminController Error: $e");
+      debugPrint("❌ AdminController Error: $e");
     } finally {
       isLoading = false;
       notifyListeners();
@@ -122,7 +122,7 @@ class AdminController extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      print("Error fetching quizzes: $e");
+      debugPrint("Error fetching quizzes: $e");
     }
   }
 
@@ -192,7 +192,7 @@ class AdminController extends ChangeNotifier {
         currentCourseLessons = [];
       }
     } catch (e) {
-      print("Error fetching lessons: $e");
+      debugPrint("Error fetching lessons: $e");
     } finally {
       isLoading = false;
       notifyListeners();
@@ -280,7 +280,7 @@ class AdminController extends ChangeNotifier {
         platformAverageScore = 0.0;
       }
     } catch (e) {
-      print("Error fetching attempts: $e");
+      debugPrint("Error fetching attempts: $e");
     }
   }
 

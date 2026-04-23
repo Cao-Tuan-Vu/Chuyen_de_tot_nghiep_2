@@ -42,7 +42,7 @@ class ManageCoursesPage extends StatelessWidget {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: style.primary.withOpacity(0.1),
+                        color: style.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(style.icon, color: style.primary),
@@ -112,7 +112,7 @@ class ManageCoursesPage extends StatelessWidget {
               TextField(controller: descCtrl, decoration: const InputDecoration(labelText: 'Mô tả ngắn')),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
-                value: levelCtrl.text,
+                initialValue: levelCtrl.text,
                 items: const [
                   DropdownMenuItem(value: 'Cơ bản', child: Text('Cơ bản')),
                   DropdownMenuItem(value: 'Trung cấp', child: Text('Trung cấp')),

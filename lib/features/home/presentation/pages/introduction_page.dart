@@ -41,11 +41,11 @@ class IntroductionPage extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 20,
                         spreadRadius: 5,
                       ),
@@ -58,7 +58,7 @@ class IntroductionPage extends StatelessWidget {
               Card(
                 elevation: 0,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white,
+                color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
@@ -145,7 +145,7 @@ class IntroductionPage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white,
+      color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -154,7 +154,7 @@ class IntroductionPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(icon, color: color, size: 28),

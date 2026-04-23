@@ -40,7 +40,7 @@ class PolicyPage extends StatelessWidget {
               Card(
                 elevation: 0,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                color: isDarkMode ? Colors.white.withOpacity(0.05) : Colors.white,
+                color: isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(

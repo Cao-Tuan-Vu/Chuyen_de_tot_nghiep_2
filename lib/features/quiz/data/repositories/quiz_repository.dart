@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -264,6 +265,7 @@ class QuizRepository {
       final finalData = _asMap(leaderboardData['finalExam']);
       final finalTestScore = (finalData['percentage'] as num?)?.toDouble() ?? 0.0;
       final totalScore = (learningAverageScore * 0.4) + (finalTestScore * 0.6);
+      debugPrint('Calculated total score: $totalScore');
 
       // Check for rank displacement notifications
       try {
@@ -294,7 +296,7 @@ class QuizRepository {
           }
         }
       } catch (e) {
-        print('Error sending displacement notification: $e');
+        debugPrint('Error sending displacement notification: $e');
       }
 
       return result;
