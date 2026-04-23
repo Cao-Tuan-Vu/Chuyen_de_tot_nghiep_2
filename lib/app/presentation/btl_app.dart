@@ -133,7 +133,7 @@ class _BtlAppState extends State<BtlApp> {
                 ),
                 iconTheme: IconThemeData(color: Colors.white),
               ),
-              cardTheme: CardTheme(
+              cardTheme: CardThemeData(
                 elevation: 2,
                 shadowColor: Colors.black.withOpacity(0.05),
                 color: Colors.white,
