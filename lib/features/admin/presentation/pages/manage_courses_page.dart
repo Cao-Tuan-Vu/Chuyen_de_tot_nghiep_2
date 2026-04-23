@@ -110,10 +110,10 @@ class ManageCoursesPage extends StatelessWidget {
               TextField(controller: titleCtrl, decoration: const InputDecoration(labelText: 'Tên khóa học')),
               const SizedBox(height: 12),
               TextField(controller: descCtrl, decoration: const InputDecoration(labelText: 'Mô tả ngắn')),
-              const SizedBox(height: 12),
-               DropdownButtonFormField<String>(
-                 initialValue: levelCtrl.text,
-                items: const [
+               const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: levelCtrl.text,
+                 items: const [
                   DropdownMenuItem(value: 'Cơ bản', child: Text('Cơ bản')),
                   DropdownMenuItem(value: 'Trung cấp', child: Text('Trung cấp')),
                   DropdownMenuItem(value: 'Nâng cao', child: Text('Nâng cao')),
