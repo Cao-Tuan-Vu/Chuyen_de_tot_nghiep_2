@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:btl/features/admin/presentation/controllers/admin_controller.dart';
 import 'package:btl/features/learning/presentation/theme/course_visuals.dart';
 import 'package:btl/features/learning/domain/entities/course.dart';
+import 'package:btl/app/widgets/styled_card.dart';
 
 class ManageCoursesPage extends StatelessWidget {
   const ManageCoursesPage({super.key});
@@ -36,9 +37,9 @@ class ManageCoursesPage extends StatelessWidget {
                 final course = courses[index];
                 final style = courseVisualStyleFor(course.id);
                 
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: ListTile(
+                 return StyledCard(
+                   margin: const EdgeInsets.only(bottom: 12),
+                   child: ListTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
