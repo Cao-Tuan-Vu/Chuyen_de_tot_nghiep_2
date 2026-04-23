@@ -231,16 +231,19 @@ class _HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<_HomeContent> {
   late final TextEditingController _searchController;
+  late final FocusNode _searchFocusNode;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _searchFocusNode = FocusNode();
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -430,57 +433,69 @@ class _HomeContentState extends State<_HomeContent> {
         ),
 
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Search
-                TextField(
-                  controller: _searchController,
-                  onSubmitted: (value) {
-                    if (value.trim().isNotEmpty) {
-                      widget.onSearch(value.trim());
-                    }
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Tìm kiếm khóa học...",
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.arrow_forward),
-                      onPressed: () {
-                        if (_searchController.text.trim().isNotEmpty) {
-                          widget.onSearch(_searchController.text.trim());
-                        }
-                      },
+          child: GestureDetector(
+            onTap: () {
+              // Bấm vào bất cứ nơi nào sẽ unfocus keyboard
+              _searchFocusNode.unfocus();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Search
+                  TextField(
+                    controller: _searchController,
+                    focusNode: _searchFocusNode,
+                    onSubmitted: (value) {
+                      if (value.trim().isNotEmpty) {
+                        _searchFocusNode.unfocus();
+                        widget.onSearch(value.trim());
+                      }
+                    },
+                    onEditingComplete: () {
+                      _searchFocusNode.unfocus();
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Tìm kiếm khóa học...",
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.arrow_forward),
+                        onPressed: () {
+                          if (_searchController.text.trim().isNotEmpty) {
+                            _searchFocusNode.unfocus();
+                            widget.onSearch(_searchController.text.trim());
+                          }
+                        },
+                      ),
+                      filled: true,
+                      fillColor: widget.isDarkMode ? Colors.grey[800] : Colors.grey[100],
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                     ),
-                    filled: true,
-                    fillColor: widget.isDarkMode ? Colors.grey[800] : Colors.grey[100],
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                   ),
-                ),
-                const SizedBox(height: 28),
+                  const SizedBox(height: 28),
 
-                // Banner
-                FadeTransition(
-                  opacity: widget.bannerAnimation,
-                  child: SlideTransition(
-                    position: Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(widget.bannerAnimation),
-                    child: _buildFeaturedBanner(widget.isDarkMode),
+                  // Banner
+                  FadeTransition(
+                    opacity: widget.bannerAnimation,
+                    child: SlideTransition(
+                      position: Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(widget.bannerAnimation),
+                      child: _buildFeaturedBanner(widget.isDarkMode),
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 32),
-                const Text("Tiếp tục học", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 32),
+                  const Text("Tiếp tục học", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
 
-                _HomeEnrolledCoursesPreview(
-                  controller: widget.controller,
-                  learningRepository: widget.learningRepository,
-                  quizRepository: widget.quizRepository,
-                  isDarkMode: widget.isDarkMode,
-                ),
-              ],
+                  _HomeEnrolledCoursesPreview(
+                    controller: widget.controller,
+                    learningRepository: widget.learningRepository,
+                    quizRepository: widget.quizRepository,
+                    isDarkMode: widget.isDarkMode,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
