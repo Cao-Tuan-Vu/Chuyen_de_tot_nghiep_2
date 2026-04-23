@@ -210,3 +210,5 @@ class _UserDetailPageState extends State<UserDetailPage> {
     return '${((passes / _attempts.length) * 100).toInt()}%';
   }
 }
+
+
