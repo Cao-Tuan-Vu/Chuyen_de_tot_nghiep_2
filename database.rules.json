@@ -1,62 +1,75 @@
 {
   "rules": {
     "users": {
+      // Cho phép Admin đọc danh sách tất cả người dùng
+      ".read": "auth != null && (auth.token.email == 'admin@gmail.com' || root.child('users').child(auth.uid).child('role').val() == 'admin')",
       "$uid": {
+        // Mỗi người dùng được quyền đọc/ghi dữ liệu của chính mình
         ".read": "auth != null && auth.uid == $uid",
-        ".write": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && (auth.uid == $uid || auth.token.email == 'admin@gmail.com' || root.child('users').child(auth.uid).child('role').val() == 'admin')",
         ".indexOn": ["email", "uid"]
       }
     },
+
+    "courses": {
+      ".read": "auth != null",
+      ".write": "auth != null && (auth.token.email == 'admin@gmail.com' || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+      ".indexOn": ["level"]
+    },
+
+    "lessons": {
+      ".read": "auth != null",
+      ".write": "auth != null && (auth.token.email == 'admin@gmail.com' || root.child('users').child(auth.uid).child('role').val() == 'admin')"
+    },
+
+    "quizzes": {
+      ".read": "auth != null",
+      ".write": "auth != null && (auth.token.email == 'admin@gmail.com' || root.child('users').child(auth.uid).child('role').val() == 'admin')"
+    },
+
+    "questions": {
+      ".read": "auth != null",
+      ".write": "auth != null && (auth.token.email == 'admin@gmail.com' || root.child('users').child(auth.uid).child('role').val() == 'admin')"
+    },
+
     "profiles": {
       "$uid": {
         ".read": "auth != null && auth.uid == $uid",
-        ".write": "auth != null && auth.uid == $uid"
+        ".write": "auth != null && (auth.uid == $uid || auth.token.email == 'admin@gmail.com' || root.child('users').child(auth.uid).child('role').val() == 'admin')"
       }
     },
-    "sessions": {
-      "$uid": {
-        ".read": "auth != null && auth.uid == $uid",
-        ".write": "auth != null && auth.uid == $uid"
-      }
-    },
-    "courses": {
-      ".read": "auth != null",
-      ".write": false
-    },
-    "lessons": {
-      ".read": "auth != null",
-      ".write": false
-    },
-    "quizzes": {
-      ".read": "auth != null",
-      ".write": false
-    },
+
     "attempts": {
+      ".read": "auth != null && (auth.token.email == 'admin@gmail.com' || root.child('users').child(auth.uid).child('role').val() == 'admin')",
       "$attemptId": {
         ".read": "auth != null && data.child('userId').val() == auth.uid",
-        ".write": "auth != null && newData.child('userId').val() == auth.uid"
+        ".write": "auth != null && (newData.child('userId').val() == auth.uid || auth.token.email == 'admin@gmail.com')"
       }
     },
+
     "leaderboard": {
       ".read": "auth != null",
       "$uid": {
         ".write": "auth != null && auth.uid == $uid"
       }
     },
-    "contacts": {
-      "$messageId": {
-        ".read": false,
-        ".write": "auth != null"
-      }
-    },
+
     "notifications": {
       "$uid": {
         ".read": "auth != null && auth.uid == $uid",
-        ".write": "auth != null",
+        ".write": "auth != null && (auth.uid == $uid || auth.token.email == 'admin@gmail.com' || root.child('users').child(auth.uid).child('role').val() == 'admin')",
         ".indexOn": ["timestamp"]
       }
     },
-    ".read": false,
-    ".write": false
+
+    "sessions": {
+      "$uid": {
+        // Mỗi user được quyền đọc/ghi session của chính mình
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      },
+      // Admin được quyền xem tất cả sessions (để quản lý log)
+      ".read": "auth != null && (auth.token.email == 'admin@gmail.com' || root.child('users').child(auth.uid).child('role').val() == 'admin')"
+    }
   }
 }

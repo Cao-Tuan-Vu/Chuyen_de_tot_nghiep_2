@@ -68,10 +68,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   /// Get first character of displayName, default to 'H' if empty
   String _getFirstCharacter(String? displayName) {
-    if (displayName == null || displayName.isEmpty) {
+    if (displayName == null || displayName.trim().isEmpty) {
       return 'H';
     }
-    return displayName[0].toUpperCase();
+    return displayName.trim()[0].toUpperCase();
   }
 
   @override
@@ -219,10 +219,10 @@ class _HomeContent extends StatelessWidget {
   }
 
   String _getFirstChar(String? displayName) {
-    if (displayName == null || displayName.isEmpty) {
+    if (displayName == null || displayName.trim().isEmpty) {
       return 'H';
     }
-    return displayName[0].toUpperCase();
+    return displayName.trim()[0].toUpperCase();
   }
 
   Widget _buildDecorativeCircle(double size, Color color) {
@@ -651,7 +651,7 @@ class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview
 
         final courses = snapshot.data ?? [];
         if (courses.isEmpty) {
-          return _buildEmptyState();
+          return _buildEmptyState(context);
         }
 
         return SizedBox(
@@ -691,23 +691,58 @@ class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Container(
-      height: 200,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: widget.isDarkMode ? Colors.grey[900] : Colors.grey[100],
-        borderRadius: BorderRadius.circular(20),
+        color: widget.isDarkMode ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10)),
+        ],
       ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.school_outlined, size: 70, color: Colors.grey[400]),
-            const SizedBox(height: 12),
-            const Text('Chưa có khóa học nào', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-            const Text('Hãy khám phá ngay!', style: TextStyle(color: Colors.grey)),
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.indigo.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.auto_stories_outlined, size: 60, color: Colors.indigo[400]),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Bắt đầu hành trình nào!',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Bạn chưa tham gia khóa học nào. Hãy khám phá kho tàng kiến thức của EduCode ngay.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontSize: 13),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              // Tìm đến State của HomePage để đổi index sang 1 (Course Catalog)
+              final homeState = context.findAncestorStateOfType<_HomePageState>();
+              if (homeState != null) {
+                homeState.setState(() {
+                  homeState._selectedIndex = 1;
+                });
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.indigo,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: const Text('KHÁM PHÁ NGAY', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
       ),
     );
   }

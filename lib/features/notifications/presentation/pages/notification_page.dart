@@ -11,18 +11,23 @@ class NotificationPage extends StatelessWidget {
   FirebaseDatabase get _database => FirebaseDatabase.instance;
 
   Future<void> _markAllAsRead() async {
-    final snapshot = await _database.ref('notifications/$userId').get();
-    if (snapshot.exists) {
-      final data = snapshot.value as Map<dynamic, dynamic>;
-      final Map<String, dynamic> updates = {};
-      data.forEach((key, value) {
-        if ((value as Map)['isRead'] == false) {
-          updates['notifications/$userId/$key/isRead'] = true;
+    try {
+      final snapshot = await _database.ref('notifications/$userId').get();
+      if (snapshot.exists) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+        final Map<String, dynamic> updates = {};
+        data.forEach((key, value) {
+          if ((value as Map)['isRead'] == false) {
+            // Cập nhật đường dẫn đầy đủ để tránh lỗi permission ở cấp cao hơn
+            updates['$key/isRead'] = true;
+          }
+        });
+        if (updates.isNotEmpty) {
+          await _database.ref('notifications/$userId').update(updates);
         }
-      });
-      if (updates.isNotEmpty) {
-        await _database.ref().update(updates);
       }
+    } catch (e) {
+      debugPrint("Lỗi khi đánh dấu tất cả đã đọc: $e");
     }
   }
 
@@ -114,20 +119,40 @@ class NotificationPage extends StatelessWidget {
         StreamBuilder(
           stream: _database.ref('notifications/$userId').onValue,
           builder: (context, snapshot) {
-            final bool hasUnread = (snapshot.hasData && snapshot.data?.snapshot.value != null) ? 
-                (snapshot.data!.snapshot.value as Map).values.any((e) => (e as Map)['isRead'] == false) : false;
+            bool hasUnread = false;
+            if (snapshot.hasData && snapshot.data?.snapshot.value != null) {
+              final data = snapshot.data!.snapshot.value;
+              if (data is Map) {
+                hasUnread = data.values.any((e) => (e as Map)['isRead'] == false);
+              }
+            }
             
-            return IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(color: Colors.white24, shape: BoxShape.circle),
-                child: Icon(
-                  Icons.done_all_rounded, 
-                  color: hasUnread ? Colors.white : Colors.white60,
-                  size: 20,
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(color: Colors.white24, shape: BoxShape.circle),
+                    child: Icon(
+                      Icons.done_all_rounded, 
+                      color: hasUnread ? Colors.white : Colors.white60,
+                      size: 20,
+                    ),
+                  ),
+                  onPressed: hasUnread ? () => _markAllAsRead() : null,
                 ),
-              ),
-              onPressed: hasUnread ? () => _markAllAsRead() : null,
+                if (hasUnread)
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(color: Colors.redAccent, shape: BoxShape.circle),
+                    ),
+                  ),
+              ],
             );
           },
         ),
@@ -195,7 +220,7 @@ class NotificationPage extends StatelessWidget {
   }
 }
 
-class _NotificationCard extends StatelessWidget {
+class _NotificationCard extends StatefulWidget {
   final NotificationItem item;
   final String userId;
   final bool isDarkMode;
@@ -203,37 +228,62 @@ class _NotificationCard extends StatelessWidget {
   const _NotificationCard({required this.item, required this.userId, required this.isDarkMode});
 
   @override
+  State<_NotificationCard> createState() => _NotificationCardState();
+}
+
+class _NotificationCardState extends State<_NotificationCard> {
+  late bool _localIsRead;
+
+  @override
+  void initState() {
+    super.initState();
+    _localIsRead = widget.item.isRead;
+  }
+
+  @override
+  void didUpdateWidget(_NotificationCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.item.isRead != widget.item.isRead) {
+      _localIsRead = widget.item.isRead;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final Color iconColor = _getIconColor(item.type);
+    final Color iconColor = _getIconColor(widget.item.type);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
-        onTap: () {
-          FirebaseDatabase.instance.ref('notifications/$userId/${item.id}').update({'isRead': true});
+        onTap: () async {
+          if (!_localIsRead) {
+            setState(() => _localIsRead = true);
+            try {
+              // Sử dụng .set(true) trực tiếp vào field isRead để đảm bảo chính xác tuyệt đối
+              await FirebaseDatabase.instance
+                  .ref('notifications/${widget.userId}/${widget.item.id}/isRead')
+                  .set(true);
+            } catch (e) {
+              // Nếu lỗi (mất mạng...), khôi phục lại trạng thái cũ để người dùng biết
+              setState(() => _localIsRead = false);
+              debugPrint("Lỗi cập nhật thông báo: $e");
+            }
+          }
         },
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: item.isRead 
-                ? (isDarkMode ? const Color(0xFF1E1E1E) : Colors.white)
-                : (isDarkMode ? Colors.indigo.withOpacity(0.1) : Colors.indigo.withAlpha(15)),
+            color: _localIsRead 
+                ? (widget.isDarkMode ? const Color(0xFF1E1E1E) : Colors.white)
+                : (widget.isDarkMode ? Colors.indigo.withOpacity(0.1) : Colors.indigo.withAlpha(15)),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: item.isRead 
-                  ? (isDarkMode ? Colors.grey[800]! : Colors.grey[100]!)
+              color: _localIsRead 
+                  ? (widget.isDarkMode ? Colors.grey[800]! : Colors.grey[100]!)
                   : Colors.indigo.withOpacity(0.3),
               width: 1,
             ),
-            boxShadow: [
-              if (!item.isRead)
-                BoxShadow(
-                  color: Colors.indigo.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-            ],
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,7 +294,7 @@ class _NotificationCard extends StatelessWidget {
                   color: iconColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: Icon(_getIcon(item.type), color: iconColor, size: 24),
+                child: Icon(_getIcon(widget.item.type), color: iconColor, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -255,17 +305,17 @@ class _NotificationCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            item.title,
+                            widget.item.title,
                             style: TextStyle(
-                              fontWeight: item.isRead ? FontWeight.w700 : FontWeight.w900,
+                              fontWeight: _localIsRead ? FontWeight.w700 : FontWeight.w900,
                               fontSize: 16,
-                              color: item.isRead 
-                                  ? (isDarkMode ? Colors.white : Colors.black87)
-                                  : (isDarkMode ? Colors.indigo[100] : Colors.indigo[900]),
+                              color: _localIsRead 
+                                  ? (widget.isDarkMode ? Colors.white : Colors.black87)
+                                  : (widget.isDarkMode ? Colors.indigo[100] : Colors.indigo[900]),
                             ),
                           ),
                         ),
-                        if (!item.isRead)
+                        if (!_localIsRead)
                           Container(
                             width: 8,
                             height: 8,
@@ -275,9 +325,9 @@ class _NotificationCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      item.body,
+                      widget.item.body,
                       style: TextStyle(
-                        color: isDarkMode ? Colors.grey[400] : Colors.grey[700], 
+                        color: widget.isDarkMode ? Colors.grey[400] : Colors.grey[700], 
                         height: 1.5,
                         fontSize: 14,
                       ),
@@ -287,15 +337,15 @@ class _NotificationCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          DateFormat('HH:mm - dd/MM/yyyy').format(item.createdAt),
+                          DateFormat('HH:mm - dd/MM/yyyy').format(widget.item.createdAt),
                           style: TextStyle(
                             fontSize: 11, 
-                            color: isDarkMode ? Colors.grey[600] : Colors.grey[400],
+                            color: widget.isDarkMode ? Colors.grey[600] : Colors.grey[400],
                             fontWeight: FontWeight.w500
                           ),
                         ),
-                        if (item.type != null)
-                          _buildTypeChip(item.type!),
+                        if (widget.item.type != null)
+                          _buildTypeChip(widget.item.type!),
                       ],
                     ),
                   ],
@@ -307,6 +357,7 @@ class _NotificationCard extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildTypeChip(String type) {
     String label = 'Hệ thống';

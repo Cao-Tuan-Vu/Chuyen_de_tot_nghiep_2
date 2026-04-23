@@ -51,7 +51,7 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  Future<void> register(String email, String password, String displayName) async {
+  Future<bool> register(String email, String password, String displayName) async {
     isLoading = true;
     error = null;
     notifyListeners();
@@ -64,15 +64,15 @@ class AuthController extends ChangeNotifier {
       );
       token = session.token;
       currentUser = session.user;
+      isLoading = false;
+      notifyListeners();
+      return true;
     } catch (e) {
       error = e.toString();
       isLoading = false;
       notifyListeners();
-      return;
+      return false;
     }
-
-    isLoading = false;
-    notifyListeners();
   }
 
   Future<void> updateDisplayName(String displayName) async {
