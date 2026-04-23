@@ -149,7 +149,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(widget.user.displayName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                Text(widget.user.email ?? '', style: TextStyle(color: Colors.grey[600])),
+                Text(widget.user.email, style: TextStyle(color: Colors.grey[600])),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -157,7 +157,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                     color: Colors.indigo,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text(widget.user.role?.toUpperCase() ?? 'STUDENT', 
+                  child: Text(widget.user.role.toUpperCase(),
                     style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
                 ),
               ],

@@ -1,6 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import 'package:btl/features/quiz/domain/entities/quiz.dart';
@@ -196,7 +194,6 @@ class QuizRepository {
       final leaderboardNode = _leaderboardRef.child(userId);
       final leaderboardSnap = await leaderboardNode.get();
       final leaderboardData = _asMap(leaderboardSnap.value);
-      final currentUser = FirebaseAuth.instance.currentUser;
 
       final learningQuizzes = _asMap(leaderboardData['learningQuizzes']);
       final finalExam = _asMap(leaderboardData['finalExam']);
@@ -257,7 +254,6 @@ class QuizRepository {
       final normalizedLearning = _asMap(leaderboardData['learningQuizzes']);
       final learningValues = normalizedLearning.values.map(_asMap).toList();
       final learningQuizCount = learningValues.length;
-      final learningPassCount = learningValues.where((item) => item['passed'] == true).length;
       final learningAverageScore = learningQuizCount > 0
           ? learningValues
                   .map((item) => (item['percentage'] as num?)?.toDouble() ?? 0.0)
@@ -266,20 +262,8 @@ class QuizRepository {
           : 0.0;
 
       final finalData = _asMap(leaderboardData['finalExam']);
-      final normalizedLevelTests = _asMap(leaderboardData['levelTests']);
-      final easyScore = (_asMap(normalizedLevelTests['easy'])['percentage'] as num?)?.toDouble() ?? 0.0;
-      final mediumScore = (_asMap(normalizedLevelTests['medium'])['percentage'] as num?)?.toDouble() ?? 0.0;
-      final hardScore = (_asMap(normalizedLevelTests['hard'])['percentage'] as num?)?.toDouble() ?? 0.0;
-      final hasEasyAttempt = normalizedLevelTests['easy'] != null;
-      final hasMediumAttempt = normalizedLevelTests['medium'] != null;
-      final hasHardAttempt = normalizedLevelTests['hard'] != null;
-      final levelScores = [easyScore, mediumScore, hardScore].where((value) => value > 0).toList();
-      final levelAverageScore =
-          levelScores.isEmpty ? 0.0 : levelScores.reduce((a, b) => a + b) / levelScores.length;
       final finalTestScore = (finalData['percentage'] as num?)?.toDouble() ?? 0.0;
-      final finalQuizPassed = finalData['passed'] == true;
       final totalScore = (learningAverageScore * 0.4) + (finalTestScore * 0.6);
-      final activityCount = learningQuizCount + (finalData.isNotEmpty ? 1 : 0);
 
       // Check for rank displacement notifications
       try {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:btl/features/admin/presentation/controllers/admin_controller.dart';
-import 'package:btl/features/admin/presentation/pages/quiz_editor_page.dart';
 
 class ManageQuizzesPage extends StatelessWidget {
   const ManageQuizzesPage({super.key});

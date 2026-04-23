@@ -175,7 +175,8 @@ class _MyCoursesPageState extends State<MyCoursesPage> {
 
 class CourseCatalogPage extends StatefulWidget {
   final String userId;
-  const CourseCatalogPage({Key? key, required this.userId}) : super(key: key);
+  final String? initialQuery;
+  const CourseCatalogPage({Key? key, required this.userId, this.initialQuery}) : super(key: key);
 
   @override
   State<CourseCatalogPage> createState() => _CourseCatalogPageState();
@@ -183,43 +184,84 @@ class CourseCatalogPage extends StatefulWidget {
 
 class _CourseCatalogPageState extends State<CourseCatalogPage> {
   final db = FirebaseDatabase.instance.ref();
-  Map<String, dynamic> _courses = {};
+  Map<String, dynamic> _allCourses = {};
+  Map<String, dynamic> _filteredCourses = {};
   final Set<String> _enrolled = {};
   bool _loading = true;
+  late TextEditingController _searchController;
 
   @override
   void initState() {
-	super.initState();
-	_loadCatalog();
+    super.initState();
+    _searchController = TextEditingController(text: widget.initialQuery);
+    _loadCatalog();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadCatalog() async {
-	setState(() => _loading = true);
-	final snap = await db.child('courses').get();
-	final userSnap = await db.child('users/${widget.userId}').get();
+    setState(() => _loading = true);
+    try {
+      final snap = await db.child('courses').get();
+      final userSnap = await db.child('users/${widget.userId}').get();
 
-	_enrolled.clear();
-	if (userSnap.exists) {
-	  final data = userSnap.value;
-	  if (data is Map && data.containsKey('enrolledCourses')) {
-		final raw = data['enrolledCourses'];
-		if (raw is Map) {
-		  _enrolled.addAll(raw.keys.map((k) => k.toString()));
-		} else if (raw is List) {
-		  for (var v in raw) {
-			if (v != null) _enrolled.add(v.toString());
-		  }
-		}
-	  }
-	}
+      _enrolled.clear();
+      if (userSnap.exists) {
+        final data = userSnap.value;
+        if (data is Map && data.containsKey('enrolledCourses')) {
+          final raw = data['enrolledCourses'];
+          if (raw is Map) {
+            _enrolled.addAll(raw.keys.map((k) => k.toString()));
+          } else if (raw is List) {
+            for (var v in raw) {
+              if (v != null) _enrolled.add(v.toString());
+            }
+          }
+        }
+      }
 
-	if (snap.exists && snap.value is Map) {
-	  _courses = Map<String, dynamic>.from(snap.value as Map);
-	} else {
-	  _courses = {};
-	}
+      if (snap.exists && snap.value is Map) {
+        _allCourses = Map<String, dynamic>.from(snap.value as Map);
+        _applyFilter(_searchController.text);
+      } else {
+        _allCourses = {};
+        _filteredCourses = {};
+      }
+    } catch (e) {
+      print('❌ [CATALOG] Error: $e');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
 
-	setState(() => _loading = false);
+  void _applyFilter(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        _filteredCourses = Map.from(_allCourses);
+      });
+      return;
+    }
+
+    final lowerQuery = query.toLowerCase();
+    final filtered = <String, dynamic>{};
+    
+    _allCourses.forEach((id, data) {
+      final courseData = Map<String, dynamic>.from(data as Map);
+      final title = (courseData['title'] ?? '').toString().toLowerCase();
+      final desc = (courseData['desc'] ?? '').toString().toLowerCase();
+      
+      if (title.contains(lowerQuery) || desc.contains(lowerQuery)) {
+        filtered[id] = data;
+      }
+    });
+
+    setState(() {
+      _filteredCourses = filtered;
+    });
   }
 
   Future<void> _toggleEnroll(String courseId) async {
@@ -312,32 +354,64 @@ class _CourseCatalogPageState extends State<CourseCatalogPage> {
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : _courses.isEmpty
-              ? _buildEmptyState()
-              : GridView.builder(
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.75,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: _applyFilter,
+                    decoration: InputDecoration(
+                      hintText: 'Tìm kiếm khóa học...',
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                _searchController.clear();
+                                _applyFilter('');
+                              },
+                            )
+                          : null,
+                      filled: true,
+                      fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[100],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
                   ),
-                  itemCount: _courses.length,
-                  itemBuilder: (context, index) {
-                    final id = _courses.keys.elementAt(index);
-                    final c = Map<String, dynamic>.from(_courses[id] as Map);
-                    final enrolled = _enrolled.contains(id);
-                    return _CatalogCard(
-                      id: id,
-                      title: c['title'] ?? id,
-                      desc: c['desc'] ?? '',
-                      level: c['level'] ?? 'Cơ bản',
-                      enrolled: enrolled,
-                      onToggle: () => _toggleEnroll(id),
-                      isDarkMode: isDarkMode,
-                    );
-                  },
                 ),
+                Expanded(
+                  child: _filteredCourses.isEmpty
+                      ? _buildEmptyState()
+                      : GridView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.75,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                          ),
+                          itemCount: _filteredCourses.length,
+                          itemBuilder: (context, index) {
+                            final id = _filteredCourses.keys.elementAt(index);
+                            final c = Map<String, dynamic>.from(_filteredCourses[id] as Map);
+                            final enrolled = _enrolled.contains(id);
+                            return _CatalogCard(
+                              id: id,
+                              title: c['title'] ?? id,
+                              desc: c['desc'] ?? '',
+                              level: c['level'] ?? 'Cơ bản',
+                              enrolled: enrolled,
+                              onToggle: () => _toggleEnroll(id),
+                              isDarkMode: isDarkMode,
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
     );
   }
 
@@ -385,7 +459,7 @@ class _CatalogCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-			color: Colors.black.withValues(alpha: 0.05),
+			color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -399,7 +473,7 @@ class _CatalogCard extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: enrolled
-					  ? [courseStyle.primary.withValues(alpha: 0.88), courseStyle.gradient[1].withValues(alpha: 0.92)]
+					  ? [courseStyle.primary.withOpacity(0.88), courseStyle.gradient[1].withOpacity(0.92)]
 					  : courseStyle.gradient,
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,

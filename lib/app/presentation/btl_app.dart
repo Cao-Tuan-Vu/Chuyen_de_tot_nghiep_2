@@ -133,11 +133,13 @@ class _BtlAppState extends State<BtlApp> {
                 ),
                 iconTheme: IconThemeData(color: Colors.white),
               ),
-              cardTheme: CardThemeData(
+              cardTheme: const CardThemeData(
                 elevation: 2,
-                shadowColor: Colors.black.withOpacity(0.05),
+                shadowColor: Colors.black12,
                 color: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                ),
               ),
             ),
             onGenerateRoute: _onGenerateRoute,

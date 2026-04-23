@@ -428,7 +428,7 @@ class _RankingPageState extends State<RankingPage> {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.12),
+                color: Colors.white.withOpacity(0.12),
                 shape: BoxShape.circle,
               ),
             ),
@@ -440,7 +440,7 @@ class _RankingPageState extends State<RankingPage> {
               width: 90,
               height: 90,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.08),
+                color: Colors.white.withOpacity(0.08),
                 shape: BoxShape.circle,
               ),
             ),
@@ -470,7 +470,7 @@ class _RankingPageState extends State<RankingPage> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -482,7 +482,7 @@ class _RankingPageState extends State<RankingPage> {
             width: 62,
             height: 62,
             decoration: BoxDecoration(
-              color: const Color(0xFF6366F1).withValues(alpha: 0.12),
+              color: const Color(0xFF6366F1).withOpacity(0.12),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.emoji_events_outlined, color: Color(0xFF6366F1), size: 30),
@@ -514,7 +514,7 @@ class _RankingPageState extends State<RankingPage> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
+              color: Colors.black.withOpacity(0.06),
               blurRadius: 14,
               offset: const Offset(0, 8),
             ),
@@ -606,7 +606,7 @@ class _RankingPageState extends State<RankingPage> {
           dense: true,
           contentPadding: EdgeInsets.zero,
           leading: CircleAvatar(
-            backgroundColor: const Color(0xFF6366F1).withValues(alpha: 0.1),
+            backgroundColor: const Color(0xFF6366F1).withOpacity(0.1),
             child: Text('${index + 1}'),
           ),
           title: Text(user.displayName),
@@ -628,8 +628,8 @@ class _RankingPageState extends State<RankingPage> {
       decoration: BoxDecoration(
         color: isDarkMode ? const Color(0xFF111827) : Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.indigo.withValues(alpha: 0.06)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 14, offset: const Offset(0, 6))],
+        border: Border.all(color: Colors.indigo.withOpacity(0.06)),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 14, offset: const Offset(0, 6))],
       ),
       child: Row(
         children: [
@@ -640,7 +640,7 @@ class _RankingPageState extends State<RankingPage> {
           ),
           CircleAvatar(
             radius: 22,
-            backgroundColor: const Color(0xFF6366F1).withValues(alpha: 0.1),
+            backgroundColor: const Color(0xFF6366F1).withOpacity(0.1),
             child: Text(avatarText,
               style: const TextStyle(color: Color(0xFF6366F1), fontWeight: FontWeight.bold)),
           ),
@@ -660,7 +660,7 @@ class _RankingPageState extends State<RankingPage> {
                   child: LinearProgressIndicator(
                     minHeight: 7,
                     value: totalProgress,
-                    backgroundColor: Colors.grey.withValues(alpha: 0.12),
+                    backgroundColor: Colors.grey.withOpacity(0.12),
                     color: const Color(0xFF10B981),
                   ),
                 ),
@@ -849,7 +849,7 @@ class _InlineMetricBar extends StatelessWidget {
           child: LinearProgressIndicator(
             minHeight: 5,
             value: progress.clamp(0.0, 1.0),
-            backgroundColor: color.withValues(alpha: 0.12),
+            backgroundColor: color.withOpacity(0.12),
             color: color,
           ),
         ),

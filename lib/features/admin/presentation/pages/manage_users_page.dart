@@ -30,6 +30,8 @@ class ManageUsersPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final user = users[index];
                 final isAdmin = user.role == 'admin' || user.email == 'admin@gmail.com';
+                final email = user.email;
+                final userId = user.id;
                 
                 return ListTile(
                   onTap: () {
@@ -51,11 +53,11 @@ class ManageUsersPage extends StatelessWidget {
                     user.displayName.isNotEmpty ? user.displayName : 'Học viên',
                     style: const TextStyle(fontWeight: FontWeight.bold)
                   ),
-                  subtitle: Text(user.email ?? 'No email'),
+                  subtitle: Text(email),
                   trailing: PopupMenuButton<String>(
                     onSelected: (val) {
                       if (val == 'role') {
-                        _showRoleDialog(context, adminCtrl, user.id!, user.role ?? 'student');
+                        _showRoleDialog(context, adminCtrl, userId, user.role);
                       }
                     },
                     itemBuilder: (context) => [

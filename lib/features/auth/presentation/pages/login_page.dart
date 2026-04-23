@@ -103,6 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                       return;
                     }
                     final ok = await widget.controller.sendPasswordResetEmail(email);
+                    if (!context.mounted) return;
                     if (ok) {
                       Navigator.pop(dialogContext);
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã gửi email thành công!')));
@@ -131,6 +132,7 @@ class _LoginPageState extends State<LoginPage> {
         _displayNameController.text.trim(),
       );
       if (success && mounted) {
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Đăng ký thành công! Vui lòng đăng nhập.')),
         );
@@ -148,6 +150,7 @@ class _LoginPageState extends State<LoginPage> {
       );
       if (mounted) {
         if (widget.controller.isLoggedIn) {
+          if (!context.mounted) return;
           Navigator.of(context).pushReplacementNamed(HomePage.routeName);
         } else {
           // Bắt buộc gọi setState để hiển thị lỗi đã được humanize

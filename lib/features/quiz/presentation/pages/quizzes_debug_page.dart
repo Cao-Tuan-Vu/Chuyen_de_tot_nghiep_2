@@ -12,7 +12,6 @@ class QuizzesDebugPage extends StatefulWidget {
 }
 
 class _QuizzesDebugPageState extends State<QuizzesDebugPage> {
-  late final QuizRepository _repo = widget.repository ?? QuizRepository();
   late Future<Map<String, dynamic>> _allFuture;
 
   @override

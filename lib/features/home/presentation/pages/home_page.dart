@@ -39,6 +39,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _selectedIndex = 0;
   bool _isDarkMode = false;
+  String? _initialSearchQuery;
 
   late AnimationController _bannerController;
   late Animation<double> _bannerAnimation;
@@ -102,8 +103,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           quizRepository: widget.quizRepository,
           isDarkMode: _isDarkMode,
           bannerAnimation: _bannerAnimation,
+          onSearch: (query) {
+            setState(() {
+              _initialSearchQuery = query;
+              _selectedIndex = 1;
+            });
+          },
         )
-                : CourseCatalogPage(userId: widget.controller.currentUser?.id ?? ''),
+                : CourseCatalogPage(
+                    userId: widget.controller.currentUser?.id ?? '',
+                    initialQuery: _initialSearchQuery,
+                  ),
         bottomNavigationBar: _buildModernBottomNav(),
       ),
     );
@@ -196,13 +206,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 }
 
 // ==================== NỘI DUNG TRANG CHỦ ====================
-class _HomeContent extends StatelessWidget {
+class _HomeContent extends StatefulWidget {
   const _HomeContent({
     required this.controller,
     required this.learningRepository,
     this.quizRepository,
     required this.isDarkMode,
     required this.bannerAnimation,
+    required this.onSearch,
   });
 
   final AuthController controller;
@@ -210,6 +221,26 @@ class _HomeContent extends StatelessWidget {
   final QuizRepository? quizRepository;
   final bool isDarkMode;
   final Animation<double> bannerAnimation;
+  final Function(String) onSearch;
+
+  @override
+  State<_HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<_HomeContent> {
+  late final TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
@@ -238,7 +269,7 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = controller.currentUser;
+    final user = widget.controller.currentUser;
 
     // Prepare avatar image for header (supports Base64 or remote URL)
     ImageProvider? avatarImage;
@@ -404,11 +435,25 @@ class _HomeContent extends StatelessWidget {
               children: [
                 // Search
                 TextField(
+                  controller: _searchController,
+                  onSubmitted: (value) {
+                    if (value.trim().isNotEmpty) {
+                      widget.onSearch(value.trim());
+                    }
+                  },
                   decoration: InputDecoration(
                     hintText: "Tìm kiếm khóa học...",
                     prefixIcon: const Icon(Icons.search),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.arrow_forward),
+                      onPressed: () {
+                        if (_searchController.text.trim().isNotEmpty) {
+                          widget.onSearch(_searchController.text.trim());
+                        }
+                      },
+                    ),
                     filled: true,
-                    fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[100],
+                    fillColor: widget.isDarkMode ? Colors.grey[800] : Colors.grey[100],
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                   ),
                 ),
@@ -416,10 +461,10 @@ class _HomeContent extends StatelessWidget {
 
                 // Banner
                 FadeTransition(
-                  opacity: bannerAnimation,
+                  opacity: widget.bannerAnimation,
                   child: SlideTransition(
-                    position: Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(bannerAnimation),
-                    child: _buildFeaturedBanner(isDarkMode),
+                    position: Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(widget.bannerAnimation),
+                    child: _buildFeaturedBanner(widget.isDarkMode),
                   ),
                 ),
 
@@ -428,10 +473,10 @@ class _HomeContent extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 _HomeEnrolledCoursesPreview(
-                  controller: controller,
-                  learningRepository: learningRepository,
-                  quizRepository: quizRepository,
-                  isDarkMode: isDarkMode,
+                  controller: widget.controller,
+                  learningRepository: widget.learningRepository,
+                  quizRepository: widget.quizRepository,
+                  isDarkMode: widget.isDarkMode,
                 ),
               ],
             ),

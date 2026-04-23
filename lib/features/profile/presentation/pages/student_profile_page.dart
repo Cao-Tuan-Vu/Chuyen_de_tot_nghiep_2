@@ -56,7 +56,6 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
   @override
   Widget build(BuildContext context) {
     final user = widget.controller.currentUser;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     ImageProvider? avatarImage;
     if (user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty) {

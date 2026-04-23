@@ -17,7 +17,10 @@ class _ManageLessonsPageState extends State<ManageLessonsPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => context.read<AdminController>().fetchLessonsForCourse(widget.courseId));
+    Future.microtask(() {
+      if (!mounted) return;
+      context.read<AdminController>().fetchLessonsForCourse(widget.courseId);
+    });
   }
 
   @override

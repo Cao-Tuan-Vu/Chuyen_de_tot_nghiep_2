@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -37,13 +36,13 @@ class _QuizPageState extends State<QuizPage> {
   late Future<Quiz> _quizFuture;
   final Map<String, int> _answers = {};
   bool _isSubmitting = false;
-  String? _error;
   int _currentQuestionIndex = 0;
   late PageController _pageController;
   
   Timer? _timer;
   int _remainingSeconds = 0;
   bool _isTimeUp = false;
+  String? _error;
 
   @override
   void initState() {
@@ -74,9 +73,7 @@ class _QuizPageState extends State<QuizPage> {
 
   void _onTimeUp() {
     if (_isSubmitting) return;
-    setState(() {
-      _isTimeUp = true;
-    });
+    setState(() => _isTimeUp = true);
     
     // Hiện thông báo và tự động nộp bài
     ScaffoldMessenger.of(context).showSnackBar(
@@ -140,7 +137,12 @@ class _QuizPageState extends State<QuizPage> {
         ),
       );
     } catch (e) {
-      setState(() => _error = e.toString());
+      if (mounted) {
+        setState(() => _error = e.toString());
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi: ${e.toString()}')),
+        );
+      }
     } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);
@@ -178,6 +180,10 @@ class _QuizPageState extends State<QuizPage> {
     final appBarTitle = (widget.quizTitle != null && widget.quizTitle!.trim().isNotEmpty)
         ? widget.quizTitle!.trim()
         : 'Làm bài trắc nghiệm';
+
+    if (_isTimeUp) {
+      return _buildTimeUpState();
+    }
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8FAFC),
@@ -472,6 +478,29 @@ class _QuizPageState extends State<QuizPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTimeUpState() {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.timer_off_outlined, size: 80, color: Colors.red),
+            const SizedBox(height: 24),
+            const Text(
+              'Hết thời gian!',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            const Text('Hệ thống đang tự động nộp bài...'),
+            const SizedBox(height: 24),
+            if (_error != null)
+              Text(_error!, style: const TextStyle(color: Colors.red)),
+          ],
+        ),
       ),
     );
   }
