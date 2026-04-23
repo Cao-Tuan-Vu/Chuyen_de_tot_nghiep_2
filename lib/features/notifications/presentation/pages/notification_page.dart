@@ -179,7 +179,7 @@ class NotificationPage extends StatelessWidget {
             Positioned(
               right: -20,
               bottom: -20,
-              child: Icon(Icons.notifications_active_rounded, size: 150, color: Colors.white.withValues(alpha: 0.1)),
+              child: Icon(Icons.notifications_active_rounded, size: 150, color: Colors.white.withOpacity(0.1)),
             ),
           ],
         ),
@@ -276,12 +276,12 @@ class _NotificationCardState extends State<_NotificationCard> {
           decoration: BoxDecoration(
             color: _localIsRead 
                 ? (widget.isDarkMode ? const Color(0xFF1E1E1E) : Colors.white)
-                : (widget.isDarkMode ? Colors.indigo.withValues(alpha: 0.1) : Colors.indigo.withAlpha(15)),
+                : (widget.isDarkMode ? Colors.indigo.withOpacity(0.1) : Colors.indigo.withAlpha(15)),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: _localIsRead 
                   ? (widget.isDarkMode ? Colors.grey[800]! : Colors.grey[100]!)
-                  : Colors.indigo.withValues(alpha: 0.3),
+                  : Colors.indigo.withOpacity(0.3),
               width: 1,
             ),
           ),
@@ -291,7 +291,7 @@ class _NotificationCardState extends State<_NotificationCard> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.1),
+                  color: iconColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Icon(_getIcon(widget.item.type), color: iconColor, size: 24),
@@ -385,7 +385,7 @@ class _NotificationCardState extends State<_NotificationCard> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -425,5 +425,6 @@ class _NotificationCardState extends State<_NotificationCard> {
     }
   }
 }
+
 
 

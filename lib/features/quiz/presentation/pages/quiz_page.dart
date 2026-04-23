@@ -354,7 +354,7 @@ class _QuizPageState extends State<QuizPage> {
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: isSelected 
-                          ? Colors.blue.withValues(alpha: isDark ? 0.2 : 0.08) 
+                          ? Colors.blue.withOpacity(isDark ? 0.2 : 0.08) 
                           : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
@@ -365,7 +365,7 @@ class _QuizPageState extends State<QuizPage> {
                       ),
                       boxShadow: isSelected ? [
                         BoxShadow(
-                          color: Colors.blue.withValues(alpha: 0.1),
+                          color: Colors.blue.withOpacity(0.1),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         )
@@ -432,7 +432,7 @@ class _QuizPageState extends State<QuizPage> {
         color: isDark ? Colors.black : Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -547,5 +547,6 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 }
+
 
 

@@ -459,7 +459,7 @@ class _CatalogCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-			color: Colors.black.withValues(alpha: 0.05),
+			color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -473,7 +473,7 @@ class _CatalogCard extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: enrolled
-					  ? [courseStyle.primary.withValues(alpha: 0.88), courseStyle.gradient[1].withValues(alpha: 0.92)]
+					  ? [courseStyle.primary.withOpacity(0.88), courseStyle.gradient[1].withOpacity(0.92)]
 					  : courseStyle.gradient,
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -551,6 +551,7 @@ class _CatalogCard extends StatelessWidget {
     );
   }
 }
+
 
 
 

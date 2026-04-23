@@ -200,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.15),
+                            color: Colors.white.withOpacity(0.15),
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white24, width: 2),
                           ),
@@ -235,7 +235,7 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: BorderRadius.circular(32),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
+                        color: Colors.black.withOpacity(0.08),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -417,9 +417,9 @@ class _LoginPageState extends State<LoginPage> {
                             margin: const EdgeInsets.only(top: 20),
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.redAccent.withValues(alpha: 0.1),
+                              color: Colors.redAccent.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.redAccent.withValues(alpha: 0.3)),
+                              border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
                             ),
                             child: Text(
                               _humanizeError(widget.controller.error!),
@@ -489,5 +489,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
 
 

@@ -316,12 +316,12 @@ class _HomeContentState extends State<_HomeContent> {
                 Positioned(
                   top: -40,
                   right: -30,
-                  child: _buildDecorativeCircle(160, Colors.white.withValues(alpha: 0.12)),
+                  child: _buildDecorativeCircle(160, Colors.white.withOpacity(0.12)),
                 ),
                 Positioned(
                   bottom: 20,
                   left: -20,
-                  child: _buildDecorativeCircle(100, Colors.white.withValues(alpha: 0.08)),
+                  child: _buildDecorativeCircle(100, Colors.white.withOpacity(0.08)),
                 ),
                 // Layer 3: Main Content
                 SafeArea(
@@ -334,9 +334,9 @@ class _HomeContentState extends State<_HomeContent> {
                           padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 2),
+                            border: Border.all(color: Colors.white.withOpacity(0.5), width: 2),
                             boxShadow: [
-                              BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 15, spreadRadius: 2),
+                              BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 15, spreadRadius: 2),
                             ],
                           ),
                           child: CircleAvatar(
@@ -360,7 +360,7 @@ class _HomeContentState extends State<_HomeContent> {
                             children: [
                               Text(
                                 _getGreeting(),
-                                style: TextStyle(fontSize: 14, color: Colors.white.withValues(alpha: 0.9), fontWeight: FontWeight.w500),
+                                style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.9), fontWeight: FontWeight.w500),
                               ),
                               Text(
                                 "${user?.displayName ?? 'Học viên'}! 👋",
@@ -498,7 +498,7 @@ class _HomeContentState extends State<_HomeContent> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        boxShadow: [BoxShadow(color: Colors.cyan.withValues(alpha: 0.4), blurRadius: 30, offset: const Offset(0, 15))],
+        boxShadow: [BoxShadow(color: Colors.cyan.withOpacity(0.4), blurRadius: 30, offset: const Offset(0, 15))],
       ),
       child: Stack(
         children: [
@@ -530,7 +530,7 @@ class _HomeContentState extends State<_HomeContent> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.25),
+                    color: Colors.white.withOpacity(0.25),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Row(
@@ -745,7 +745,7 @@ class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview
         color: widget.isDarkMode ? Colors.grey[900] : Colors.white,
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10)),
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10)),
         ],
       ),
       child: Column(
@@ -754,7 +754,7 @@ class _HomeEnrolledCoursesPreviewState extends State<_HomeEnrolledCoursesPreview
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.indigo.withValues(alpha: 0.1),
+              color: Colors.indigo.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.auto_stories_outlined, size: 60, color: Colors.indigo[400]),
@@ -870,7 +870,7 @@ class _CourseCardState extends State<_CourseCard> {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: widget.isDarkMode ? Colors.black45 : Colors.black.withValues(alpha: 0.08),
+              color: widget.isDarkMode ? Colors.black45 : Colors.black.withOpacity(0.08),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -888,7 +888,7 @@ class _CourseCardState extends State<_CourseCard> {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: widget.isDarkMode
-                            ? courseStyle.gradient.map((color) => color.withValues(alpha: 0.85)).toList()
+                            ? courseStyle.gradient.map((color) => color.withOpacity(0.85)).toList()
                             : courseStyle.gradient,
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -898,7 +898,7 @@ class _CourseCardState extends State<_CourseCard> {
                       child: Icon(
                         courseStyle.icon,
                         size: 48,
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: Colors.white.withOpacity(0.9),
                       ),
                     ),
                   ),
@@ -979,5 +979,6 @@ class _CourseCardState extends State<_CourseCard> {
     );
   }
 }
+
 
 

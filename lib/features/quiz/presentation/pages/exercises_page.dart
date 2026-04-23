@@ -255,7 +255,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
             Positioned(
               right: -30,
               bottom: -30,
-              child: Icon(Icons.quiz_rounded, size: 180, color: Colors.white.withValues(alpha: 0.1)),
+              child: Icon(Icons.quiz_rounded, size: 180, color: Colors.white.withOpacity(0.1)),
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -281,7 +281,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.15),
+        color: Colors.white.withOpacity(0.15),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.white24),
       ),
@@ -313,7 +313,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
           borderRadius: BorderRadius.circular(24),
           gradient: LinearGradient(colors: colors, begin: Alignment.topLeft, end: Alignment.bottomRight),
           boxShadow: [
-            BoxShadow(color: colors.last.withValues(alpha: 0.3), blurRadius: 12, offset: const Offset(0, 6)),
+            BoxShadow(color: colors.last.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 6)),
           ],
         ),
         child: Stack(
@@ -321,7 +321,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
             Positioned(
               right: -10,
               top: -10,
-              child: Icon(icon, size: 100, color: Colors.white.withValues(alpha: 0.15)),
+              child: Icon(icon, size: 100, color: Colors.white.withOpacity(0.15)),
             ),
             Padding(
               padding: const EdgeInsets.all(24),
@@ -332,7 +332,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
+                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
                         child: Icon(icon, color: Colors.white, size: 26),
                       ),
                       const SizedBox(width: 12),
@@ -340,7 +340,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Text(desc, style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 14, height: 1.4)),
+                  Text(desc, style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14, height: 1.4)),
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -374,5 +374,6 @@ class _LevelPool {
   final String level;
   final List<QuizQuestion> questions;
 }
+
 
 
